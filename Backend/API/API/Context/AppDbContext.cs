@@ -15,8 +15,6 @@ namespace API.Context
         public DbSet<Location> Locations { get; set; }
         public DbSet<Feature> Features { get; set; }
         public DbSet<VehicleFeature> VehicleFeature { get; set; }
-        public DbSet<Wheel> Wheels { get; set; }
-        public DbSet<WheelStock> WheelStock { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -28,11 +26,9 @@ namespace API.Context
 
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleFeatureConfiguration());
-            modelBuilder.ApplyConfiguration(new WheelStockConfiguration());
             modelBuilder.ApplyConfiguration(new FeatureConfiguration());
             modelBuilder.ApplyConfiguration(new LocationConfiguration());
             modelBuilder.ApplyConfiguration(new StatusConfiguration());
-            modelBuilder.ApplyConfiguration(new WheelConfiguration());
         }
         
     }

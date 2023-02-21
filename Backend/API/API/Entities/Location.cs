@@ -14,11 +14,6 @@ namespace API.Entities
         /// All vehicles for sale by this dealership.
         /// </summary>
         public virtual ICollection<Vehicle> OwnedVehicles { get; set; }
-
-        /// <summary>
-        /// All wheels stored at this location.
-        /// </summary>
-        public virtual ICollection<WheelStock> Wheels { get; set; }
         
     }
 }
