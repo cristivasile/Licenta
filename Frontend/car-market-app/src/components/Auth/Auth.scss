@@ -1,0 +1,44 @@
+@import "../../Theme.scss";
+
+.Auth{
+    width: 100%;
+    height: 100%;
+}
+
+.titleContainer{
+    width: 50%;
+    position: absolute;
+    left: 25%;
+    top: 10%;
+    font-size: 4em;
+    font-weight: bolder;
+    color: $accent2-color;
+    text-shadow:  1px 1px 2px $main-color;
+}
+
+.authContainer{
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    padding:1em 2em 1em 2em;
+    margin:1em;
+    width: 15%;
+    background-color: rgba(255,255,255,0.8);
+    border-radius: 10px;
+}
+
+.buttonDiv{
+    margin: 4%;
+}
+
+.formTitle{
+    font-size:2.5em;
+    font-weight:bolder;
+    margin: 0em 0em 0.5em 0em;
+    color: $main-color;
+}
+
+.errorMessage{
+    font-weight: bold;
+    color: red;
+}

@@ -1,0 +1,34 @@
+@import "../../Theme.scss";
+
+@keyframes spinner {
+    0% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(140deg);
+    }
+    75% {
+      transform: rotate(220deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 10px solid transparent;
+  background: linear-gradient($light-color, $light-color) padding-box,
+  linear-gradient(to top, $accent1-color, $light-color 55%) border-box;
+  border-radius: 50%;
+  animation: spinner 1.6s linear infinite;
+} 
+
+.container{
+  position:absolute;
+  padding: .25%;
+  border-radius: 50%;
+  background-color: $light-color;
+  z-index: 3;
+}

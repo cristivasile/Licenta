@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYUsNfCf5FUOyKdcJafEn6wAAAAACAAAAAAAQZgAAAAEAACAAAABqZB0dGd3kxxXg1aIhyCmK/eQmENjbTv05F4NUBs2MCQAAAAAOgAAAAAIAACAAAACmI+YGeQbUrA4wFfjgq0xYWXl+PRO9Q6z3Bdit2lLQRYAAAABlR4iFQ9Z3vwFg3orCjiDZVt2mMjWgYT2oyZzL26yxh9Uy6bWG3hwEEyNnddGdV98FDs//QQ/R3xsXmPM9uVKlyd+Lwxmhhe5LWM4iFvtsEwdY7c9ssdJ0jLwoU4HW/aHjF4mkHKt9jTgKH7F0D6xbQGQA4jhVQvNq34DdRhsIaUAAAAC4gZbDeHQ4PA5AN04MuKxIx4qfIji9in0foEdJOj+ysHz/6y/TSXSy0sNLYtmYWd9ZptEinSSp2ZyCAlB0yYYz</EncryptedPassword>
+    <History>True|2022-01-26T22:25:59.5408183Z;True|2022-01-26T23:34:20.2011582+02:00;</History>
+  </PropertyGroup>
+  <ItemGroup>
+    <EFMigrations Include="API.Context.AppDbContext">
+      <Value>Data Source=tcp:prospectautoservermanagement.database.windows.net,1433%3bInitial Catalog=API_db%3bUser Id=prospectauto%40prospectautoservermanagement%3bPassword=Admin123!</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,62 @@
+@import "../../Theme.scss";
+
+.mainContainer{
+    width: 95%;
+    height: 90%;
+    border-radius: 2vw 2vw .2vw .2vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.header{
+    height: 7%;
+    border-radius: .5em .5em 0 0;
+    background-color: $border-color;
+    box-shadow: .5vw 1vh 1vw $accent1-color;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.content{
+    height: 93%;
+    border-radius: 0 0 .5em .5em;
+    border: .5em solid $border-color;
+    border-top: 0;
+    background-color: rgba(255,255,255,0.8);
+    box-shadow: .5vw 1vh 1vw $accent1-color;
+}
+
+.fillerDiv{
+    width: 75%;
+}
+
+.buttonContainer{
+    width: 10%;
+    height: 100%;
+    margin: 0;
+    display:flex;
+    align-items: center;
+    padding-right: 1em;
+    justify-content: right;
+}
+
+.messageContainer{
+    width: 15%;
+    height: 100%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    text-align: center;
+    padding-left: 1em;
+    font-size: 1.4em;
+    font-weight: 500;
+    color: white;
+}
+
+ .usernameSpan{
+    color: $background-color;
+    font-weight: bold;
+    margin-left: .2em;
+    margin-right: .1em;
+ }
