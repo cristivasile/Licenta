@@ -26,7 +26,7 @@ function App() {
 
   return (
     <ThemeProvider theme={materialTheme}>
-      <title>Test</title>
+      <title>Test</title> 
       <div className="App">
         <Router>
           <Routes>  

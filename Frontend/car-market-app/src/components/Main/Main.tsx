@@ -4,7 +4,7 @@ import './Main.scss';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Button } from '@mui/material';
 import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath } from '../../constants';
-import { logout } from '../../redux/user';
+import { logout } from '../../redux/userStore';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Vehicles from './Vehicles/Vehicles';
 import Error404 from '../Error404/Error404';

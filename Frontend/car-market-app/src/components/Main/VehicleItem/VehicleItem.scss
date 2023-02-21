@@ -1,0 +1,65 @@
+@import "../../../Theme.scss";
+
+.vehicleItem{
+    background-color: white;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .vehiclesHeader{
+        font-weight: bold;
+        font-size: 1.5em;
+        width: 100%;
+        background-color: $accent1-color;
+        padding-bottom: 1%;
+        padding-top: 1%;
+        display: flex;
+        color: white;
+        flex-direction: row;
+        justify-content: space-between;
+    
+        .vehicleName{
+            margin-left: 10%;
+        }
+        .vehiclePrice{
+            margin-right: 10%;
+        }
+    }
+
+    .vehicleImageContainer{
+        width: 70%;
+        height: 11em;
+        display: flex;
+        align-items:center;
+        justify-content: center;
+        
+        .vehicleImage{
+            object-fit: fit;
+            border: 1px solid gray;
+            max-height: 100%;
+            max-width: 100%;
+        }
+    }
+
+    .vehicleDescriptionContainer{
+        width: 90%;
+        display: flex;
+        font-size: 1.1em;
+        flex-direction: column;
+        margin-bottom: .2em;
+    }
+
+    .vehicleDescriptionRow{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: .1em;
+
+        .descriptionTitle{
+            font-weight: bold;
+            color: $main-color;
+        }
+    }
+}

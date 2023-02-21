@@ -9,22 +9,21 @@
 }
 
 .header{
-    height: 7%;
-    border-radius: .5em .5em 0 0;
-    background-color: $border-color;
-    box-shadow: .5vw 1vh 1vw $accent1-color;
+    height: 8%;
+    box-shadow: 0 0 2vw $accent1-color;
     display: flex;
     flex-direction: row;
     align-items: center;
+    background-color: $main-color;
 }
 
 .content{
-    height: 93%;
-    border-radius: 0 0 .5em .5em;
-    border: .5em solid $border-color;
-    border-top: 0;
+    height: 92%;
+    display: flex;
+    align-items: stretch;
+    border-radius: 0 0 .3em .3em;
+    box-shadow: 0 .5vw 1vw $accent1-color;
     background-color: rgba(255,255,255,0.8);
-    box-shadow: .5vw 1vh 1vw $accent1-color;
 }
 
 .fillerDiv{
@@ -59,4 +58,6 @@
     font-weight: bold;
     margin-left: .2em;
     margin-right: .1em;
+    margin-top: .75em;
+    margin-bottom: .75em;
  }

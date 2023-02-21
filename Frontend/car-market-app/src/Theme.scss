@@ -34,3 +34,17 @@ $main-background: linear-gradient(145deg, $main-color, $accent1-color, $accent2-
         font-size:1.1em;
     }
 }
+
+.errorMessage{
+    font-weight: bold;
+    color: red;
+}
+
+.successMessage{
+    font-weight: bold;
+    color: green;
+}
+
+.leftMargin{
+    margin-left: 1.5em;
+}

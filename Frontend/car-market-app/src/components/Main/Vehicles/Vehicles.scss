@@ -1,1 +1,46 @@
-.Vehicles {}
+@import "../../../Theme.scss";
+
+.vehicles{
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+.toolbar {
+    width: 100%;
+    background-color: white;
+}
+
+.toolbarButtons{
+    width: 100%;
+    margin-top: .4em;
+    margin-bottom: .4em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.formTitle{
+    color: $main-color;
+}
+
+.vehiclesListContainer{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    max-height: 100%;
+    overflow-y: scroll;
+    padding-bottom: 1em;
+}
+
+.vehicleItemContainer{
+    width: 22%;
+    box-shadow: .2em .2em .8em gray;
+    margin-top: 1%;
+}
+
+.vehicleItemContainer:hover{
+    box-shadow: .2em .2em 2em gray;
+}

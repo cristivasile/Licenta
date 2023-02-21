@@ -7,7 +7,7 @@ const Loading: FC<LoadingProps> = () => {
   
   return (
     <div className="container">
-      <div className="spinner">
+      <div className="spinner dark">
       </div>
     </div>
 );

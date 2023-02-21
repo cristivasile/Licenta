@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import './Auth.scss';
 import { Button } from '@mui/material';
-import { login, setRole, setToken, setUser} from '../../redux/user';
+import { login, setRole, setToken, setUser} from '../../redux/userStore';
 import { useAppDispatch} from '../../hooks';
 import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath, apiUrl } from '../../constants';
 import Loading from '../Loading/Loading';

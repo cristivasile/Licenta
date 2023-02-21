@@ -18,17 +18,25 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 10px solid transparent;
+  border: .5em solid transparent;
   background: linear-gradient($light-color, $light-color) padding-box,
   linear-gradient(to top, $accent1-color, $light-color 55%) border-box;
   border-radius: 50%;
   animation: spinner 1.6s linear infinite;
+
+  &.dark{
+    background: linear-gradient($main-color, $main-color) padding-box,
+    linear-gradient(to top, white, $main-color 55%) border-box;
+  }
 } 
 
 .container{
-  position:absolute;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding: .25%;
   border-radius: 50%;
-  background-color: $light-color;
+  background-color: $main-color;
   z-index: 3;
 }

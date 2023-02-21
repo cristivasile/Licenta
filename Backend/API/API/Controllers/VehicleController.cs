@@ -72,7 +72,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Admin")]
+        // TODO - change back [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> CreateVehicle([FromBody] VehicleCreateModel vehicle)
         {
             await vehicleManager.Create(vehicle);

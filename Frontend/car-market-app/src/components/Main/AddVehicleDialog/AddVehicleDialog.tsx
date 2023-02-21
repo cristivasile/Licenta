@@ -1,0 +1,302 @@
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField } from '@mui/material';
+import React, { FC, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { setVehicles } from '../../../redux/vehiclesStore';
+import { getAvailableVehicles, postVehicle } from '../../../services/vehiclesService';
+import { fileToBase64 } from '../../../utils';
+import Loading from '../../Loading/Loading';
+import './AddVehicleDialog.scss';
+
+export interface AddVehicleDialogProps {
+  isOpen: boolean,
+  onClose: Function,
+  loadingCallback: Function,
+  locations: string[],
+}
+
+const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProps) => {
+
+  const today = new Date();
+  const token = useAppSelector((state) => state.user.token);
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const [brandValue, setBrandValue] = useState("");
+  const [modelValue, setModelValue] = useState("");
+  const [priceValue, setPriceValue] = useState(NaN);
+  const [yearValue, setYearValue] = useState(NaN);
+  const [engineSizeValue, setEngineSizeValue] = useState(NaN);
+  const [powerValue, setPowerValue] = useState(NaN);
+  const [odometerValue, setOdometerValue] = useState(NaN);
+  const [locationValue, setLocationValue] = useState("");
+  const [imageValue, setImageValue] = useState(new File([""], ""));
+
+  const [brandError, setBrandError] = useState(false);
+  const [brandErrorText, setBrandErrorText] = useState("");
+  const [modelError, setModelError] = useState(false);
+  const [modelErrorText, setModelErrorText] = useState("");
+  const [yearError, setYearError] = useState(false);
+  const [yearErrorText, setYearErrorText] = useState("");
+  const [odometerError, setOdometerError] = useState(false);
+  const [odometerErrorText, setOdometerErrorText] = useState("");
+  const [engineSizeError, setEngineSizeError] = useState(false);
+  const [engineSizeErrorText, setEngineSizeErorrText] = useState("");
+  const [powerError, setPowerError] = useState(false);
+  const [powerErrorText, setPowerErrorText] = useState("");
+  const [locationError, setLocationError] = useState(false);
+  const [locationErrorText, setLocationErrorText] = useState("");
+  const [priceError, setPriceError] = useState(false);
+  const [priceErrorText, setPriceErrorText] = useState("");
+
+  const dispatch = useAppDispatch();
+
+  const generateErrorMessage = () => (
+    <div className="errorMessage leftMargin">{errorMessage}</div>
+  );
+  const generateSuccessMessage = () => (
+    <div className="successMessage leftMargin">{successMessage}</div> 
+  );
+
+  function clearMessages(){
+    setErrorMessage("");
+    setSuccessMessage("");
+    setBrandError(false);
+    setBrandErrorText("");
+    setModelError(false);
+    setModelErrorText("");
+    setYearError(false);
+    setYearErrorText("");
+    setOdometerError(false);
+    setOdometerErrorText("");
+    setEngineSizeError(false);
+    setEngineSizeErorrText("");
+    setPowerError(false);
+    setPowerErrorText("");
+    setLocationError(false);
+    setLocationErrorText("");
+    setPriceError(false);
+    setPriceErrorText("");
+  }
+
+  function clearInputs(){
+    setBrandValue("");
+    setModelValue("");
+    setYearValue(NaN);
+    setPriceValue(NaN);
+    setEngineSizeValue(NaN);
+    setPowerValue(NaN);
+    setOdometerValue(NaN);
+    setLocationValue("");
+    setImageValue(new File([""], ""));
+  }
+
+  function validate(){
+    var hasError = false;
+    if(modelValue === ""){
+      setModelError(true);
+      setModelErrorText("This field is mandatory!");
+      hasError = true;
+    }
+    if(brandValue === ""){
+      setBrandError(true);
+      setBrandErrorText("This field is mandatory!");
+      hasError = true;
+    }
+    if(locationValue === ""){
+      setLocationError(true);
+      setLocationErrorText("This field is mandatory!");
+      hasError = true;
+    }
+
+    if(Number.isNaN(yearValue)){
+      setYearError(true);
+      setYearErrorText("This field is mandatory!");
+      hasError = true;
+    }
+    else if(yearValue <= 1886){
+      setYearError(true);
+      setYearErrorText("Year cannot be smaller than 1886");
+      hasError = true;
+    }
+    else if(yearValue >= today.getFullYear()){
+      setYearError(true);
+      setYearErrorText("Year cannot be bigger than " + today.getFullYear());
+      hasError = true;
+    }
+
+    if(Number.isNaN(odometerValue)){
+      setOdometerError(true);
+      setOdometerErrorText("This field is mandatory!");
+      hasError = true;
+    }
+    if(Number.isNaN(powerValue)){
+      setPowerError(true);
+      setPowerErrorText("This field is mandatory!");
+      hasError = true;
+    }
+    if(Number.isNaN(engineSizeValue)){
+      setEngineSizeError(true);
+      setEngineSizeErorrText("This field is mandatory!");
+      hasError = true;
+    }
+    if(Number.isNaN(priceValue)){
+      setPriceError(true);
+      setPriceErrorText("This field is mandatory!");
+      hasError = true;
+    }
+
+    return !hasError;
+  }
+
+  async function addVehicle(){
+    clearMessages();
+
+    if(!validate()) //don't send a request if validation fails
+      return;
+
+    setLoading(true);
+
+    var imageString = imageValue.name !== "" ? await fileToBase64(imageValue) : "";
+
+    postVehicle(imageString, brandValue, modelValue, odometerValue, yearValue, engineSizeValue, powerValue, locationValue, [], priceValue, token)  //TODO - implement features
+      .then(async response => {
+        if (response.status !== 200) {
+          var text = await response.text();
+          setErrorMessage(text !== "" ? text : response.statusText);
+        }
+        else{
+          setSuccessMessage("Vehicle successfully added!");
+          clearInputs();
+          props.loadingCallback(true);
+          getAvailableVehicles(token)
+            .then(async (response) => {
+              if(response.status === 200){
+                var json = await response.json();
+                dispatch(setVehicles(json));
+              }
+              else{
+                //TODO - notify error
+              }
+            })
+            .then(() => {
+              props.loadingCallback(false);
+            })
+        }
+      })
+      .catch((err) => {
+        if (err.message === "Failed to fetch") {
+          setErrorMessage("The server is currently unavailable");
+        }
+        else {
+          setErrorMessage("An unexpected error happened");
+          console.log(err.message);
+        }
+      })
+      .then(response => {
+        setLoading(false)
+      });
+  }
+
+  function handleNumericInput(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<number>>, isFloat = false){
+    var value = event.target.value;
+    var number;
+
+    if(value !== ""){
+      if(isFloat)
+        number = parseFloat(value);
+      else
+        number = parseInt(value, 10);
+      }
+    else
+      number = NaN;
+
+    setter(number);
+  }
+
+  return(
+    <Dialog open={props.isOpen} onClose={() => {clearMessages(); props.onClose();}} PaperProps={{sx: {width: "50em"}}}>
+      {loading? <Loading/> : <></>}
+      <DialogTitle className="formTitle">Add a new vehicle</DialogTitle>
+      <DialogContent>
+      <div className="splitDiv">
+        <Button disabled={loading} variant="contained" component="label" className="addImageButton">
+          Add image
+          <input type="file" hidden accept={"image/png, image/jpeg"} 
+           onChange={(event) => event.target.files !== null ? setImageValue(event.target.files![0]) : {}}/>
+        </Button>
+        <div>
+          {imageValue.name !== "" ? imageValue.name : "No image selected"}
+        </div>
+      </div>
+
+      <div className="splitDiv">
+        <TextField value={brandValue} label="Brand*" margin="dense" fullWidth autoFocus
+            onChange={(event) => setBrandValue(event.target.value)}
+            type="text" name="brand" className="vehicleDialogField"
+            error={brandError} helperText={brandErrorText}/>
+        <TextField value={modelValue} label="Model*" margin="dense" fullWidth autoFocus
+            onChange={(event) => setModelValue(event.target.value)}
+            type="text" name="model" className="vehicleDialogField"
+            error={modelError} helperText={modelErrorText}/>
+      </div>
+      <div className="splitDiv">
+        <TextField value={yearValue || ""} label="Year*" margin="dense" fullWidth autoFocus
+            onChange={(event) => handleNumericInput(event, setYearValue)}
+            type="number" name="year" className="vehicleDialogField"
+            error={yearError} helperText={yearErrorText}/>
+        <TextField value={odometerValue || ""} label="Odometer*" margin="dense" fullWidth autoFocus
+            onChange={(event) => handleNumericInput(event, setOdometerValue)}
+            type="number" name="odometer" className="vehicleDialogField"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">km</InputAdornment>,
+            }}
+            error={odometerError} helperText={odometerErrorText}/>
+      </div>
+      <div className="splitDiv">
+        <TextField value={engineSizeValue || ""} label="Engine size*" margin="dense" fullWidth autoFocus
+            onChange={(event) =>handleNumericInput(event, setEngineSizeValue)}
+            type="number" name="engineSize" className="vehicleDialogField"
+            error={engineSizeError} helperText={engineSizeErrorText}/>
+        <TextField value={powerValue || ""} label="Power*" margin="dense" fullWidth autoFocus
+            onChange={(event) => handleNumericInput(event, setPowerValue)}
+            type="number" name="power" className="vehicleDialogField"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">hp</InputAdornment>,
+            }}
+            error={powerError} helperText={powerErrorText}/>
+      </div>
+      <div className="splitDiv">
+        <TextField value={locationValue} label="Location*" margin="dense" fullWidth autoFocus select
+            onChange={(event) => setLocationValue(event.target.value)}
+            name="location" className="vehicleDialogField"
+            error={locationError} helperText={locationErrorText}>
+              {props.locations.map((location) => (
+                <MenuItem key={location} value={location}>
+                  {location}
+                </MenuItem>
+              ))}
+            </TextField>
+        <TextField value={priceValue || ""} label="Price*" margin="dense" fullWidth autoFocus
+            onChange={(event) => handleNumericInput(event, setPriceValue,  true)}
+            type="number" name="price" className="vehicleDialogField"
+            InputProps={{
+              startAdornment: <InputAdornment position="start">€</InputAdornment>,
+            }}
+            error={priceError} helperText={priceErrorText}/>
+      </div>
+      </DialogContent>
+      {generateErrorMessage()}
+      {generateSuccessMessage()}
+      <DialogActions>
+        <Button disabled={loading} onClick={() => {clearMessages(); props.onClose();}} variant="contained">Cancel</Button>
+        <Button disabled={loading} onClick={addVehicle} variant="contained">Add</Button>
+      </DialogActions>
+  </Dialog>
+  );
+}
+
+
+
+export default AddVehicleDialog;
