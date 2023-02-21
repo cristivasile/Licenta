@@ -41,8 +41,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        //TODO - change back [Authorize(Policy = "Admin")]
-        [Authorize(Policy = "User")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateLocation([FromBody] LocationCreateModel newLocation)
         {
             if(await locationManager.GetByAddress(newLocation.Address) != null)
