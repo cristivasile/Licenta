@@ -139,7 +139,7 @@ namespace API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<Role> roleManager)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration configuration, RoleManager<Role> roleManager, UserManager<User> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -162,12 +162,13 @@ namespace API
             });
 
             CreateRoles(roleManager).GetAwaiter().GetResult();
+            CreateAdmins(userManager, configuration).GetAwaiter().GetResult();
         }
 
         /// <summary>
         /// Creates the required roles automatically if they do not exist
         /// </summary>
-        private async Task CreateRoles(RoleManager<Role> roleManager)
+        private static async Task CreateRoles(RoleManager<Role> roleManager)
         {
             bool userRoleExists = await roleManager.RoleExistsAsync("User");
             bool adminRoleExists = await roleManager.RoleExistsAsync("Admin");
@@ -184,6 +185,49 @@ namespace API
             if (!sysAdminRoleExists)
             {
                 await roleManager.CreateAsync(new Role("SysAdmin"));
+            }
+        }
+
+        /// <summary>
+        /// Adds the default admin users if they are not present in the database.
+        /// </summary>
+        private static async Task CreateAdmins(UserManager<User> userManager, IConfiguration configuration)
+        {
+            //create the default admin
+            if(await userManager.FindByNameAsync("admin") == null)
+            {
+                List<string> adminRoles = new() { "User", "Admin" };
+                var adminUser = new User()
+                {
+                    UserName = "admin",
+                    Email = ""
+                };
+                var result = await userManager.CreateAsync(adminUser, configuration.GetValue<string>("RootPasswords:adminPassword"));
+
+                if (!result.Succeeded)
+                    throw new Exception("Could not create the default admin!");
+
+                foreach (string role in adminRoles)
+                    await userManager.AddToRoleAsync(adminUser, role);
+            }
+           
+            //create the default sysadmin
+            if(await userManager.FindByNameAsync("sysadmin") == null)
+            {
+                List<string> adminRoles = new() { "User", "Admin", "SysAdmin" };
+                var adminUser = new User()
+                {
+                    UserName = "sysadmin",
+                    Email = ""
+                };
+
+                var result = await userManager.CreateAsync(adminUser, configuration.GetValue<string>("RootPasswords:sysAdminPassword"));
+
+                if (!result.Succeeded)
+                    throw new Exception("Could not create the default sysadmin!");
+
+                foreach (string role in adminRoles)
+                    await userManager.AddToRoleAsync(adminUser, role);
             }
         }
     }
