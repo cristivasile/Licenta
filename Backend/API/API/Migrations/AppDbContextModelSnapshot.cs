@@ -169,19 +169,9 @@ namespace API.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("RoleId1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("RoleId1");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
@@ -242,55 +232,6 @@ namespace API.Migrations
                     b.HasIndex("FeatureId");
 
                     b.ToTable("VehicleFeature");
-                });
-
-            modelBuilder.Entity("API.Entities.Wheel", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BoltPattern")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Diameter")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Material")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Weight")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Width")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Wheels");
-                });
-
-            modelBuilder.Entity("API.Entities.WheelStock", b =>
-                {
-                    b.Property<string>("WheelId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("LocationId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
-
-                    b.HasKey("WheelId", "LocationId");
-
-                    b.HasIndex("LocationId");
-
-                    b.ToTable("WheelStock");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -403,23 +344,11 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Entities.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId1");
-
                     b.HasOne("API.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("API.Entities.User", "User")
-                        .WithMany("Roles")
-                        .HasForeignKey("UserId1");
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("API.Entities.Vehicle", b =>
@@ -448,25 +377,6 @@ namespace API.Migrations
                     b.Navigation("Feature");
 
                     b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("API.Entities.WheelStock", b =>
-                {
-                    b.HasOne("API.Entities.Location", "Location")
-                        .WithMany("Wheels")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("API.Entities.Wheel", "Wheel")
-                        .WithMany("Locations")
-                        .HasForeignKey("WheelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Location");
-
-                    b.Navigation("Wheel");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -513,18 +423,6 @@ namespace API.Migrations
             modelBuilder.Entity("API.Entities.Location", b =>
                 {
                     b.Navigation("OwnedVehicles");
-
-                    b.Navigation("Wheels");
-                });
-
-            modelBuilder.Entity("API.Entities.Role", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("API.Entities.User", b =>
-                {
-                    b.Navigation("Roles");
                 });
 
             modelBuilder.Entity("API.Entities.Vehicle", b =>
@@ -532,11 +430,6 @@ namespace API.Migrations
                     b.Navigation("Status");
 
                     b.Navigation("VehicleFeatures");
-                });
-
-            modelBuilder.Entity("API.Entities.Wheel", b =>
-                {
-                    b.Navigation("Locations");
                 });
 #pragma warning restore 612, 618
         }

@@ -9,8 +9,6 @@ namespace API.Entities
 {
     public class Role : IdentityRole
     {
-        public ICollection<UserRole> Users { get; set; } 
-
         public Role() : base() { }
         public Role(string role) : base(role) {}
     }

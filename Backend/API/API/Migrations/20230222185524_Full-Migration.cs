@@ -1,10 +1,14 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace API.Migrations
 {
-    public partial class InitialCreate : Migration
+    /// <inheritdoc />
+    public partial class FullMigration : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -63,31 +67,11 @@ namespace API.Migrations
                 name: "Locations",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Size = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmployeeNumber = table.Column<int>(type: "int", nullable: false)
+                    Address = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Wheels",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Width = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Diameter = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BoltPattern = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Weight = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Material = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Price = table.Column<float>(type: "real", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Wheels", x => x.Id);
+                    table.PrimaryKey("PK_Locations", x => x.Address);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,9 +141,7 @@ namespace API.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    RoleId1 = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -171,23 +153,11 @@ namespace API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId1",
-                        column: x => x.RoleId1,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -222,43 +192,17 @@ namespace API.Migrations
                     Year = table.Column<int>(type: "int", nullable: false),
                     EngineSize = table.Column<float>(type: "real", nullable: false),
                     Power = table.Column<int>(type: "int", nullable: false),
-                    LocationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    LocationAddress = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Price = table.Column<float>(type: "real", nullable: false, defaultValue: 0f)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vehicles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Vehicles_Locations_LocationId",
-                        column: x => x.LocationId,
+                        name: "FK_Vehicles_Locations_LocationAddress",
+                        column: x => x.LocationAddress,
                         principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "WheelStock",
-                columns: table => new
-                {
-                    LocationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    WheelId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Stock = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_WheelStock", x => new { x.WheelId, x.LocationId });
-                    table.ForeignKey(
-                        name: "FK_WheelStock_Locations_LocationId",
-                        column: x => x.LocationId,
-                        principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_WheelStock_Wheels_WheelId",
-                        column: x => x.WheelId,
-                        principalTable: "Wheels",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Address");
                 });
 
             migrationBuilder.CreateTable(
@@ -333,16 +277,6 @@ namespace API.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId1",
-                table: "AspNetUserRoles",
-                column: "RoleId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_UserId1",
-                table: "AspNetUserRoles",
-                column: "UserId1");
-
-            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
@@ -360,16 +294,12 @@ namespace API.Migrations
                 column: "FeatureId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Vehicles_LocationId",
+                name: "IX_Vehicles_LocationAddress",
                 table: "Vehicles",
-                column: "LocationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WheelStock_LocationId",
-                table: "WheelStock",
-                column: "LocationId");
+                column: "LocationAddress");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -394,9 +324,6 @@ namespace API.Migrations
                 name: "VehicleFeature");
 
             migrationBuilder.DropTable(
-                name: "WheelStock");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -407,9 +334,6 @@ namespace API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Vehicles");
-
-            migrationBuilder.DropTable(
-                name: "Wheels");
 
             migrationBuilder.DropTable(
                 name: "Locations");
