@@ -17,6 +17,7 @@ namespace API.Managers
     {
         private readonly IConfiguration config;
         private readonly UserManager<User> userManager;
+        private readonly int tokenExpirationInMinutes = 60;
 
         public TokenManager(IConfiguration config, UserManager<User> manager)
         {
@@ -42,7 +43,7 @@ namespace API.Managers
             var tokenDescription = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(25),
+                Expires = DateTime.Now.AddMinutes(tokenExpirationInMinutes),
                 SigningCredentials = creds
             };
 
