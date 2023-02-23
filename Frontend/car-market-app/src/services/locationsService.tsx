@@ -1,4 +1,5 @@
 import { apiUrl } from "../constants";
+import { authenticatedFetch } from "./fetchInterceptor";
 
 export const postLocation = (addressValue: string, token: string | null): Promise<Response> => {
     const requestOptions = {
@@ -6,7 +7,7 @@ export const postLocation = (addressValue: string, token: string | null): Promis
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + token },
         body: JSON.stringify({ address: addressValue})
       };
-    return fetch(apiUrl + "/api/Location", requestOptions);
+    return authenticatedFetch(apiUrl + "/api/Location", requestOptions);
 }
 
 export const getLocations = (token: string | null): Promise<Response> => {
@@ -14,5 +15,5 @@ export const getLocations = (token: string | null): Promise<Response> => {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + token }
   };
-  return fetch(apiUrl + "/api/Location/getAll", requestOptions);
+  return authenticatedFetch(apiUrl + "/api/Location/getAll", requestOptions);
 }

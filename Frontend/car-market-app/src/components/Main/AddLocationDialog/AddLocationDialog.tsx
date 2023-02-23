@@ -1,6 +1,5 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import React, { FC, useState } from 'react';
-import { apiUrl } from '../../../constants';
 import { useAppSelector } from '../../../hooks';
 import { postLocation } from '../../../services/locationsService';
 import Loading from '../../Loading/Loading';

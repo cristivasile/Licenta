@@ -20,16 +20,33 @@ export const userSlice = createSlice({
         loggedUser: getLocalStorageString(userLocalStoragePath),
         token: getLocalStorageString(tokenLocalStoragePath),
         role: getLocalStorageString(roleLocalStoragePath),
+        signOutReason: "",
     },
     reducers: {
         login: (state) => {
             state.isLogged = true;
+            state.signOutReason = "";
         },
         logout: (state) => {
             state.isLogged = false;
             state.loggedUser = "";
             state.token = "";
             state.role = "";
+            state.signOutReason = "";
+        },
+        sessionExpired: (state) => {
+            state.isLogged = false;
+            //state.loggedUser = state.loggedUser; do not reset username
+            state.token = "";
+            state.role = "";
+            state.signOutReason = "Your session has expired. Please log in again!";
+        },
+        unauthorized: (state) => {
+            state.isLogged = false;
+            //state.loggedUser = state.loggedUser; do not reset username
+            state.token = "";
+            state.role = "";
+            state.signOutReason = "You are unauthorized for this action!";
         },
         setUser: (state, action) => {
             state.loggedUser = action.payload;
@@ -43,5 +60,5 @@ export const userSlice = createSlice({
     },
 });
 
-export const {login, logout, setUser, setToken, setRole} = userSlice.actions;
+export const {login, logout, sessionExpired, unauthorized, setUser, setToken, setRole} = userSlice.actions;
 export default userSlice.reducer;

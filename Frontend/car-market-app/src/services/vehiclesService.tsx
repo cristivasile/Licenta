@@ -1,4 +1,5 @@
 import { apiUrl } from "../constants";
+import { authenticatedFetch } from "./fetchInterceptor";
 
 export const postVehicle = (image: string, brand: string, model: string, odometer: number,
     year: number, engineSize: number, power: number, address: string, features: [], price: number, token: string | null): Promise<Response> => {
@@ -19,7 +20,7 @@ export const postVehicle = (image: string, brand: string, model: string, odomete
             price: price,
         })
     };
-    return fetch(apiUrl + "/api/Vehicle", requestOptions);
+    return authenticatedFetch(apiUrl + "/api/Vehicle", requestOptions);
 }
 
 export const getAvailableVehicles = (token: string | null): Promise<Response> => {
@@ -28,5 +29,5 @@ export const getAvailableVehicles = (token: string | null): Promise<Response> =>
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + token },
     };
-    return fetch(apiUrl + "/api/Vehicle/getAvailable", requestOptions);
+    return authenticatedFetch(apiUrl + "/api/Vehicle/getAvailable", requestOptions);
 }
