@@ -37,7 +37,7 @@ const Vehicles: FC<VehiclesProps> = () => {
   const token = useAppSelector((state) => state.user.token);
   const locations = useAppSelector((state) => state.location.locations);
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
-  const role = useAppSelector((state) => state.user.role) || "";
+  const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -110,7 +110,7 @@ const Vehicles: FC<VehiclesProps> = () => {
       <AddVehicleDialog {...vehicleDialogProps} />
       {/* only display the admin toolbar for admins 
         NOTE - if somebody manually changes their role they can see the menus but they can't use them because the requests will return 403 */
-        isAdmin(role) ?
+        showAdminCommands ?
           <div className="adminToolbar">
             <div className="adminToolbarButtons">
               <Button disabled={loading} variant="contained" startIcon={<AddCircleIcon />} onClick={openLocationDialog}>Add location</Button>
