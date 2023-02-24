@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import './Auth.scss';
 import { Button } from '@mui/material';
-import { login, setRole, setToken, setUser} from '../../redux/userStore';
+import { clearSignOutReason, login, setRole, setToken, setUser} from '../../redux/userStore';
 import { useAppDispatch, useAppSelector} from '../../hooks';
 import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath, apiUrl } from '../../constants';
 import Loading from '../Loading/Loading';
@@ -61,6 +61,7 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
     setPasswordError(false);
     setUsernameErrorText("");
     setPasswordErrorText("");
+    dispatch(clearSignOutReason());
   }
 
   const handleLogin = (event: FormEvent) => {

@@ -48,6 +48,9 @@ export const userSlice = createSlice({
             state.role = "";
             state.signOutReason = "You are unauthorized for this action!";
         },
+        clearSignOutReason: (state) => {
+            state.signOutReason = "";
+        },
         setUser: (state, action) => {
             state.loggedUser = action.payload;
         },
@@ -60,5 +63,5 @@ export const userSlice = createSlice({
     },
 });
 
-export const {login, logout, sessionExpired, unauthorized, setUser, setToken, setRole} = userSlice.actions;
+export const {login, logout, sessionExpired, unauthorized, clearSignOutReason, setUser, setToken, setRole} = userSlice.actions;
 export default userSlice.reducer;
