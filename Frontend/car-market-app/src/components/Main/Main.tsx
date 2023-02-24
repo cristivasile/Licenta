@@ -23,9 +23,9 @@ const Main: FC<MainProps> = (props: MainProps) => {
     if (isLogged) {
         var decodedToken: any = jwt_decode(token);
         var now = new Date();
-        
+
         //token has expired, log out
-        if (decodedToken.exp < now.getTime()) {
+        if (decodedToken.exp * 1000 < now.getTime()) {
             dispatch(sessionExpired());
             console.log("Token expired!");
         }
