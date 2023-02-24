@@ -10,13 +10,23 @@ import { setLocations } from '../../../redux/locationsStore';
 import { getLocations } from '../../../services/locationsService';
 import { getAvailableVehicles } from '../../../services/vehiclesService';
 import { setVehicles } from '../../../redux/vehiclesStore';
-import { logout } from '../../../redux/userStore';
 import VehicleItem from '../VehicleItem/VehicleItem';
 
 interface VehiclesProps { }
 
 interface LocationsModel {
   address: string
+}
+
+const adminRoleSet = new Set<string>(["admin", "sysadmin"]);
+/**
+ * Checks whether the current user is an admin
+ * @param role the user's role
+ */
+function isAdmin(role: string): boolean {
+  if (adminRoleSet.has(role.toLowerCase()))
+    return true;
+  return false;
 }
 
 const Vehicles: FC<VehiclesProps> = () => {
@@ -27,6 +37,7 @@ const Vehicles: FC<VehiclesProps> = () => {
   const token = useAppSelector((state) => state.user.token);
   const locations = useAppSelector((state) => state.location.locations);
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
+  const role = useAppSelector((state) => state.user.role) || "";
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -38,14 +49,11 @@ const Vehicles: FC<VehiclesProps> = () => {
           dispatch(setVehicles(json));
           setLoading(false);
         }
-        else if (result.status === 401){
-          dispatch(logout()); //TODO - fix this some other way
-        }
-        else{
+        else {
           //TODO - notify fetch fail
         }
       });
-  // eslint-disable-next-line 
+    // eslint-disable-next-line 
   }, []);
 
   function openLocationDialog() {
@@ -95,24 +103,29 @@ const Vehicles: FC<VehiclesProps> = () => {
     locations: locations,
   } as AddVehicleDialogProps;
 
-
   return (
     <div className="vehicles">
       {loading ? <Loading /> : <></>}
       <AddLocationDialog {...locationDialogProps} />
       <AddVehicleDialog {...vehicleDialogProps} />
-      <div className="toolbar">
-        <div className="toolbarButtons">
-          <Button disabled={loading} variant="contained" startIcon={<AddCircleIcon />} onClick={openLocationDialog}>Add location</Button>
-          <Button disabled={loading} variant="contained" startIcon={<AddCircleIcon />} onClick={openVehicleDialog}>Add vehicle</Button>
-        </div>
-      </div>
-      <div className="vehiclesListContainer">
-          {vehicles.map((vehicle) => (
-            <div className="vehicleItemContainer" key={vehicle.id}>
-              <VehicleItem vehicle={vehicle}/>
+      {/* only display the admin toolbar for admins 
+        NOTE - if somebody manually changes their role they can see the menus but they can't use them because the requests will return 403 */
+        isAdmin(role) ?
+          <div className="adminToolbar">
+            <div className="adminToolbarButtons">
+              <Button disabled={loading} variant="contained" startIcon={<AddCircleIcon />} onClick={openLocationDialog}>Add location</Button>
+              <Button disabled={loading} variant="contained" startIcon={<AddCircleIcon />} onClick={openVehicleDialog}>Add vehicle</Button>
             </div>
-          ))}
+          </div>
+          :
+          <></>
+      }
+      <div className="vehiclesListContainer">
+        {vehicles.map((vehicle) => (
+          <div className="vehicleItemContainer" key={vehicle.id}>
+            <VehicleItem vehicle={vehicle} />
+          </div>
+        ))}
       </div>
     </div>
   );
