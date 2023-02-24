@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import './Auth.scss';
 import { Button } from '@mui/material';
-import { clearSignOutReason, login, setRole, setToken, setUser} from '../../redux/userStore';
-import { useAppDispatch, useAppSelector} from '../../hooks';
+import { login, setRole, setToken, setUser} from '../../redux/userStore';
+import { useAppDispatch } from '../../hooks';
 import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath, apiUrl } from '../../constants';
 import Loading from '../Loading/Loading';
 
@@ -33,12 +33,6 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
     <div className="errorMessage">{errorMessage}</div>
   );
 
-  //get the message in case of timeout
-  var signOutReason = useAppSelector((state) => state.user.signOutReason) || "";
-  
-  if(errorMessage === "" && signOutReason !== "")
-    setErrorMessage(signOutReason);
-
   function validate(){
     var hasError = false;
     if(usernameValue === ""){
@@ -61,7 +55,6 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
     setPasswordError(false);
     setUsernameErrorText("");
     setPasswordErrorText("");
-    dispatch(clearSignOutReason());
   }
 
   const handleLogin = (event: FormEvent) => {
