@@ -8,5 +8,3 @@ export const fileToBase64 = (file: File | Blob): Promise<string> =>
     reader.readAsDataURL(file);
     reader.onerror = reject;
   });
-
-//TODO - compress file
