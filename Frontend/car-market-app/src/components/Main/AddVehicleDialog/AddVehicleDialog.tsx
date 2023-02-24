@@ -2,6 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornme
 import React, { FC, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setVehicles } from '../../../redux/vehiclesStore';
+import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
 import { getAvailableVehicles, postVehicle } from '../../../services/vehiclesService';
 import { fileToBase64 } from '../../../utils';
 import Loading from '../../Loading/Loading';
@@ -177,7 +178,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
                 dispatch(setVehicles(json));
               }
               else{
-                //TODO - notify error
+                generateToastError("The server returned " + response.status + ", please refresh the page manually!", 5000);
               }
             })
             .then(() => {
@@ -186,16 +187,10 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         }
       })
       .catch((err) => {
-        if (err.message === "Failed to fetch") {
-          setErrorMessage("The server is currently unavailable");
-        }
-        else {
-          setErrorMessage("An unexpected error happened");
-          console.log(err.message);
-        }
+        notifyFetchFail(err);
       })
-      .then(response => {
-        setLoading(false)
+      .then(() => {
+        setLoading(false);
       });
   }
 

@@ -11,6 +11,7 @@ import { getLocations } from '../../../services/locationsService';
 import { getAvailableVehicles } from '../../../services/vehiclesService';
 import { setVehicles } from '../../../redux/vehiclesStore';
 import VehicleItem from '../VehicleItem/VehicleItem';
+import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
 
 interface VehiclesProps { }
 
@@ -47,11 +48,16 @@ const Vehicles: FC<VehiclesProps> = () => {
         if (result.status === 200) {
           var json = await result.json();
           dispatch(setVehicles(json));
-          setLoading(false);
         }
         else {
-          //TODO - notify fetch fail
+          notifyBadResultCode(result.status);
         }
+      })            
+      .catch((err) => {
+        notifyFetchFail(err);
+      })
+      .then(() => {
+        setLoading(false);
       });
     // eslint-disable-next-line 
   }, []);
@@ -75,21 +81,22 @@ const Vehicles: FC<VehiclesProps> = () => {
     getLocations(token)
       .then(async response => {
         if (response.status !== 200) {
-          throw new Error();
+          notifyBadResultCode(response.status);
         }
         else {
           var json = await response.json();
           var locationsList = json.map((x: LocationsModel) => x.address);
           dispatch(setLocations(locationsList));
-          setLoading(false);
           setVehicleDialogOpen(true);
         }
       })
       .catch((err) => {
-        setLoading(false);
+        notifyFetchFail(err);
         return;
       })
-    //TODO - notify fetch fail
+      .then(() => {
+        setLoading(false);
+      });
   }
 
   function closeVehicleDialog() {
