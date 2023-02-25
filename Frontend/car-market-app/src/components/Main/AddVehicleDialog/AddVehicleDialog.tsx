@@ -3,7 +3,7 @@ import React, { FC, useState } from 'react';
 import { useAppDispatch } from '../../../hooks';
 import { setVehicles } from '../../../redux/vehiclesStore';
 import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
-import { getAvailableVehicles, postVehicle } from '../../../services/vehiclesService';
+import { getAvailableVehicles, postVehicle, VehicleAddModel } from '../../../services/vehiclesService';
 import { compressImage, fileToBase64 } from '../../../utils';
 import Loading from '../../Loading/Loading';
 import './AddVehicleDialog.scss';
@@ -161,10 +161,23 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     setLoading(true);
 
     var compressedImage = await compressImage(imageValue, .5, 1024);  //compress the image in order to save bandwidth and reduce loading times
-    var imageString = imageValue.name !== "" ? await fileToBase64(compressedImage) : "";
+    var base64Image = imageValue.name !== "" ? await fileToBase64(compressedImage) : "";
 
-    postVehicle(imageString, brandValue, modelValue, descriptionValue, locationValue, 
-      odometerValue, yearValue, engineSizeValue, powerValue, [], priceValue)  //TODO - implement features
+    var newVehicle: VehicleAddModel = {   //TODO - implement features
+      image: base64Image, 
+      brand: brandValue,
+      model: modelValue,
+      description: descriptionValue,
+      address: locationValue,
+      odometer: odometerValue,
+      year: yearValue,
+      engineSize: engineSizeValue,
+      power: powerValue,
+      features: [],
+      price: priceValue
+    };
+
+    postVehicle(newVehicle)
       .then(async response => {
         if (response.status !== 200) {
           var text = await response.text();

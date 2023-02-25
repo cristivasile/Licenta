@@ -16,24 +16,23 @@ export interface VehicleAddModel{
     price: number
 }
 
-export const postVehicle = (image: string, brand: string, model: string, description: string, address: string, odometer: number, 
-    year: number, engineSize: number, power: number, features: [], price: number): Promise<Response> => {
+export const postVehicle = (newVehicle: VehicleAddModel): Promise<Response> => {
 
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " +  store.getState().user.token },
         body: JSON.stringify({
-            image: image,
-            brand: brand,
-            model: model,
-            description: description,
-            odometer: odometer,
-            year: year,
-            engineSize: engineSize,
-            power: power,
-            locationAddress: address,
-            features: features,
-            price: price,
+            image: newVehicle.image,
+            brand: newVehicle.brand,
+            model: newVehicle.model,
+            description: newVehicle.description,
+            odometer: newVehicle.odometer,
+            year: newVehicle.year,
+            engineSize: newVehicle.engineSize,
+            power: newVehicle.power,
+            locationAddress: newVehicle.address,
+            features: newVehicle.features,
+            price: newVehicle.price,
         })
     };
     return authenticatedFetch(apiUrl + "/api/Vehicle", requestOptions);
