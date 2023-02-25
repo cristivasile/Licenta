@@ -1,14 +1,18 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { VehicleModel } from '../../../models/VehicleModel';
 import './VehicleItem.scss';
+import defaultImage from "../../../assets/no-image.png";
 
 interface VehicleItemProps {
   vehicle: VehicleModel
 }
 
 const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
-
-
+  const [image, setImage] = useState(props.vehicle.image);
+  
+  function setDefaultImage(){
+    setImage(defaultImage);
+  }
 
   return (
     <div className="vehicleItem">
@@ -21,7 +25,7 @@ const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
         </div>
       </div>
       <div className="vehicleImageContainer">
-        <img src={props.vehicle.image} alt="Empty" className="vehicleImage"/>
+        <img src={image} alt="Empty" className="vehicleImage" onError={() => setDefaultImage()}/>
         {/* TODO - add alt image */}
       </div>
       <div className="vehicleDescriptionContainer">
