@@ -99,6 +99,7 @@ namespace API.Managers
                 Image = vehicle.Image,
                 Brand = vehicle.Brand,
                 Model = vehicle.Model,
+                Description = vehicle.Description,
                 LocationAddress = vehicle.LocationAddress,
                 Odometer = vehicle.Odometer,
                 EngineSize = vehicle.EngineSize,
@@ -145,6 +146,7 @@ namespace API.Managers
 
             currentVehicle.Brand = updatedVehicle.Brand;
             currentVehicle.Model = updatedVehicle.Model;
+            currentVehicle.Description = updatedVehicle.Description;
             currentVehicle.Price = updatedVehicle.Price;
             currentVehicle.EngineSize = updatedVehicle.EngineSize;
             currentVehicle.Power = updatedVehicle.Power;

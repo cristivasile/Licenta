@@ -11,31 +11,31 @@ namespace API.Models
     {
         public string Id { get; set; }
         public Status Status { get; set; }
-
-        public VehicleModel(Vehicle x)
+        public VehicleModel(Vehicle ob)
         {
-            Id = x.Id;
-            Brand = x.Brand;
-            Model = x.Model;
-            LocationAddress = x.LocationAddress;
+            Id = ob.Id;
+            Brand = ob.Brand;
+            Model = ob.Model;
+            Description = ob.Description;
+            LocationAddress = ob.LocationAddress;
 
-            if(x.Location != null)
-                LocationAddress = x.Location.Address;
+            if(ob.Location != null)
+                LocationAddress = ob.Location.Address;
 
-            if (x.Image != null)
-                Image = x.Image;
+            if (ob.Image != null)
+                Image = ob.Image;
 
-            if (x.Status != null)
+            if (ob.Status != null)
             {
-                Status = x.Status;
+                Status = ob.Status;
                 Status.Vehicle = null;
             }
 
-            Odometer = x.Odometer;
-            Power = x.Power;
-            EngineSize = x.EngineSize;
-            Price = x.Price;
-            Year = x.Year;
+            Odometer = ob.Odometer;
+            Power = ob.Power;
+            EngineSize = ob.EngineSize;
+            Price = ob.Price;
+            Year = ob.Year;
         }
     }
 }

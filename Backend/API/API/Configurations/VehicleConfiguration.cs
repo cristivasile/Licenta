@@ -24,6 +24,9 @@ namespace API.Configurations
             builder.Property(x => x.Price)
                 .HasDefaultValue(0);
 
+            builder.Property(x => x.Description)
+                .HasDefaultValue("");
+
             //1 - 1: Vehicle <-> Status
             builder
                 .HasOne<Status>(x => x.Status)
