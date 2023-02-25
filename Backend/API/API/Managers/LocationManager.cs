@@ -20,6 +20,11 @@ namespace API.Managers
 
         public async Task Create(LocationCreateModel newLocation)
         {
+            var location = await locationRepository.GetByName(newLocation.Address);
+
+            if (location != null)
+                throw new Exception("Location already exists!");
+
             var createdLocation = new Location()
             {
                 Address = newLocation.Address,
@@ -28,16 +33,14 @@ namespace API.Managers
             await locationRepository.Create(createdLocation); 
         }
 
-        public async Task<int> Delete(string name)
+        public async Task Delete(string name)
         {
-            var foundLocation = await locationRepository.GetByName(name);
+            var location = await locationRepository.GetByName(name);
 
-            ///404 not found
-            if (foundLocation == null)
-                return -1;
+            if (location == null)
+                throw new Exception("Location doesn't exist!");
 
-            await locationRepository.Delete(foundLocation);
-            return 0;
+            await locationRepository.Delete(location);
         }
 
         public async Task<List<LocationModel>> GetAll()
@@ -60,18 +63,16 @@ namespace API.Managers
             return foundLocation;
         }
 
-        public async Task<int> Update(string name, LocationCreateModel updatedLocation)
+        public async Task Update(string name, LocationCreateModel updatedLocation)
         {
             var location = await locationRepository.GetByName(name);
 
-            //404 not found
             if (location == null)
-                return -1;
+                throw new Exception("Location doesn't exist!");
 
             location.Address = updatedLocation.Address;
 
             await locationRepository.Update(location);
-            return 0;
         }
 
     }

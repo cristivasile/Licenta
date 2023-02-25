@@ -44,12 +44,15 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateLocation([FromBody] LocationCreateModel newLocation)
         {
-            if(await locationManager.GetByAddress(newLocation.Address) != null)
+            try
             {
-                return BadRequest("Location already exists!");
+                await locationManager.Create(newLocation);
+                return Ok();
             }
-            await locationManager.Create(newLocation);
-            return Ok();
+            catch
+            {
+                return BadRequest("Location already exists! Update or delete it!");
+            }
         }
 
 
@@ -57,20 +60,30 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> UpdateLocation([FromRoute] string address, [FromBody] LocationCreateModel updatedLocation)
         {
-            if (await locationManager.Update(address, updatedLocation) == -1)
+            try
+            {
+                await locationManager.Update(address, updatedLocation);
+                return Ok();
+            }
+            catch
+            {
                 return NotFound();
-
-            return Ok();
+            }
         }
 
         [HttpDelete("{address}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteLocation([FromRoute] string address)
         {
-            if (await locationManager.Delete(address) == -1)
+            try
+            {
+                await locationManager.Delete(address);
+                return Ok();
+            }
+            catch
+            {
                 return NotFound();
-
-            return Ok();
+            }
         }
 
     }

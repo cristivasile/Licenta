@@ -2,6 +2,7 @@
 using API.Helpers;
 using API.Interfaces;
 using API.Models;
+using API.Models.Input;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -110,7 +111,7 @@ namespace API.Managers
             Status newStatus = new()
             {
                 VehicleId = newVehicle.Id,
-                VehicleStatus = "available",
+                VehicleStatus = "Available",
                 DateAdded = System.DateTime.Now,
                 DateSold = null
             };
@@ -132,13 +133,12 @@ namespace API.Managers
             await vehicleRepository.Create(newVehicle, newStatus, features);
         }
 
-        public async Task<int> Update(string id, VehicleCreateModel updatedVehicle)
+        public async Task Update(string id, VehicleCreateModel updatedVehicle)
         {
             var currentVehicle = await vehicleRepository.GetById(id);
 
-            ///404 not found
             if (currentVehicle == null)
-                return -1;
+                throw new Exception("Vehicle doesn't exist!");
 
             if (updatedVehicle.Image != "")
                 currentVehicle.Image = updatedVehicle.Image;
@@ -167,54 +167,52 @@ namespace API.Managers
             }
 
             await vehicleRepository.Update(currentVehicle, features);
-            return 0;
         }
 
-        public async Task<int> UpdateStatus(string id)
+        public async Task UpdateStatus(string id, VehicleUpdateStatusModel updatedStatus)
         {
             var currentVehicle = await vehicleRepository.GetById(id);
 
             ///404 not found
             if (currentVehicle == null)
-                return -1;
-
-            if (currentVehicle.Status.VehicleStatus == "Sold")
-                return -2;
+                throw new Exception("The vehicle was not found!");
 
             var status = await vehicleRepository.GetStatusById(id);
-
-            status.DateSold = System.DateTime.Now;
-            status.VehicleStatus = "Sold";
+            if (updatedStatus.sold)
+            {
+                status.DateSold = DateTime.Now;
+                status.VehicleStatus = "Sold";
+            }
+            else
+            {
+                status.DateSold = null;
+                status.VehicleStatus = "Available";
+            }
 
             await vehicleRepository.UpdateStatus(status);
-
-            return 0;
         }
 
-        public async Task<int> Delete(string id)
+        public async Task Delete(string id)
         {
             var currentVehicle = await vehicleRepository.GetById(id);
 
-            ///404 not found
             if (currentVehicle == null)
-                return -1;
+                throw new Exception("Vehicle doesn't exist!");
 
             await vehicleRepository.Delete(currentVehicle);
-            return 0;
         }
 
         public async Task<VehicleWithFeaturesModel> GetById(string id)
         {
             var vehicle = await vehicleRepository.GetById(id);
 
-            VehicleWithFeaturesModel returned = null;
             if (vehicle == null)
-                return returned;
+                return null;
 
             var features = await vehicleRepository.GetFeaturesByVehicleId(id);
             var groupedFeatures = features.OrderBy(x => -x.Desirability).ThenBy(x => x.Name).GroupBy(x => x.Desirability).Select(x => x.ToList()).ToList();
 
-            returned = new VehicleWithFeaturesModel(vehicle, features, groupedFeatures);
+            var returned = new VehicleWithFeaturesModel(vehicle, features, groupedFeatures);
 
             return returned;
         }

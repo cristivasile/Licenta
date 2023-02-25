@@ -1,4 +1,5 @@
 ﻿using API.Interfaces;
+using API.Managers;
 using API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -43,29 +45,45 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateFeature([FromBody] FeatureCreateModel newFeature)
         {
-            if (await featureManager.Create(newFeature) == -1)
-                return BadRequest("Feature already exists, update or remove it first!");
-            return Ok();
+            try
+            {
+                await featureManager.Create(newFeature);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest("Location already exists! Update or delete it!");
+            }
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> UpdateFeature([FromRoute] string id, [FromBody] FeatureCreateModel updatedFeature)
         {
-            if (await featureManager.Update(id, updatedFeature) == -1)
+            try
+            {
+                await featureManager.Update(id, updatedFeature);
+                return Ok();
+            }
+            catch
+            {
                 return NotFound();
-
-            return Ok();
+            }
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteFeature([FromRoute] string id)
         {
-            if (await featureManager.Delete(id) == -1)
+            try
+            {
+                await featureManager.Delete(id);
+                return Ok();
+            }
+            catch
+            {
                 return NotFound();
-
-            return Ok();
+            }
         }
     }
 }

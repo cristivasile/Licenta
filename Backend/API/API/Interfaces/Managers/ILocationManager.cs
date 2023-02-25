@@ -11,7 +11,7 @@ namespace API.Interfaces
         Task<List<LocationModel>> GetAll();
         Task<LocationModel> GetByAddress(string name);
         Task Create(LocationCreateModel newVehicle);
-        Task<int> Update(string name, LocationCreateModel updatedVehicle);
-        Task<int> Delete(string name);
+        Task Update(string name, LocationCreateModel updatedVehicle);
+        Task Delete(string name);
     }
 }

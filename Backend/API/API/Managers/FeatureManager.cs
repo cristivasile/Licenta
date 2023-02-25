@@ -18,14 +18,8 @@ namespace API.Managers
             featureRepository = repository;
         }
 
-        public async Task<int> Create(FeatureCreateModel newFeature)
+        public async Task Create(FeatureCreateModel newFeature)
         {
-            var foundFeature = await featureRepository.GetByName(newFeature.Name);
-
-            ///feature already exists
-            if (foundFeature != null)
-                return -1;
-
             var createdFeature = new Feature()
             {
                 Name = newFeature.Name,
@@ -33,19 +27,16 @@ namespace API.Managers
             };
 
             await featureRepository.Create(createdFeature);
-            return 0;
         }
 
-        public async Task<int> Delete(string name)
+        public async Task Delete(string name)
         {
-            var foundFeature = await featureRepository.GetByName(name);
+            var feature = await featureRepository.GetByName(name);
 
-            ///404 not found
-            if (foundFeature == null)
-                return -1;
+            if (feature == null)
+                throw new Exception("Feature doesn't exist!");
 
-            await featureRepository.Delete(foundFeature);
-            return 0;
+            await featureRepository.Delete(feature);
         }
 
         public async Task<List<FeatureModel>> GetAll()
@@ -69,19 +60,17 @@ namespace API.Managers
             return foundFeature;
         }
 
-        public async Task<int> Update(string name, FeatureCreateModel updatedFeature)
+        public async Task Update(string name, FeatureCreateModel updatedFeature)
         {
             var feature = await featureRepository.GetByName(name);
 
-            //404 not found
             if (feature == null)
-                return -1;
+                throw new Exception("Feature doesn't exist!");
 
             feature.Name = updatedFeature.Name;
             feature.Desirability = feature.Desirability;
 
             await featureRepository.Update(feature);
-            return 0;
         }
         
     }

@@ -10,8 +10,8 @@ namespace API.Interfaces
     {
         Task<List<FeatureModel>> GetAll();
         Task<FeatureModel> GetByName(string id);
-        Task<int> Create(FeatureCreateModel newVehicle);
-        Task<int> Update(string id, FeatureCreateModel updatedVehicle);
-        Task<int> Delete(string id);
+        Task Create(FeatureCreateModel newVehicle);
+        Task Update(string id, FeatureCreateModel updatedVehicle);
+        Task Delete(string id);
     }
 }

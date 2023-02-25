@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using API.Models.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace API.Interfaces
         Task<VehicleWithFeaturesModel> GetById(string id);
         Task Create(VehicleCreateModel newVehicle);
         Task Update(string id, VehicleCreateModel updatedVehicle);
-        Task UpdateStatus(string id);
+        Task UpdateStatus(string id, VehicleUpdateStatusModel updatedStatus);
         Task Delete(string id);
     }
 }

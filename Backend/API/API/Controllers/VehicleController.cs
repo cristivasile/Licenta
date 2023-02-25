@@ -1,5 +1,6 @@
 ﻿using API.Interfaces;
 using API.Models;
+using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -84,35 +85,45 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> UpdateVehicle([FromRoute] string id, [FromBody] VehicleCreateModel updatedVehicle)
         {
-            if (await vehicleManager.Update(id, updatedVehicle) == -1)
+            try
+            {
+                await vehicleManager.Update(id, updatedVehicle);
+                return Ok();
+            }
+            catch
+            {
                 return NotFound();
-
-            return Ok();
+            }
         }
 
         [HttpPut("setSold/{id}")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> UpdateVehicleStatus([FromRoute] string id)
+        public async Task<IActionResult> UpdateVehicleStatus([FromRoute] string id, [FromBody] VehicleUpdateStatusModel newStatus)
         {
-            var result = await vehicleManager.UpdateStatus(id);
-
-            if (result == -1)
+            try
+            {
+                await vehicleManager.UpdateStatus(id, newStatus);
+                return Ok();
+            }
+            catch
+            {
                 return NotFound();
-
-            if (result == -2)
-                return BadRequest("Vehicle already sold!");
-
-            return Ok();
+            }
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteVehicle([FromRoute] string id)
         {
-            if (await vehicleManager.Delete(id) == -1)
+            try
+            {
+                await vehicleManager.Delete(id);
+                return Ok();
+            }
+            catch
+            {
                 return NotFound();
-
-            return Ok();
+            }
         }
     } 
 }
