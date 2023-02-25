@@ -32,6 +32,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [powerValue, setPowerValue] = useState(NaN);
   const [odometerValue, setOdometerValue] = useState(NaN);
   const [locationValue, setLocationValue] = useState("");
+  const [descriptionValue, setDescriptionValue] = useState("");
   const [imageValue, setImageValue] = useState(new File([""], ""));
 
   const [brandError, setBrandError] = useState(false);
@@ -90,6 +91,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     setPowerValue(NaN);
     setOdometerValue(NaN);
     setLocationValue("");
+    setDescriptionValue("");
     setImageValue(new File([""], ""));
   }
 
@@ -162,7 +164,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     var compressedImage = await compressImage(imageValue, .5, 1024);  //compress the image in order to save bandwidth and reduce loading times
     var imageString = imageValue.name !== "" ? await fileToBase64(compressedImage) : "";
 
-    postVehicle(imageString, brandValue, modelValue, odometerValue, yearValue, engineSizeValue, powerValue, locationValue, [], priceValue, token)  //TODO - implement features
+    postVehicle(imageString, brandValue, modelValue, descriptionValue, locationValue, 
+      odometerValue, yearValue, engineSizeValue, powerValue, [], priceValue, token)  //TODO - implement features
       .then(async response => {
         if (response.status !== 200) {
           var text = await response.text();
@@ -288,6 +291,11 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
               startAdornment: <InputAdornment position="start">€</InputAdornment>,
             }}
             error={priceError} helperText={priceErrorText}/>
+      </div>
+      <div className="fullDiv">
+        <TextField value={descriptionValue || ""} label="Description" margin="dense" fullWidth autoFocus
+            onChange={(event) => setDescriptionValue(event.target.value)}
+            multiline minRows={3} maxRows={5} name="description" className="vehicleDialogField"/>
       </div>
       </DialogContent>
       {generateErrorMessage()}

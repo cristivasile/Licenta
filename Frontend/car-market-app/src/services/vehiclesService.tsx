@@ -1,8 +1,8 @@
 import { apiUrl } from "../constants";
 import { authenticatedFetch } from "./fetchInterceptor";
 
-export const postVehicle = (image: string, brand: string, model: string, odometer: number,
-    year: number, engineSize: number, power: number, address: string, features: [], price: number, token: string | null): Promise<Response> => {
+export const postVehicle = (image: string, brand: string, model: string, description: string, address: string, odometer: number, 
+    year: number, engineSize: number, power: number, features: [], price: number, token: string | null): Promise<Response> => {
     
     const requestOptions = {
         method: 'POST',
@@ -11,6 +11,7 @@ export const postVehicle = (image: string, brand: string, model: string, odomete
             image: image,
             brand: brand,
             model: model,
+            description: description,
             odometer: odometer,
             year: year,
             engineSize: engineSize,

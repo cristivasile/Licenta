@@ -26,7 +26,6 @@ const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
       </div>
       <div className="vehicleImageContainer">
         <img src={image} alt="Empty" className="vehicleImage" onError={() => setDefaultImage()}/>
-        {/* TODO - add alt image */}
       </div>
       <div className="vehicleDescriptionContainer">
         <div className="vehicleDescriptionRow"> 
