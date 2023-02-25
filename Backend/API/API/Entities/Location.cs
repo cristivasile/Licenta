@@ -9,7 +9,6 @@ namespace API.Entities
     public class Location
     {
         public string Address { get; set; }
-
         /// <summary>
         /// All vehicles for sale by this dealership.
         /// </summary>
