@@ -35,7 +35,6 @@ const Vehicles: FC<VehiclesProps> = () => {
   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const token = useAppSelector((state) => state.user.token);
   const locations = useAppSelector((state) => state.location.locations);
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
   const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
@@ -43,7 +42,7 @@ const Vehicles: FC<VehiclesProps> = () => {
 
   useEffect(() => {
     setLoading(true);
-    getAvailableVehicles(token)
+    getAvailableVehicles()
       .then(async (result) => {
         if (result.status === 200) {
           var json = await result.json();
@@ -78,7 +77,7 @@ const Vehicles: FC<VehiclesProps> = () => {
   function openVehicleDialog() {
     setLoading(true);
 
-    getLocations(token)
+    getLocations()
       .then(async response => {
         if (response.status !== 200) {
           notifyBadResultCode(response.status);

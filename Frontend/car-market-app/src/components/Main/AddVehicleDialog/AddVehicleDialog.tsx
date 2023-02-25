@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField } from '@mui/material';
 import React, { FC, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { useAppDispatch } from '../../../hooks';
 import { setVehicles } from '../../../redux/vehiclesStore';
 import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
 import { getAvailableVehicles, postVehicle } from '../../../services/vehiclesService';
@@ -18,7 +18,6 @@ export interface AddVehicleDialogProps {
 const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProps) => {
 
   const today = new Date();
-  const token = useAppSelector((state) => state.user.token);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -165,7 +164,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     var imageString = imageValue.name !== "" ? await fileToBase64(compressedImage) : "";
 
     postVehicle(imageString, brandValue, modelValue, descriptionValue, locationValue, 
-      odometerValue, yearValue, engineSizeValue, powerValue, [], priceValue, token)  //TODO - implement features
+      odometerValue, yearValue, engineSizeValue, powerValue, [], priceValue)  //TODO - implement features
       .then(async response => {
         if (response.status !== 200) {
           var text = await response.text();
@@ -179,7 +178,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
           props.loadingCallback(true);
 
           //refresh the vehciles list
-          getAvailableVehicles(token)
+          getAvailableVehicles()
             .then(async (response) => {
               if(response.status === 200){
                 var json = await response.json();

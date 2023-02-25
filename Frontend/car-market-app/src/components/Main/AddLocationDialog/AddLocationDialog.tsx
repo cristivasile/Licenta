@@ -1,6 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import React, { FC, useState } from 'react';
-import { useAppSelector } from '../../../hooks';
+import { FC, useState } from 'react';
 import { postLocation } from '../../../services/locationsService';
 import Loading from '../../Loading/Loading';
 import './AddLocationDialog.scss';
@@ -16,7 +15,6 @@ const AddLocationDialog: FC<AddLocationDialogProps> = (props: AddLocationDialogP
   const [successMessage, setSuccessMessage] = useState("");
   const [addressValue, setAddressValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const token = useAppSelector((state) => state.user.token);
 
   const generateErrorMessage = () => (
     <div className="errorMessage leftMargin">{errorMessage}</div>
@@ -35,7 +33,7 @@ const AddLocationDialog: FC<AddLocationDialogProps> = (props: AddLocationDialogP
       return;
     }
 
-    postLocation(addressValue, token)
+    postLocation(addressValue)
       .then(async response => {
         if (response.status !== 200) {
           var text = await response.text();
