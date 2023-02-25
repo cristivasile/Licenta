@@ -36,9 +36,9 @@ namespace API.Repositories
             return locations;
         }
 
-        public async Task<Feature> GetById(string id)
+        public async Task<Feature> GetByName(string name)
         {
-            var locations = await storage.Features.FirstOrDefaultAsync(x => x.Id == id);
+            var locations = await storage.Features.FirstOrDefaultAsync(x => x.Name == name);
             return locations;
         }
 

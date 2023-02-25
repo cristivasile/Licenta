@@ -18,21 +18,27 @@ namespace API.Managers
             featureRepository = repository;
         }
 
-        public async Task Create(FeatureCreateModel newFeature)
+        public async Task<int> Create(FeatureCreateModel newFeature)
         {
+            var foundFeature = await featureRepository.GetByName(newFeature.Name);
+
+            ///feature already exists
+            if (foundFeature != null)
+                return -1;
+
             var createdFeature = new Feature()
             {
-                Id = Utilities.GetGUID(),
                 Name = newFeature.Name,
                 Desirability = newFeature.Desirability
             };
 
             await featureRepository.Create(createdFeature);
+            return 0;
         }
 
-        public async Task<int> Delete(string id)
+        public async Task<int> Delete(string name)
         {
-            var foundFeature = await featureRepository.GetById(id);
+            var foundFeature = await featureRepository.GetByName(name);
 
             ///404 not found
             if (foundFeature == null)
@@ -51,9 +57,9 @@ namespace API.Managers
             return features;
         }
 
-        public async Task<FeatureModel> GetById(string id)
+        public async Task<FeatureModel> GetByName(string name)
         {
-            var feature = await featureRepository.GetById(id);
+            var feature = await featureRepository.GetByName(name);
 
             //404 not found
             if (feature == null)
@@ -63,9 +69,9 @@ namespace API.Managers
             return foundFeature;
         }
 
-        public async Task<int> Update(string id, FeatureCreateModel updatedFeature)
+        public async Task<int> Update(string name, FeatureCreateModel updatedFeature)
         {
-            var feature = await featureRepository.GetById(id);
+            var feature = await featureRepository.GetByName(name);
 
             //404 not found
             if (feature == null)

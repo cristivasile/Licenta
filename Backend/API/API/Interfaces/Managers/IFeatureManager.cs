@@ -9,8 +9,8 @@ namespace API.Interfaces
     public interface IFeatureManager
     {
         Task<List<FeatureModel>> GetAll();
-        Task<FeatureModel> GetById(string id);
-        Task Create(FeatureCreateModel newVehicle);
+        Task<FeatureModel> GetByName(string id);
+        Task<int> Create(FeatureCreateModel newVehicle);
         Task<int> Update(string id, FeatureCreateModel updatedVehicle);
         Task<int> Delete(string id);
     }

@@ -9,7 +9,7 @@ namespace API.Entities
     public class VehicleFeature
     {
         public string VehicleId { get; set; }
-        public string FeatureId { get; set; }
+        public string FeatureName { get; set; }
         /// <summary>
         /// Referenced vehicle.
         /// </summary>

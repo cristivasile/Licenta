@@ -15,7 +15,7 @@ namespace API.Configurations
         {
             //M - M: Vehicle <-> Feature
             builder
-                .HasKey(x => new { x.VehicleId, x.FeatureId });
+                .HasKey(x => new { x.VehicleId, x.FeatureName });
 
             builder
                 .HasOne<Vehicle>(x => x.Vehicle)
@@ -25,7 +25,7 @@ namespace API.Configurations
             builder
                 .HasOne<Feature>(x => x.Feature)
                 .WithMany(x => x.FeatureVehicles)
-                .HasForeignKey(x => x.FeatureId);
+                .HasForeignKey(x => x.FeatureName);
 
         }
     }

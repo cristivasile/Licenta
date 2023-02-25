@@ -33,7 +33,7 @@ namespace API.Controllers
         [Authorize(Policy = "User")]
         public async Task<IActionResult> ReadById([FromRoute] string id)
         {
-            var location = await featureManager.GetById(id);
+            var location = await featureManager.GetByName(id);
             if (location == null)
                 return NotFound();
             return Ok(location);
@@ -43,7 +43,8 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateFeature([FromBody] FeatureCreateModel newFeature)
         {
-            await featureManager.Create(newFeature);
+            if (await featureManager.Create(newFeature) == -1)
+                return BadRequest("Feature already exists, update or remove it first!");
             return Ok();
         }
 

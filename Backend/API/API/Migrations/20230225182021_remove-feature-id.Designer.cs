@@ -4,6 +4,7 @@ using API.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230225182021_remove-feature-id")]
+    partial class removefeatureid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,12 +223,12 @@ namespace API.Migrations
                     b.Property<string>("VehicleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("FeatureName")
+                    b.Property<string>("FeatureId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("VehicleId", "FeatureName");
+                    b.HasKey("VehicleId", "FeatureId");
 
-                    b.HasIndex("FeatureName");
+                    b.HasIndex("FeatureId");
 
                     b.ToTable("VehicleFeature");
                 });
@@ -360,7 +363,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Entities.Feature", "Feature")
                         .WithMany("FeatureVehicles")
-                        .HasForeignKey("FeatureName")
+                        .HasForeignKey("FeatureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

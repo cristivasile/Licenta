@@ -123,7 +123,7 @@ namespace API.Managers
                 {
                     features.Add(new VehicleFeature
                     {
-                        FeatureId = featureId,
+                        FeatureName = featureId,
                         VehicleId = generatedId,
                     });
                 }
@@ -160,7 +160,7 @@ namespace API.Managers
                 {
                     features.Add(new VehicleFeature
                     {
-                        FeatureId = featureId,
+                        FeatureName = featureId,
                         VehicleId = currentVehicle.Id,
                     });
                 }

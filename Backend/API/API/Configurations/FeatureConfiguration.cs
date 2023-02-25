@@ -13,9 +13,7 @@ namespace API.Configurations
     {
         public void Configure(EntityTypeBuilder<Feature> builder)
         {
-            builder
-                .Property(x => x.Name)
-                .IsRequired();
+            builder.HasKey(x => x.Name);
         }
     }
 }

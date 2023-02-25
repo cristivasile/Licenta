@@ -13,8 +13,8 @@ namespace API.Interfaces
         Task<List<VehicleModel>> GetAvailableFiltered(VehicleFiltersModel filters);
         Task<VehicleWithFeaturesModel> GetById(string id);
         Task Create(VehicleCreateModel newVehicle);
-        Task<int> Update(string id, VehicleCreateModel updatedVehicle);
-        Task<int> UpdateStatus(string id);
-        Task<int> Delete(string id);
+        Task Update(string id, VehicleCreateModel updatedVehicle);
+        Task UpdateStatus(string id);
+        Task Delete(string id);
     }
 }
