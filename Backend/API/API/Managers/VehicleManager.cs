@@ -106,6 +106,7 @@ namespace API.Managers
                 Year = vehicle.Year
             };
 
+
             Status newStatus = new()
             {
                 VehicleId = newVehicle.Id,

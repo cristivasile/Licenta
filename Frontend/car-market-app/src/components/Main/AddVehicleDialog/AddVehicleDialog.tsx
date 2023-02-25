@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setVehicles } from '../../../redux/vehiclesStore';
 import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
 import { getAvailableVehicles, postVehicle } from '../../../services/vehiclesService';
-import { fileToBase64 } from '../../../utils';
+import { compressImage, fileToBase64 } from '../../../utils';
 import Loading from '../../Loading/Loading';
 import './AddVehicleDialog.scss';
 
@@ -159,7 +159,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
     setLoading(true);
 
-    var imageString = imageValue.name !== "" ? await fileToBase64(imageValue) : "";
+    var compressedImage = await compressImage(imageValue, .5, 1024);  //compress the image in order to save bandwidth and reduce loading times
+    var imageString = imageValue.name !== "" ? await fileToBase64(compressedImage) : "";
 
     postVehicle(imageString, brandValue, modelValue, odometerValue, yearValue, engineSizeValue, powerValue, locationValue, [], priceValue, token)  //TODO - implement features
       .then(async response => {
@@ -170,7 +171,11 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         else{
           setSuccessMessage("Vehicle successfully added!");
           clearInputs();
+          
+          //notify the user that the vehicles list is loading
           props.loadingCallback(true);
+
+          //refresh the vehciles list
           getAvailableVehicles(token)
             .then(async (response) => {
               if(response.status === 200){
@@ -180,6 +185,9 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
               else{
                 generateToastError("The server returned " + response.status + ", please refresh the page manually!", 5000);
               }
+            })
+            .catch((err) => {
+              notifyFetchFail(err);
             })
             .then(() => {
               props.loadingCallback(false);

@@ -7,6 +7,7 @@ import { login, setRole, setToken, setUser} from '../../redux/userStore';
 import { useAppDispatch } from '../../hooks';
 import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath, apiUrl } from '../../constants';
 import Loading from '../Loading/Loading';
+import { notifyFetchFail } from '../../services/toastNotificationsService';
 
 interface LoginProps { 
   userName: string;
@@ -94,15 +95,9 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
         }
       })
       .catch((err) => {
-        if (err.message === "Failed to fetch") {
-          setErrorMessage("The server is currently unavailable");
-        }
-        else {
-          setErrorMessage("An unexpected error happened");
-          console.log(err.message);
-        }
+        notifyFetchFail(err);
       })
-      .then(response => {
+      .then(() => {
         setLoading(false)
       });
   };
