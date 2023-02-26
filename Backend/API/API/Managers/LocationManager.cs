@@ -20,7 +20,7 @@ namespace API.Managers
 
         public async Task Create(LocationCreateModel newLocation)
         {
-            var location = await locationRepository.GetByName(newLocation.Address);
+            var location = await locationRepository.GetByAddress(newLocation.Address);
 
             if (location != null)
                 throw new Exception("Location already exists!");
@@ -35,7 +35,7 @@ namespace API.Managers
 
         public async Task Delete(string name)
         {
-            var location = await locationRepository.GetByName(name);
+            var location = await locationRepository.GetByAddress(name);
 
             if (location == null)
                 throw new Exception("Location doesn't exist!");
@@ -53,7 +53,7 @@ namespace API.Managers
 
         public async Task<LocationModel> GetByAddress(string name)
         {
-            var location = await locationRepository.GetByName(name);
+            var location = await locationRepository.GetByAddress(name);
 
             //404 not found
             if (location == null)
@@ -65,7 +65,7 @@ namespace API.Managers
 
         public async Task Update(string name, LocationCreateModel updatedLocation)
         {
-            var location = await locationRepository.GetByName(name);
+            var location = await locationRepository.GetByAddress(name);
 
             if (location == null)
                 throw new Exception("Location doesn't exist!");
