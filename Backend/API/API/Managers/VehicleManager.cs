@@ -14,10 +14,12 @@ namespace API.Managers
     public class VehicleManager : IVehicleManager
     {
         private readonly IVehicleRepository vehicleRepository;
+        private readonly IFeatureRepository featureRepository;
 
-        public VehicleManager(IVehicleRepository manager)
+        public VehicleManager(IVehicleRepository vehicleRepository, IFeatureRepository featureRepository)
         {
-            this.vehicleRepository = manager;
+            this.vehicleRepository = vehicleRepository;
+            this.featureRepository = featureRepository;
         }
 
         public async Task<List<VehicleModel>> GetAll()
@@ -105,33 +107,28 @@ namespace API.Managers
                 EngineSize = vehicle.EngineSize,
                 Power = vehicle.Power,
                 Price = vehicle.Price,
-                Year = vehicle.Year
+                Year = vehicle.Year,
+                Features = new List<Feature>()
             };
 
 
             Status newStatus = new()
             {
                 VehicleId = newVehicle.Id,
-                VehicleStatus = "Available",
+                IsSold = false,
                 DateAdded = System.DateTime.Now,
                 DateSold = null
             };
 
-            var features = new List<VehicleFeature>();
-
             if (vehicle.Features != null)
             {
-                foreach (var featureId in vehicle.Features)
+                foreach (var featureName in vehicle.Features)
                 {
-                    features.Add(new VehicleFeature
-                    {
-                        FeatureName = featureId,
-                        VehicleId = generatedId,
-                    });
+                    newVehicle.Features.Add(await featureRepository.GetByName(featureName));
                 }
             }
 
-            await vehicleRepository.Create(newVehicle, newStatus, features);
+            await vehicleRepository.Create(newVehicle, newStatus);
         }
 
         public async Task Update(string id, VehicleCreateModel updatedVehicle)
@@ -153,22 +150,27 @@ namespace API.Managers
             currentVehicle.Odometer = updatedVehicle.Odometer;
             currentVehicle.LocationAddress = updatedVehicle.LocationAddress;
             currentVehicle.Year = updatedVehicle.Year;
-
-            var features = new List<VehicleFeature>();
+            currentVehicle.Features = new List<Feature>();
 
             if (updatedVehicle.Features != null)
             {
-                foreach (var featureId in updatedVehicle.Features)
+                foreach (var featureName in updatedVehicle.Features)
                 {
-                    features.Add(new VehicleFeature
-                    {
-                        FeatureName = featureId,
-                        VehicleId = currentVehicle.Id,
-                    });
+                    currentVehicle.Features.Add(await featureRepository.GetByName(featureName));
                 }
             }
 
-            await vehicleRepository.Update(currentVehicle, features);
+            var features = new List<Feature>();
+
+            if (updatedVehicle.Features != null)
+            {
+                foreach (var featureName in updatedVehicle.Features)
+                {
+                    features.Add(await featureRepository.GetByName(featureName));
+                }
+            }
+
+            await vehicleRepository.Update(currentVehicle);
         }
 
         public async Task UpdateStatus(string id, VehicleUpdateStatusModel updatedStatus)
@@ -179,16 +181,16 @@ namespace API.Managers
             if (currentVehicle == null)
                 throw new Exception("The vehicle was not found!");
 
-            var status = await vehicleRepository.GetStatusById(id);
+            var status = currentVehicle.Status;
             if (updatedStatus.sold)
             {
                 status.DateSold = DateTime.Now;
-                status.VehicleStatus = "Sold";
+                status.IsSold = true;
             }
             else
             {
                 status.DateSold = null;
-                status.VehicleStatus = "Available";
+                status.IsSold = false;
             }
 
             await vehicleRepository.UpdateStatus(status);
@@ -211,10 +213,11 @@ namespace API.Managers
             if (vehicle == null)
                 return null;
 
-            var features = await vehicleRepository.GetFeaturesByVehicleId(id);
-            var groupedFeatures = features.OrderBy(x => -x.Desirability).ThenBy(x => x.Name).GroupBy(x => x.Desirability).Select(x => x.ToList()).ToList();
+            var groupedFeatures = vehicle.Features.OrderBy(x => -x.Desirability)
+                .ThenBy(x => x.Name).GroupBy(x => x.Desirability)
+                .ToDictionary(x => x.Key, x => FeatureModel.ConvertToResultType(x.ToList()));
 
-            var returned = new VehicleWithFeaturesModel(vehicle, features, groupedFeatures);
+            var returned = new VehicleWithFeaturesModel(vehicle, groupedFeatures);
 
             return returned;
         }

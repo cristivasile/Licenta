@@ -13,5 +13,5 @@ namespace API.Interfaces
         Task Create(FeatureCreateModel newVehicle);
         Task Update(string id, FeatureCreateModel updatedVehicle);
         Task Delete(string id);
-    }
+    }   
 }

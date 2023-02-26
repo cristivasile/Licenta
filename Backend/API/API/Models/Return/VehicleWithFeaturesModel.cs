@@ -1,4 +1,5 @@
 ﻿using API.Entities;
+using API.Models.Return;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,10 @@ namespace API.Models
     public class VehicleWithFeaturesModel : VehicleCreateModel
     {
         public string Id { get; set; }
-        public Status Status { get; set; }
-        new public List<Feature> Features { get; set; }
-        public List<List<Feature>> GroupedFeatures { get; set; }
+        public StatusModel Status { get; set; }
+        public Dictionary<int, List<FeatureModel>> GroupedFeatures { get; set; }
 
-        public VehicleWithFeaturesModel(Vehicle ob, List<Feature> features, List<List<Feature>> groupedFeatures)
+        public VehicleWithFeaturesModel(Vehicle ob, Dictionary<int, List<FeatureModel>> groupedFeatures)
         {
             Id = ob.Id;
             Brand = ob.Brand;
@@ -23,16 +23,11 @@ namespace API.Models
 
             if (ob.Status != null)
             {
-                Status = ob.Status;
-                //avoid including vehicle again in status
-                Status.Vehicle = null;
+                Status = new(ob.Status);
             }
 
             if (ob.Image != null)
                 Image = ob.Image;
-
-            if (features != null)
-                Features = features;
 
             if (groupedFeatures != null)
                 GroupedFeatures = groupedFeatures;

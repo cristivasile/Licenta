@@ -14,8 +14,6 @@ namespace API.Context
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Feature> Features { get; set; }
-        public DbSet<VehicleFeature> VehicleFeature { get; set; }
-
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
@@ -25,7 +23,6 @@ namespace API.Context
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
-            modelBuilder.ApplyConfiguration(new VehicleFeatureConfiguration());
             modelBuilder.ApplyConfiguration(new FeatureConfiguration());
             modelBuilder.ApplyConfiguration(new LocationConfiguration());
             modelBuilder.ApplyConfiguration(new StatusConfiguration());

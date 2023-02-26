@@ -16,6 +16,6 @@ namespace API.Entities
         /// <summary>
         /// All vehicles that have this feature.
         /// </summary>
-        public virtual ICollection<VehicleFeature> FeatureVehicles { get; set; }
+        public virtual ICollection<Vehicle> Vehicles { get; set; }
     }
 }
