@@ -1,6 +1,7 @@
 ﻿using API.Context;
 using API.Entities;
 using API.Interfaces;
+using API.Specifications.LocationSpecifications;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace API.Repositories
 {
-    public class LocationRepository : RepositoryBase<Location>, ILocationRepository
+    public class LocationRepository : Repository<Location>, ILocationRepository
     {
 
-        public LocationRepository(AppDbContext context) : base(context) { }
-
-        public async Task<Location> GetByName(string name)
+        public LocationRepository(AppDbContext context) : base(context)
         {
-            var locations = await context.Locations.FirstOrDefaultAsync(x => x.Address == name);
-            return locations;
+            entitySet = context.Locations;
         }
+
+        public async Task<Location> GetByAddress(string address) 
+            => await ApplySpecification(new LocationByAddressSpecification(address)).FirstOrDefaultAsync();
     }
 }

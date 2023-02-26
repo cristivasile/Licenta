@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Entities
 {
-    public class Vehicle
+    public class Vehicle : Entity
     {
         public string Id { get; set; }
         public string Image { get; set; }

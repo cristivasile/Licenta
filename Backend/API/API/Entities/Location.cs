@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Entities
 {
-    public class Location
+    public class Location : Entity
     {
         public string Address { get; set; }
         /// <summary>

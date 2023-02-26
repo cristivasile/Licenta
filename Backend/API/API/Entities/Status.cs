@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Entities
 {
-    public class Status
+    public class Status : Entity
     {
         public string VehicleId { get; set; }
         public bool IsSold { get; set; } = false;

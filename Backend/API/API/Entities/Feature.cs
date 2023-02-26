@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace API.Entities
 {
-    public class Feature
+    public class Feature: Entity
     {
         public string Name { get; set; }
         /// <example>
