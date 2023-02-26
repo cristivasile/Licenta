@@ -13,7 +13,11 @@ namespace API.Configurations
                 .HasKey(x => x.VehicleId);
 
             builder
-                .Property(x => x.VehicleStatus)
+                .Property(x => x.IsSold)
+                .IsRequired();
+
+            builder
+                .Property(x => x.DateAdded)
                 .IsRequired();
 
             //nullable
