@@ -9,43 +9,15 @@ using System.Threading.Tasks;
 
 namespace API.Repositories
 {
-    public class FeatureRepository : IFeatureRepository
+    public class FeatureRepository : RepositoryBase<Feature>, IFeatureRepository
     {
-        private readonly AppDbContext storage;
 
-        public FeatureRepository(AppDbContext context)
-        {
-            storage = context;
-        }
-
-        public async Task Create(Feature newFeature)
-        {
-            await storage.Features.AddAsync(newFeature);
-            await storage.SaveChangesAsync();
-        }
-
-        public async Task Delete(Feature toDelete)
-        {
-            await Task.FromResult(storage.Features.Remove(toDelete));
-            await storage.SaveChangesAsync();
-        }
-
-        public async Task<List<Feature>> GetAll()
-        {
-            var locations = await storage.Features.ToListAsync();
-            return locations;
-        }
+        public FeatureRepository(AppDbContext context) : base(context) { }
 
         public async Task<Feature> GetByName(string name)
         {
-            var locations = await storage.Features.FirstOrDefaultAsync(x => x.Name == name);
+            var locations = await context.Features.FirstOrDefaultAsync(x => x.Name == name);
             return locations;
-        }
-
-        public async Task Update(Feature updatedFeature)
-        {
-            await Task.FromResult(storage.Features.Update(updatedFeature));
-            await storage.SaveChangesAsync();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace API.Interfaces
         Task<List<Vehicle>> GetAll();
         Task<List<Vehicle>> GetAvailable();
         Task<Vehicle> GetById(string id);
-        Task Create(Vehicle newVehicle, Status newStatus);
+        Task CreateWithStatus(Vehicle newVehicle, Status newStatus);
         Task Update(Vehicle updatedVehicle);
         Task UpdateStatus(Status updatedStatus);
         Task Delete(Vehicle toDelete);

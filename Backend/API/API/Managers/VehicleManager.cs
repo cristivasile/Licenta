@@ -128,7 +128,7 @@ namespace API.Managers
                 }
             }
 
-            await vehicleRepository.Create(newVehicle, newStatus);
+            await vehicleRepository.CreateWithStatus(newVehicle, newStatus);
         }
 
         public async Task Update(string id, VehicleCreateModel updatedVehicle)

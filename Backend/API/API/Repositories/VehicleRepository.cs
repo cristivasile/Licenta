@@ -9,22 +9,17 @@ using System.Threading.Tasks;
 
 namespace API.Repositories
 {
-    public class VehicleRepository : IVehicleRepository
+    public class VehicleRepository : RepositoryBase<Vehicle>, IVehicleRepository
     {
-        private readonly AppDbContext context;
         
-        public VehicleRepository(AppDbContext context)
-        {
-            this.context = context;
-        }
+        public VehicleRepository(AppDbContext context) : base(context) { }
 
-        public async Task<List<Vehicle>> GetAll()
+        public async Task CreateWithStatus(Vehicle newVehicle, Status newStatus)
         {
-            var vehicles = await context.Vehicles
-                                .Include(x => x.Status)
-                                .Include(x => x.Location)
-                                .ToListAsync();
-            return vehicles;
+            await context.Vehicles.AddAsync(newVehicle);
+            await context.Statuses.AddAsync(newStatus);
+
+            await context.SaveChangesAsync();
         }
 
         public async Task<List<Vehicle>> GetAvailable()
@@ -40,32 +35,10 @@ namespace API.Repositories
         
         public async Task<Vehicle> GetById(string id)
         {
-            var vehicles = await context.Vehicles.Where(x => x.Id == id)
+            var vehicle = await context.Vehicles.Where(x => x.Id == id)
                 .Include(x => x.Status).Include(x => x.Location).Include(x => x.Features)
-                .ToListAsync();
-            var vehicle = vehicles[0];
+                .FirstOrDefaultAsync();
             return vehicle;
-        }
-
-        public async Task Create(Vehicle newVehicle, Status newStatus)
-        {
-            await context.Vehicles.AddAsync(newVehicle);
-            await context.Statuses.AddAsync(newStatus);
-
-            await context.SaveChangesAsync();
-        }
-
-        public async Task Update(Vehicle updatedVehicle)
-        {
-            await Task.FromResult(context.Vehicles.Update(updatedVehicle));
-
-            await context.SaveChangesAsync();
-        }
-
-        public async Task Delete(Vehicle toDelete)
-        {
-            await Task.FromResult(context.Vehicles.Remove(toDelete));
-            await context.SaveChangesAsync();
         }
 
         public async Task UpdateStatus(Status updatedStatus)
