@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230222185524_Full-Migration")]
-    partial class FullMigration
+    [Migration("20230228191031_full-migration")]
+    partial class fullmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,19 +25,25 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("API.Entities.BodyType", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("BodyTypes");
+                });
+
             modelBuilder.Entity("API.Entities.Feature", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Desirability")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("Name");
 
                     b.ToTable("Features");
                 });
@@ -90,11 +96,17 @@ namespace API.Migrations
                     b.Property<DateTime?>("DateSold")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("VehicleStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsSold")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("PurchaserUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("VehicleId");
+
+                    b.HasIndex("PurchaserUserId");
 
                     b.ToTable("Statuses");
                 });
@@ -184,9 +196,18 @@ namespace API.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("BodyTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Brand")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("");
 
                     b.Property<float>("EngineSize")
                         .HasColumnType("real");
@@ -199,7 +220,7 @@ namespace API.Migrations
 
                     b.Property<string>("Model")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Odometer")
                         .HasColumnType("int");
@@ -217,24 +238,41 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BodyTypeName");
+
                     b.HasIndex("LocationAddress");
+
+                    b.HasIndex("Brand", "Model");
 
                     b.ToTable("Vehicles");
                 });
 
-            modelBuilder.Entity("API.Entities.VehicleFeature", b =>
+            modelBuilder.Entity("API.Entities.VehicleType", b =>
                 {
-                    b.Property<string>("VehicleId")
+                    b.Property<string>("Brand")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("FeatureId")
+                    b.Property<string>("Model")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("VehicleId", "FeatureId");
+                    b.HasKey("Brand", "Model");
 
-                    b.HasIndex("FeatureId");
+                    b.ToTable("VehicleTypes");
+                });
 
-                    b.ToTable("VehicleFeature");
+            modelBuilder.Entity("FeatureVehicle", b =>
+                {
+                    b.Property<string>("FeaturesName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("VehiclesId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FeaturesName", "VehiclesId");
+
+                    b.HasIndex("VehiclesId");
+
+                    b.ToTable("FeatureVehicle");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -330,11 +368,17 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Status", b =>
                 {
+                    b.HasOne("API.Entities.User", "PurchasedBy")
+                        .WithMany("PurchasedVehicleStatuses")
+                        .HasForeignKey("PurchaserUserId");
+
                     b.HasOne("API.Entities.Vehicle", "Vehicle")
                         .WithOne("Status")
                         .HasForeignKey("API.Entities.Status", "VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("PurchasedBy");
 
                     b.Navigation("Vehicle");
                 });
@@ -356,30 +400,42 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Vehicle", b =>
                 {
+                    b.HasOne("API.Entities.BodyType", "BodyType")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("BodyTypeName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("API.Entities.Location", "Location")
                         .WithMany("OwnedVehicles")
                         .HasForeignKey("LocationAddress");
 
+                    b.HasOne("API.Entities.VehicleType", "VehicleType")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("Brand", "Model")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BodyType");
+
                     b.Navigation("Location");
+
+                    b.Navigation("VehicleType");
                 });
 
-            modelBuilder.Entity("API.Entities.VehicleFeature", b =>
+            modelBuilder.Entity("FeatureVehicle", b =>
                 {
-                    b.HasOne("API.Entities.Feature", "Feature")
-                        .WithMany("FeatureVehicles")
-                        .HasForeignKey("FeatureId")
+                    b.HasOne("API.Entities.Feature", null)
+                        .WithMany()
+                        .HasForeignKey("FeaturesName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Entities.Vehicle", "Vehicle")
-                        .WithMany("VehicleFeatures")
-                        .HasForeignKey("VehicleId")
+                    b.HasOne("API.Entities.Vehicle", null)
+                        .WithMany()
+                        .HasForeignKey("VehiclesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Feature");
-
-                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -418,9 +474,9 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("API.Entities.Feature", b =>
+            modelBuilder.Entity("API.Entities.BodyType", b =>
                 {
-                    b.Navigation("FeatureVehicles");
+                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("API.Entities.Location", b =>
@@ -428,11 +484,19 @@ namespace API.Migrations
                     b.Navigation("OwnedVehicles");
                 });
 
+            modelBuilder.Entity("API.Entities.User", b =>
+                {
+                    b.Navigation("PurchasedVehicleStatuses");
+                });
+
             modelBuilder.Entity("API.Entities.Vehicle", b =>
                 {
                     b.Navigation("Status");
+                });
 
-                    b.Navigation("VehicleFeatures");
+            modelBuilder.Entity("API.Entities.VehicleType", b =>
+                {
+                    b.Navigation("Vehicles");
                 });
 #pragma warning restore 612, 618
         }

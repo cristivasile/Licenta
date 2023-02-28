@@ -12,7 +12,6 @@ namespace API.Repositories
 {
     public class VehicleRepository : Repository<Vehicle>, IVehicleRepository
     {
-        
         public VehicleRepository(AppDbContext context) : base(context)
         {
             entitySet = context.Vehicles;

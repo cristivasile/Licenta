@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace API.Migrations
 {
     /// <inheritdoc />
-    public partial class FullMigration : Migration
+    public partial class fullmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,16 +51,26 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BodyTypes",
+                columns: table => new
+                {
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BodyTypes", x => x.Name);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Features",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Desirability = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Features", x => x.Id);
+                    table.PrimaryKey("PK_Features", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -72,6 +82,18 @@ namespace API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Locations", x => x.Address);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VehicleTypes",
+                columns: table => new
+                {
+                    Brand = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Model = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VehicleTypes", x => new { x.Brand, x.Model });
                 });
 
             migrationBuilder.CreateTable(
@@ -186,23 +208,61 @@ namespace API.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Model = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true, defaultValue: ""),
                     Odometer = table.Column<int>(type: "int", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
                     EngineSize = table.Column<float>(type: "real", nullable: false),
                     Power = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
+                    Brand = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Model = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LocationAddress = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Price = table.Column<float>(type: "real", nullable: false, defaultValue: 0f)
+                    BodyTypeName = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vehicles", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Vehicles_BodyTypes_BodyTypeName",
+                        column: x => x.BodyTypeName,
+                        principalTable: "BodyTypes",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Vehicles_Locations_LocationAddress",
                         column: x => x.LocationAddress,
                         principalTable: "Locations",
                         principalColumn: "Address");
+                    table.ForeignKey(
+                        name: "FK_Vehicles_VehicleTypes_Brand_Model",
+                        columns: x => new { x.Brand, x.Model },
+                        principalTable: "VehicleTypes",
+                        principalColumns: new[] { "Brand", "Model" },
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FeatureVehicle",
+                columns: table => new
+                {
+                    FeaturesName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    VehiclesId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeatureVehicle", x => new { x.FeaturesName, x.VehiclesId });
+                    table.ForeignKey(
+                        name: "FK_FeatureVehicle_Features_FeaturesName",
+                        column: x => x.FeaturesName,
+                        principalTable: "Features",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FeatureVehicle_Vehicles_VehiclesId",
+                        column: x => x.VehiclesId,
+                        principalTable: "Vehicles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -210,39 +270,21 @@ namespace API.Migrations
                 columns: table => new
                 {
                     VehicleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    VehicleStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsSold = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateSold = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DateSold = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PurchaserUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Statuses", x => x.VehicleId);
                     table.ForeignKey(
+                        name: "FK_Statuses_AspNetUsers_PurchaserUserId",
+                        column: x => x.PurchaserUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Statuses_Vehicles_VehicleId",
-                        column: x => x.VehicleId,
-                        principalTable: "Vehicles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "VehicleFeature",
-                columns: table => new
-                {
-                    VehicleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FeatureId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VehicleFeature", x => new { x.VehicleId, x.FeatureId });
-                    table.ForeignKey(
-                        name: "FK_VehicleFeature_Features_FeatureId",
-                        column: x => x.FeatureId,
-                        principalTable: "Features",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_VehicleFeature_Vehicles_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "Vehicles",
                         principalColumn: "Id",
@@ -289,9 +331,24 @@ namespace API.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VehicleFeature_FeatureId",
-                table: "VehicleFeature",
-                column: "FeatureId");
+                name: "IX_FeatureVehicle_VehiclesId",
+                table: "FeatureVehicle",
+                column: "VehiclesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Statuses_PurchaserUserId",
+                table: "Statuses",
+                column: "PurchaserUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_BodyTypeName",
+                table: "Vehicles",
+                column: "BodyTypeName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_Brand_Model",
+                table: "Vehicles",
+                columns: new[] { "Brand", "Model" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_LocationAddress",
@@ -318,25 +375,31 @@ namespace API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Statuses");
+                name: "FeatureVehicle");
 
             migrationBuilder.DropTable(
-                name: "VehicleFeature");
+                name: "Statuses");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Features");
 
             migrationBuilder.DropTable(
-                name: "Features");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Vehicles");
 
             migrationBuilder.DropTable(
+                name: "BodyTypes");
+
+            migrationBuilder.DropTable(
                 name: "Locations");
+
+            migrationBuilder.DropTable(
+                name: "VehicleTypes");
         }
     }
 }

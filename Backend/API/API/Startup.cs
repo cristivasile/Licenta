@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System;
+using API.Interfaces.Repositories;
 
 namespace API
 {
@@ -85,6 +86,11 @@ namespace API
 
             services.AddScoped<IFeatureManager, FeatureManager>();
             services.AddScoped<IFeatureRepository, FeatureRepository>();
+
+            services.AddScoped<IBodyTypeRepository, BodyTypeRepository>();
+
+            services.AddScoped<IVehicleTypeRepository, VehicleTypeRepository>();
+
 
             services.AddDbContext<AppDbContext>(options => options
                                                             .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))

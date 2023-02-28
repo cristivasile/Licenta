@@ -99,8 +99,9 @@ namespace API.Managers
             {
                 Id = generatedId,
                 Image = vehicle.Image,
-                Brand = vehicle.Brand,
-                Model = vehicle.Model,
+                //Brand = vehicle.Brand,
+                //Model = vehicle.Model,
+                //TODO - fix vehicles
                 Description = vehicle.Description,
                 LocationAddress = vehicle.LocationAddress,
                 Odometer = vehicle.Odometer,
@@ -141,8 +142,9 @@ namespace API.Managers
             if (updatedVehicle.Image != "")
                 currentVehicle.Image = updatedVehicle.Image;
 
-            currentVehicle.Brand = updatedVehicle.Brand;
-            currentVehicle.Model = updatedVehicle.Model;
+            //TODO - fix vehicles
+            //currentVehicle.Brand = updatedVehicle.Brand;
+            //currentVehicle.Model = updatedVehicle.Model;
             currentVehicle.Description = updatedVehicle.Description;
             currentVehicle.Price = updatedVehicle.Price;
             currentVehicle.EngineSize = updatedVehicle.EngineSize;

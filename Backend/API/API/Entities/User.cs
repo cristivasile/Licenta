@@ -8,5 +8,6 @@ namespace API.Entities
 {
     public class User : IdentityUser
     {
+        public virtual ICollection<Status> PurchasedVehicleStatuses { get; set; }
     }
 }

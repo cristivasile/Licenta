@@ -14,8 +14,9 @@ namespace API.Models
         public VehicleModel(Vehicle ob)
         {
             Id = ob.Id;
-            Brand = ob.Brand;
-            Model = ob.Model;
+            //TODO - fix vehicles
+            //Brand = ob.Brand;
+            //Model = ob.Model;
             Description = ob.Description;
             LocationAddress = ob.LocationAddress;
 

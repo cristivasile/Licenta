@@ -15,12 +15,6 @@ namespace API.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Model)
-                .IsRequired();
-
-            builder.Property(x => x.Brand)
-                .IsRequired();
-
             builder.Property(x => x.Price)
                 .HasDefaultValue(0);
 
@@ -30,13 +24,28 @@ namespace API.Configurations
             //1 - 1: Vehicle <-> Status
             builder
                 .HasOne<Status>(x => x.Status)
-                .WithOne(x => x.Vehicle);
+                .WithOne(x => x.Vehicle)
+                .IsRequired();
 
             //1 - M : Vehicle <-> Location
             builder
                 .HasOne<Location>(x => x.Location)
                 .WithMany(x => x.OwnedVehicles)
                 .HasForeignKey(x => x.LocationAddress);
+
+            //1 - M : Vehicle <-> BodyType
+            builder
+                .HasOne<BodyType>(vehicle => vehicle.BodyType)
+                .WithMany(bodyType => bodyType.Vehicles)
+                .HasForeignKey(x => x.BodyTypeName)
+                .IsRequired();
+
+            //1 - M : Vehicle <-> VehicleType
+            builder
+                .HasOne<VehicleType>(vehicle => vehicle.VehicleType)
+                .WithMany(model => model.Vehicles)
+                .HasForeignKey(vehicle => new {vehicle.Brand, vehicle.Model})
+                .IsRequired();
         }
     }
 }

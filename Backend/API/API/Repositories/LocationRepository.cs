@@ -12,7 +12,6 @@ namespace API.Repositories
 {
     public class LocationRepository : Repository<Location>, ILocationRepository
     {
-
         public LocationRepository(AppDbContext context) : base(context)
         {
             entitySet = context.Locations;

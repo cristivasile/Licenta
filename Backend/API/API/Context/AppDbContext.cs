@@ -10,10 +10,13 @@ namespace API.Context
         <User, Role, string, IdentityUserClaim<string>, UserRole, IdentityUserLogin<string>,
         IdentityRoleClaim<string>, IdentityUserToken<string>>
     {
-        public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<BodyType> BodyTypes { get; set; }
+        public DbSet<VehicleType> VehicleTypes { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Feature> Features { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
@@ -26,6 +29,8 @@ namespace API.Context
             modelBuilder.ApplyConfiguration(new FeatureConfiguration());
             modelBuilder.ApplyConfiguration(new LocationConfiguration());
             modelBuilder.ApplyConfiguration(new StatusConfiguration());
+            modelBuilder.ApplyConfiguration(new BodyTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new VehicleTypeConfiguration());
         }
         
     }

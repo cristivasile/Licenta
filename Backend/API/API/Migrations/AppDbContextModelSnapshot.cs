@@ -22,6 +22,16 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("API.Entities.BodyType", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("BodyTypes");
+                });
+
             modelBuilder.Entity("API.Entities.Feature", b =>
                 {
                     b.Property<string>("Name")
@@ -84,9 +94,16 @@ namespace API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsSold")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("PurchaserUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("VehicleId");
+
+                    b.HasIndex("PurchaserUserId");
 
                     b.ToTable("Statuses");
                 });
@@ -176,9 +193,13 @@ namespace API.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("BodyTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Brand")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .ValueGeneratedOnAdd()
@@ -196,7 +217,7 @@ namespace API.Migrations
 
                     b.Property<string>("Model")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Odometer")
                         .HasColumnType("int");
@@ -214,9 +235,26 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BodyTypeName");
+
                     b.HasIndex("LocationAddress");
 
+                    b.HasIndex("Brand", "Model");
+
                     b.ToTable("Vehicles");
+                });
+
+            modelBuilder.Entity("API.Entities.VehicleType", b =>
+                {
+                    b.Property<string>("Brand")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Model")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Brand", "Model");
+
+                    b.ToTable("VehicleTypes");
                 });
 
             modelBuilder.Entity("FeatureVehicle", b =>
@@ -327,11 +365,17 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Status", b =>
                 {
+                    b.HasOne("API.Entities.User", "PurchasedBy")
+                        .WithMany("PurchasedVehicleStatuses")
+                        .HasForeignKey("PurchaserUserId");
+
                     b.HasOne("API.Entities.Vehicle", "Vehicle")
                         .WithOne("Status")
                         .HasForeignKey("API.Entities.Status", "VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("PurchasedBy");
 
                     b.Navigation("Vehicle");
                 });
@@ -353,11 +397,27 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Vehicle", b =>
                 {
+                    b.HasOne("API.Entities.BodyType", "BodyType")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("BodyTypeName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("API.Entities.Location", "Location")
                         .WithMany("OwnedVehicles")
                         .HasForeignKey("LocationAddress");
 
+                    b.HasOne("API.Entities.VehicleType", "VehicleType")
+                        .WithMany("Vehicles")
+                        .HasForeignKey("Brand", "Model")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BodyType");
+
                     b.Navigation("Location");
+
+                    b.Navigation("VehicleType");
                 });
 
             modelBuilder.Entity("FeatureVehicle", b =>
@@ -411,14 +471,29 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("API.Entities.BodyType", b =>
+                {
+                    b.Navigation("Vehicles");
+                });
+
             modelBuilder.Entity("API.Entities.Location", b =>
                 {
                     b.Navigation("OwnedVehicles");
                 });
 
+            modelBuilder.Entity("API.Entities.User", b =>
+                {
+                    b.Navigation("PurchasedVehicleStatuses");
+                });
+
             modelBuilder.Entity("API.Entities.Vehicle", b =>
                 {
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("API.Entities.VehicleType", b =>
+                {
+                    b.Navigation("Vehicles");
                 });
 #pragma warning restore 612, 618
         }

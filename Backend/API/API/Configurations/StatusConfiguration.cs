@@ -14,7 +14,8 @@ namespace API.Configurations
 
             builder
                 .Property(x => x.IsSold)
-                .IsRequired();
+                .IsRequired()
+                .HasDefaultValue(false);
 
             builder
                 .Property(x => x.DateAdded)
@@ -23,6 +24,13 @@ namespace API.Configurations
             //nullable
             builder
                 .Property(x => x.DateSold)
+                .IsRequired(false);
+
+            //1 - M: User <-> Status
+            builder
+                .HasOne<User>(status => status.PurchasedBy)
+                .WithMany(user => user.PurchasedVehicleStatuses)
+                .HasForeignKey(status => status.PurchaserUserId)
                 .IsRequired(false);
         }
     }

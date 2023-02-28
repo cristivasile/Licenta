@@ -63,6 +63,7 @@ namespace API.Managers
 
             var roles = await userManager.GetRolesAsync(user);
 
+            //return the highest role
             if (roles.Count == 1)
                 result.Role = "User";
             else if (roles.Count == 2)
