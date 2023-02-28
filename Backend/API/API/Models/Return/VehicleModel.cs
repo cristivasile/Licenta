@@ -1,4 +1,5 @@
 ﻿using API.Entities;
+using API.Models.Return;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,14 @@ namespace API.Models
     public class VehicleModel : VehicleCreateModel
     {
         public string Id { get; set; }
-        public Status Status { get; set; }
+        public StatusModel Status { get; set; }
         public VehicleModel(Vehicle ob)
         {
             Id = ob.Id;
-            //TODO - fix vehicles
-            //Brand = ob.Brand;
-            //Model = ob.Model;
+
+            Brand = ob.Brand;
+            Model = ob.Model;
+            BodyType = ob.BodyTypeName;
             Description = ob.Description;
             LocationAddress = ob.LocationAddress;
 
@@ -27,10 +29,7 @@ namespace API.Models
                 Image = ob.Image;
 
             if (ob.Status != null)
-            {
-                Status = ob.Status;
-                Status.Vehicle = null;
-            }
+                Status = new(ob.Status);
 
             Odometer = ob.Odometer;
             Power = ob.Power;

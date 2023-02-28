@@ -1,6 +1,7 @@
 ﻿using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using API.Interfaces.Repositories;
 using API.Models;
 using API.Models.Input;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +16,20 @@ namespace API.Managers
     {
         private readonly IVehicleRepository vehicleRepository;
         private readonly IFeatureRepository featureRepository;
+        private readonly IBodyTypeRepository bodyTypeRepository;
+        private readonly IVehicleTypeRepository vehicleTypeRepository;
+        private readonly IStatusRepository statusRepository;
+        private readonly ILocationRepository locationRepository;
 
-        public VehicleManager(IVehicleRepository vehicleRepository, IFeatureRepository featureRepository)
+        public VehicleManager(IVehicleRepository vehicleRepository, IFeatureRepository featureRepository, ILocationRepository locationRepository,
+            IBodyTypeRepository bodyTypeRepository, IVehicleTypeRepository vehicleTypeRepository, IStatusRepository statusRepository)
         {
             this.vehicleRepository = vehicleRepository;
             this.featureRepository = featureRepository;
+            this.bodyTypeRepository = bodyTypeRepository;
+            this.vehicleTypeRepository = vehicleTypeRepository;
+            this.statusRepository = statusRepository;
+            this.locationRepository = locationRepository;
         }
 
         public async Task<List<VehicleModel>> GetAll()
@@ -93,15 +103,27 @@ namespace API.Managers
 
         public async Task Create(VehicleCreateModel vehicle)
         {
+            //check if location exists
+            if (await locationRepository.GetByAddress(vehicle.LocationAddress) == null)
+                throw new Exception("Invalid location address!");
+
+            //check if body type exists
+            if (await bodyTypeRepository.GetByName(vehicle.BodyType) == null)
+                throw new Exception("Invalid body type!");
+
+            //check if given vehicle type exists and add otherwise
+            if (await vehicleTypeRepository.GetById(vehicle.Brand, vehicle.Model) == null)
+                await vehicleTypeRepository.Create(new() { Brand = vehicle.Brand, Model = vehicle.Model });
+
             var generatedId = Utilities.GetGUID();
 
             Vehicle newVehicle = new()
             {
                 Id = generatedId,
                 Image = vehicle.Image,
-                //Brand = vehicle.Brand,
-                //Model = vehicle.Model,
-                //TODO - fix vehicles
+                Brand = vehicle.Brand,
+                Model = vehicle.Model,
+                BodyTypeName = vehicle.BodyType,
                 Description = vehicle.Description,
                 LocationAddress = vehicle.LocationAddress,
                 Odometer = vehicle.Odometer,
@@ -111,7 +133,6 @@ namespace API.Managers
                 Year = vehicle.Year,
                 Features = new List<Feature>()
             };
-
 
             Status newStatus = new()
             {
@@ -129,7 +150,8 @@ namespace API.Managers
                 }
             }
 
-            await vehicleRepository.CreateWithStatus(newVehicle, newStatus);
+            await statusRepository.Create(newStatus);
+            await vehicleRepository.Create(newVehicle);
         }
 
         public async Task Update(string id, VehicleCreateModel updatedVehicle)
@@ -137,14 +159,26 @@ namespace API.Managers
             var currentVehicle = await vehicleRepository.GetById(id);
 
             if (currentVehicle == null)
-                throw new Exception("Vehicle doesn't exist!");
+                throw new KeyNotFoundException("Vehicle doesn't exist!");
 
             if (updatedVehicle.Image != "")
                 currentVehicle.Image = updatedVehicle.Image;
 
-            //TODO - fix vehicles
-            //currentVehicle.Brand = updatedVehicle.Brand;
-            //currentVehicle.Model = updatedVehicle.Model;
+            //check if location exists
+            if (await locationRepository.GetByAddress(updatedVehicle.LocationAddress) == null)
+                throw new Exception("Invalid location address!");
+
+            //check if body type exists
+            if (await bodyTypeRepository.GetByName(updatedVehicle.BodyType) == null)
+                throw new Exception("Invalid body type!");
+
+            //check if given vehicle type exists and add otherwise
+            if (await vehicleTypeRepository.GetById(updatedVehicle.Brand, updatedVehicle.Model) == null)
+                await vehicleTypeRepository.Create(new() { Brand = updatedVehicle.Brand, Model = updatedVehicle.Model });
+
+            currentVehicle.Brand = updatedVehicle.Brand;
+            currentVehicle.Model = updatedVehicle.Model;
+            currentVehicle.BodyTypeName = updatedVehicle.BodyType;
             currentVehicle.Description = updatedVehicle.Description;
             currentVehicle.Price = updatedVehicle.Price;
             currentVehicle.EngineSize = updatedVehicle.EngineSize;

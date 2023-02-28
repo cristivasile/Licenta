@@ -1,6 +1,10 @@
 ﻿using API.Context;
 using API.Entities;
 using API.Interfaces.Repositories;
+using API.Specifications.BodyTypeSpecifications;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace API.Repositories
 {
@@ -10,5 +14,8 @@ namespace API.Repositories
         {
             entitySet = context.BodyTypes;
         }
+
+        public async Task<BodyType> GetByName(string name)
+            => await ApplySpecification(new BodyTypeByNameSpecification(name)).FirstOrDefaultAsync();
     }
 }

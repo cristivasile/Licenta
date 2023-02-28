@@ -17,13 +17,6 @@ namespace API.Repositories
             entitySet = context.Vehicles;
         }
 
-        public async Task CreateWithStatus(Vehicle newVehicle, Status newStatus)
-        {
-            await context.Vehicles.AddAsync(newVehicle);
-            await context.Statuses.AddAsync(newStatus);
-            await SaveAsync();
-        }
-
         public async Task<List<Vehicle>> GetAvailable()
             => await ApplySpecification(new AvailableVehiclesSpecification()).ToListAsync();
         

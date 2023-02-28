@@ -1,9 +1,6 @@
 ﻿using API.Entities;
 using API.Models.Return;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Models
 {
@@ -16,9 +13,9 @@ namespace API.Models
         public VehicleWithFeaturesModel(Vehicle ob, Dictionary<int, List<FeatureModel>> groupedFeatures)
         {
             Id = ob.Id;
-            //TODO - fix vehicles
-            //Brand = ob.Brand;
-            //Model = ob.Model;
+            Brand = ob.Brand;
+            Model = ob.Model;
+            BodyType = ob.BodyTypeName;
             Description = ob.Description;
             LocationAddress = ob.LocationAddress;
 

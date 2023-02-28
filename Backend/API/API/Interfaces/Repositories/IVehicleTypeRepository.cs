@@ -10,5 +10,6 @@ namespace API.Interfaces.Repositories
         Task Create(VehicleType newBrand);
         Task Update(VehicleType updatedBrand);
         Task Delete(VehicleType toDelete);
+        Task<VehicleType> GetById(string brand, string model);
     }
 }

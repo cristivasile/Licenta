@@ -3,6 +3,8 @@ using API.Models;
 using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -76,8 +78,15 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateVehicle([FromBody] VehicleCreateModel vehicle)
         {
-            await vehicleManager.Create(vehicle);
-            return Ok();
+            try
+            {
+                await vehicleManager.Create(vehicle);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
         
@@ -90,9 +99,13 @@ namespace API.Controllers
                 await vehicleManager.Update(id, updatedVehicle);
                 return Ok();
             }
-            catch
+            catch(KeyNotFoundException)
             {
                 return NotFound();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 
