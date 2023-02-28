@@ -4,7 +4,7 @@ using API.Interfaces.Repositories;
 
 namespace API.Repositories
 {
-    public class VehicleTypeRepository : Repository<VehicleType>, IVehicleTypeRepository
+    public class VehicleTypeRepository : RepositoryBase<VehicleType>, IVehicleTypeRepository
     {
         public VehicleTypeRepository(AppDbContext context) : base(context)
         {

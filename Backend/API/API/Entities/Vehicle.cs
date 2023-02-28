@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,13 +9,20 @@ namespace API.Entities
 {
     public class Vehicle : Entity
     {
+        [Key]
         public string Id { get; set; }
-        public string Image { get; set; }
         public string Description { get; set; }
+        [Required]
+        public string Image { get; set; }
+        [Required]
         public int Odometer { get; set; }
+        [Required]
         public int Year { get; set; }
+        [Required]
         public float EngineSize { get; set; }
+        [Required]
         public int Power { get; set; }
+        [Required]
         public float Price { get; set; }
 
         public virtual Status Status { get; set; }

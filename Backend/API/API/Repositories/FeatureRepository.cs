@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace API.Repositories
 {
-    public class FeatureRepository : Repository<Feature>, IFeatureRepository
+    public class FeatureRepository : RepositoryBase<Feature>, IFeatureRepository
     {
         public FeatureRepository(AppDbContext context) : base(context) 
         {

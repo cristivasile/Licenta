@@ -14,12 +14,7 @@ namespace API.Configurations
 
             builder
                 .Property(x => x.IsSold)
-                .IsRequired()
                 .HasDefaultValue(false);
-
-            builder
-                .Property(x => x.DateAdded)
-                .IsRequired();
 
             //nullable
             builder

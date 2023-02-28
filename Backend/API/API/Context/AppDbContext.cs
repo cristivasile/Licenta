@@ -26,11 +26,7 @@ namespace API.Context
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
-            modelBuilder.ApplyConfiguration(new FeatureConfiguration());
-            modelBuilder.ApplyConfiguration(new LocationConfiguration());
             modelBuilder.ApplyConfiguration(new StatusConfiguration());
-            modelBuilder.ApplyConfiguration(new BodyTypeConfiguration());
-            modelBuilder.ApplyConfiguration(new VehicleTypeConfiguration());
         }
         
     }

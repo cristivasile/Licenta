@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace API.Repositories
 {
-    public class VehicleRepository : Repository<Vehicle>, IVehicleRepository
+    public class VehicleRepository : RepositoryBase<Vehicle>, IVehicleRepository
     {
         public VehicleRepository(AppDbContext context) : base(context)
         {

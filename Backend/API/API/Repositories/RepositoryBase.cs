@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace API.Repositories
 {
-    public abstract class Repository<EntityType> where EntityType: Entity
+    public abstract class RepositoryBase<EntityType> where EntityType: Entity
     {
         protected readonly AppDbContext context;
         protected DbSet<EntityType> entitySet = null;
-        public Repository(AppDbContext context)
+        public RepositoryBase(AppDbContext context)
         {
             this.context = context;
         }

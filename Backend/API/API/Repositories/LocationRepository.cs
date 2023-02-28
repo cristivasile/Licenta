@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace API.Repositories
 {
-    public class LocationRepository : Repository<Location>, ILocationRepository
+    public class LocationRepository : RepositoryBase<Location>, ILocationRepository
     {
         public LocationRepository(AppDbContext context) : base(context)
         {
