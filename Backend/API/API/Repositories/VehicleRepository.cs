@@ -23,10 +23,5 @@ namespace API.Repositories
         public async Task<Vehicle> GetById(string id)
             => await ApplySpecification(new VehicleByIdSpecification(id)).FirstOrDefaultAsync();
 
-        public async Task UpdateStatus(Status updatedStatus)
-        {
-            context.Statuses.Update(updatedStatus);
-            await SaveAsync();
-        }
     }
 }

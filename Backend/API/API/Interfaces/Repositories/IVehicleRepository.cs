@@ -15,7 +15,6 @@ namespace API.Interfaces
         Task<Vehicle> GetById(string id);
         Task Create(Vehicle newVehicle);
         Task Update(Vehicle updatedVehicle);
-        Task UpdateStatus(Status updatedStatus);
         Task Delete(Vehicle toDelete);
     }
 }

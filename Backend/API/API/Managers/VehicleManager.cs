@@ -229,7 +229,7 @@ namespace API.Managers
                 status.IsSold = false;
             }
 
-            await vehicleRepository.UpdateStatus(status);
+            await statusRepository.Update(status);
         }
 
         public async Task Delete(string id)
