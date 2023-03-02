@@ -49,7 +49,7 @@ namespace API.Managers
 
             if (filter != null)
                 vehicles = vehicles.Where(x => (x.Brand + x.Model).ToLower()
-                        .Contains(filter.filter.Replace(" ", "").ToLower()))
+                        .Contains(filter.Filter.Replace(" ", "").ToLower()))
                         .ToList();
 
             return vehicles;

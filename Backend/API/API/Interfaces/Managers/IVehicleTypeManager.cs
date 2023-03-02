@@ -1,7 +1,5 @@
-﻿using API.Entities;
-using API.Managers;
-using API.Models.Input;
-using Microsoft.AspNetCore.Mvc;
+﻿using API.Models.Input;
+using API.Models.Return;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,6 +9,6 @@ namespace API.Interfaces.Managers
     {
         Task<List<VehicleTypeModel>> GetAll();
         Task<Dictionary<string, List<string>>> GetBrandModelDictionary();
-        Task Delete(VehicleTypeModel toDelete);
+        Task Delete(VehicleTypeDeleteModel toDelete);
     }
 }

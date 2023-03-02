@@ -1,7 +1,4 @@
-﻿using API.Interfaces;
-using API.Interfaces.Managers;
-using API.Managers;
-using API.Models;
+﻿using API.Interfaces.Managers;
 using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +35,7 @@ namespace API.Controllers
 
         [HttpDelete("delete")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> DeleteVehicleType([FromBody] VehicleTypeModel toDelete)
+        public async Task<IActionResult> DeleteVehicleType([FromBody] VehicleTypeDeleteModel toDelete)
         {
             try
             {

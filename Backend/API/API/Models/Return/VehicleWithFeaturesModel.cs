@@ -1,8 +1,8 @@
 ﻿using API.Entities;
-using API.Models.Return;
+using API.Models.Input;
 using System.Collections.Generic;
 
-namespace API.Models
+namespace API.Models.Return
 {
     public class VehicleWithFeaturesModel : VehicleCreateModel
     {

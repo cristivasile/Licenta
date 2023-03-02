@@ -1,5 +1,4 @@
-﻿
-namespace API.Models
+﻿namespace API.Models.Input
 {
     public class RegisterModel
     {

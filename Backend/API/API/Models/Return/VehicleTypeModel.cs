@@ -1,6 +1,6 @@
 ﻿using API.Entities;
 
-namespace API.Models.Input
+namespace API.Models.Return
 {
     public class VehicleTypeModel
     {

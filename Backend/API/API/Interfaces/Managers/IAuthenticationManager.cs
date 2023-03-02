@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using API.Models.Input;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API.Models
+namespace API.Models.Input
 {
     public class FeatureCreateModel
     {

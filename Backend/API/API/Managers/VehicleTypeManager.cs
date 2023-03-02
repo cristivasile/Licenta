@@ -1,9 +1,7 @@
-﻿using API.Entities;
-using API.Interfaces.Managers;
+﻿using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
-using API.Models;
 using API.Models.Input;
-using API.Repositories;
+using API.Models.Return;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +18,7 @@ namespace API.Managers
             this.vehicleTypeRepository = vehicleTypeRepository;
         }
 
-        public async Task Delete(VehicleTypeModel toDelete)
+        public async Task Delete(VehicleTypeDeleteModel toDelete)
         {
             var vehicleType = await vehicleTypeRepository.GetById(toDelete.Brand, toDelete.Model);
 

@@ -1,12 +1,12 @@
 ﻿using API.Entities;
-using API.Models.Return;
+using API.Models.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.Models
+namespace API.Models.Return
 {
     public class VehicleModel : VehicleCreateModel
     {
@@ -22,7 +22,7 @@ namespace API.Models
             Description = ob.Description;
             LocationAddress = ob.LocationAddress;
 
-            if(ob.Location != null)
+            if (ob.Location != null)
                 LocationAddress = ob.Location.Address;
 
             if (ob.Image != null)

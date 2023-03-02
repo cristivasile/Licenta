@@ -1,10 +1,7 @@
 ﻿using API.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using API.Models.Input;
 
-namespace API.Models
+namespace API.Models.Return
 {
     public class FeatureModel : FeatureCreateModel
     {
