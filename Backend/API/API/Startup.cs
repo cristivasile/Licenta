@@ -20,6 +20,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System;
 using API.Interfaces.Repositories;
+using API.Interfaces.Managers;
 
 namespace API
 {
@@ -89,6 +90,7 @@ namespace API
 
             services.AddScoped<IBodyTypeRepository, BodyTypeRepository>();
 
+            services.AddScoped<IVehicleTypesManager, VehicleTypeManager>();
             services.AddScoped<IVehicleTypeRepository, VehicleTypeRepository>();
 
             services.AddScoped<IStatusRepository, StatusRepository>();
@@ -96,6 +98,12 @@ namespace API
             services.AddDbContext<AppDbContext>(options => options
                                                             .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
                                                             .UseSqlServer(Configuration.GetConnectionString("ConnString")));
+
+            //-- authentication config
+            services.AddIdentity<User, Role>()
+                    .AddEntityFrameworkStores<AppDbContext>();
+            services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+            services.AddScoped<ITokenManager, TokenManager>();
 
             services.AddCors(options =>
             {
@@ -106,11 +114,6 @@ namespace API
                                   });
             });
 
-            //-- authentication config
-            services.AddIdentity<User, Role>()
-                    .AddEntityFrameworkStores<AppDbContext>();
-            services.AddScoped<IAuthenticationManager, AuthenticationManager>();
-            services.AddScoped<ITokenManager, TokenManager>();
 
             services.AddAuthentication(options =>
             {
