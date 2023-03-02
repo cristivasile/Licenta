@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [Route("api/vehicle-types")]
+    [Route("api/Vehicle-type")]
     [ApiController]
     public class VehicleTypeController : ControllerBase
     {
-        private readonly IVehicleTypesManager vehicleTypesManager;
+        private readonly IVehicleTypeManager vehicleTypesManager;
 
-        public VehicleTypeController(IVehicleTypesManager manager)
+        public VehicleTypeController(IVehicleTypeManager manager)
         {
             vehicleTypesManager = manager;
         }
