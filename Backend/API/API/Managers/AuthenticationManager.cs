@@ -1,6 +1,6 @@
 ﻿using API.Context;
 using API.Entities;
-using API.Interfaces;
+using API.Interfaces.Managers;
 using API.Models;
 using API.Models.Input;
 using Microsoft.AspNetCore.Identity;

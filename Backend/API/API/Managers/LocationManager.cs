@@ -1,6 +1,7 @@
 ﻿using API.Entities;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.Managers;
+using API.Interfaces.Repositories;
 using API.Models.Input;
 using API.Models.Return;
 using System;

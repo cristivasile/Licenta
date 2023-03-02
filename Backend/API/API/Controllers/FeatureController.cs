@@ -1,4 +1,4 @@
-﻿using API.Interfaces;
+﻿using API.Interfaces.Managers;
 using API.Managers;
 using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;

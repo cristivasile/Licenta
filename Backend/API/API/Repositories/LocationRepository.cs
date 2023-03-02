@@ -1,6 +1,6 @@
 ﻿using API.Context;
 using API.Entities;
-using API.Interfaces;
+using API.Interfaces.Repositories;
 using API.Specifications.LocationSpecifications;
 using Microsoft.EntityFrameworkCore;
 using System;

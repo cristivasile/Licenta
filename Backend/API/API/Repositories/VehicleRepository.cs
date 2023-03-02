@@ -1,6 +1,6 @@
 ﻿using API.Context;
 using API.Entities;
-using API.Interfaces;
+using API.Interfaces.Repositories;
 using API.Models;
 using API.Specifications.VehicleSpecifications;
 using Microsoft.EntityFrameworkCore;

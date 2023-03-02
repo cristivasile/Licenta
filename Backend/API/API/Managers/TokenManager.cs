@@ -1,5 +1,5 @@
 ﻿using API.Entities;
-using API.Interfaces;
+using API.Interfaces.Managers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

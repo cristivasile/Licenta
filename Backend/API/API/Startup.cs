@@ -1,6 +1,5 @@
 using API.Context;
 using API.Entities;
-using API.Interfaces;
 using API.Managers;
 using API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
