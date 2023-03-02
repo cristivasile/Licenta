@@ -1,7 +1,8 @@
 ﻿using API.Entities;
 using API.Helpers;
 using API.Interfaces;
-using API.Models;
+using API.Models.Input;
+using API.Models.Return;
 using System;
 using System.Collections.Generic;
 using System.Linq;

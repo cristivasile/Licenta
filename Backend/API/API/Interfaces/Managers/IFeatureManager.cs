@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API.Interfaces
+namespace API.Interfaces.Managers
 {
     public interface IFeatureManager
     {
@@ -14,5 +14,5 @@ namespace API.Interfaces
         Task Create(FeatureCreateModel newVehicle);
         Task Update(string id, FeatureCreateModel updatedVehicle);
         Task Delete(string id);
-    }   
+    }
 }

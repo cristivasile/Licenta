@@ -13,7 +13,7 @@ namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20230228191031_full-migration")]
-    partial class fullmigration
+    partial class Fullmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

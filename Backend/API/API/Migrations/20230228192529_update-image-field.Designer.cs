@@ -13,7 +13,7 @@ namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20230228192529_update-image-field")]
-    partial class updateimagefield
+    partial class Updateimagefield
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

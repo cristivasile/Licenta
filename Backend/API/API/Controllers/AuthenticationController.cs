@@ -1,5 +1,5 @@
 ﻿using API.Interfaces;
-using API.Models;
+using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
