@@ -13,7 +13,7 @@ namespace API.Managers
 {
     public class VehicleTypeManager : IVehicleTypeManager
     {
-        private IVehicleTypeRepository vehicleTypeRepository;
+        private readonly IVehicleTypeRepository vehicleTypeRepository;
 
         public VehicleTypeManager(IVehicleTypeRepository vehicleTypeRepository)
         {

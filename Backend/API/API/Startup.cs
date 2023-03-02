@@ -90,7 +90,7 @@ namespace API
 
             services.AddScoped<IBodyTypeRepository, BodyTypeRepository>();
 
-            services.AddScoped<IVehicleTypesManager, VehicleTypeManager>();
+            services.AddScoped<IVehicleTypeManager, VehicleTypeManager>();
             services.AddScoped<IVehicleTypeRepository, VehicleTypeRepository>();
 
             services.AddScoped<IStatusRepository, StatusRepository>();
