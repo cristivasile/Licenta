@@ -34,19 +34,18 @@ namespace API.Managers
 
         public async Task<List<VehicleModel>> GetAll()
         {
-            //use task.fromresult to simulate tolistasync
-            var vehicles = await Task.FromResult((await vehicleRepository.GetAll())
-                               .Select(x => new VehicleModel(x)).ToList());
+            var vehicles = (await vehicleRepository.GetAll())
+                               .Select(x => new VehicleModel(x))
+                               .ToList();
 
             return vehicles;
         }
 
         public async Task<List<VehicleModel>> GetAvailable(VehicleSearchModel filter)
         {
-            //use task.fromresult to simulate tolistasync
-            var vehicles = await Task.FromResult((await vehicleRepository.GetAvailable())
+            var vehicles = (await vehicleRepository.GetAvailable())
                                 .Select(x => new VehicleModel(x))
-                                .ToList());
+                                .ToList();
 
             if (filter != null)
                 vehicles = vehicles.Where(x => (x.Brand + x.Model).ToLower()
@@ -230,7 +229,7 @@ namespace API.Managers
             }
 
             await statusRepository.Update(status);
-        }
+        }   
 
         public async Task Delete(string id)
         {
@@ -251,7 +250,7 @@ namespace API.Managers
 
             var groupedFeatures = vehicle.Features.OrderBy(x => -x.Desirability)
                 .ThenBy(x => x.Name).GroupBy(x => x.Desirability)
-                .ToDictionary(x => x.Key, x => FeatureModel.ConvertToResultType(x.ToList()));
+                .ToDictionary(x => x.Key, x => x.Select(x => new FeatureModel(x)).ToList());
 
             var returned = new VehicleWithFeaturesModel(vehicle, groupedFeatures);
 

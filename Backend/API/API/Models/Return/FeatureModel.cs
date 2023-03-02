@@ -13,15 +13,5 @@ namespace API.Models
             Name = ob.Name;
             Desirability = ob.Desirability;
         }
-
-        public static List<FeatureModel> ConvertToResultType(List<Feature> list)
-        {
-            List<FeatureModel> result = new();
-
-            foreach (var ob in list)
-                result.Add(new(ob));
-
-            return result;
-        }
     }
 }
