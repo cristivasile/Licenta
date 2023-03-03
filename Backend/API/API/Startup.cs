@@ -1,11 +1,12 @@
 using API.Context;
 using API.Entities;
+using API.Interfaces.Managers;
+using API.Interfaces.Repositories;
 using API.Managers;
 using API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,12 +15,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using System;
-using API.Interfaces.Repositories;
-using API.Interfaces.Managers;
 
 namespace API
 {
@@ -87,6 +86,7 @@ namespace API
             services.AddScoped<IFeatureManager, FeatureManager>();
             services.AddScoped<IFeatureRepository, FeatureRepository>();
 
+            services.AddScoped<IBodyTypeManager, BodyTypeManager>();
             services.AddScoped<IBodyTypeRepository, BodyTypeRepository>();
 
             services.AddScoped<IVehicleTypeManager, VehicleTypeManager>();
