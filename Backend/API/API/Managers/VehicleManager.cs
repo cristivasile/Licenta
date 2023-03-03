@@ -31,6 +31,16 @@ namespace API.Managers
             this.locationRepository = locationRepository;
         }
 
+        public Task<int> GetNumberOfVehicles()
+        {
+            return vehicleRepository.GetNumberOfVehicles();
+        }
+
+        public Task<int> GetNumberOfAvailableVehicles()
+        {
+            return vehicleRepository.GetNumberOfAvailableVehicles();
+        }
+
         public async Task<DetailedVehicleModel> GetById(string id)
         {
             var vehicle = await vehicleRepository.GetById(id);
@@ -168,6 +178,8 @@ namespace API.Managers
                 Power = vehicle.Power,
                 Price = vehicle.Price,
                 Year = vehicle.Year,
+                PowerTrainType = vehicle.PowerTrainType,
+                DriveTrainType = vehicle.DriveTrainType,
                 Features = new List<Feature>()
             };
 
@@ -224,6 +236,8 @@ namespace API.Managers
             currentVehicle.LocationAddress = updatedVehicle.LocationAddress;
             currentVehicle.Year = updatedVehicle.Year;
             currentVehicle.Features = new List<Feature>();
+            currentVehicle.PowerTrainType = updatedVehicle.PowerTrainType;
+            currentVehicle.DriveTrainType = updatedVehicle.DriveTrainType;
 
             if (updatedVehicle.Features != null)
             {
@@ -277,11 +291,6 @@ namespace API.Managers
                 throw new Exception("Vehicle doesn't exist!");
 
             await vehicleRepository.Delete(currentVehicle);
-        }
-
-        public Task<int> GetNumberOfVehicles()
-        {
-            return vehicleRepository.GetNumberOfVehicles();
         }
     }
 }

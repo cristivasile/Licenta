@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using API.Entities;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Models.Input
 {
@@ -16,5 +18,7 @@ namespace API.Models.Input
         public string LocationAddress { get; set; }
         public List<string> Features { get; set; }
         public float Price { get; set; }
+        public PowerTrainType PowerTrainType { get; set; }
+        public DriveTrainType DriveTrainType { get; set; }
     }
 }

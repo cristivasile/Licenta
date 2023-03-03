@@ -1,8 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace API.Entities
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum PowerTrainType : byte
+    {
+        Diesel = 0,
+        Petrol = 1,
+        HydrogenCell = 2,   //FCEV - fuel cell electric vehicle
+        FullElectric = 3,   //BEV - battery electric vehicle
+        Hybrid = 4,         //HEV
+        PlugInHybrid = 5,   //PHEV 
+        MildHybrid = 6      //MHEV
+    }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum DriveTrainType : byte
+    {
+        FWD = 0,
+        RWD = 1,
+        AWD = 2,
+        FourWD = 3      //4WD, 4x4
+    }
+
+
     public class Vehicle : Entity
     {
         [Key]
@@ -20,7 +43,11 @@ namespace API.Entities
         public int Power { get; set; }
         [Required]
         public float Price { get; set; }
-
+        [Required]
+        public PowerTrainType PowerTrainType { get; set; }
+        [Required]
+        public DriveTrainType DriveTrainType { get; set; }
+        
         public virtual Status Status { get; set; }
         /// <summary>
         /// All features belonging to this vehicle.

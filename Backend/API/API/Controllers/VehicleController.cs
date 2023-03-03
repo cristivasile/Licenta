@@ -29,8 +29,16 @@ namespace API.Controllers
         }
 
         [HttpGet("getNumber")]
-        [Authorize(Policy = "User")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> ReadNumberOfVehicles()
+        {
+            var numberOfVehicles = await vehicleManager.GetNumberOfVehicles();
+            return Ok(numberOfVehicles);
+        }
+
+        [HttpGet("getAvailableNumber")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> ReadNumberOfAvailableVehicles()
         {
             var numberOfVehicles = await vehicleManager.GetNumberOfVehicles();
             return Ok(numberOfVehicles);

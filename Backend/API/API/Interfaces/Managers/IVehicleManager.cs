@@ -8,6 +8,7 @@ namespace API.Interfaces.Managers
     public interface IVehicleManager
     {
         Task<int> GetNumberOfVehicles();
+        Task<int> GetNumberOfAvailableVehicles();
         Task<List<VehicleModel>> GetAll(VehiclePaginationModel filters);
         Task<List<VehicleModel>> GetAvailable();
         /// <summary>

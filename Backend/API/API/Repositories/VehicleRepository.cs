@@ -28,6 +28,11 @@ namespace API.Repositories
         public async Task<Vehicle> GetById(string id)
             => await ApplySpecification(new VehicleByIdSpecification(id)).FirstOrDefaultAsync();
 
+        public async Task<int> GetNumberOfAvailableVehicles()
+        {
+            return await entitySet.Include(x => x.Status).Where(x => x.Status.IsSold == false).CountAsync();
+        }
+
         public async Task<int> GetNumberOfVehicles()
         {
             return await entitySet.CountAsync();

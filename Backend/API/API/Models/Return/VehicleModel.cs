@@ -16,6 +16,8 @@ namespace API.Models.Return
         public float EngineSize { get; set; }
         public int Year { get; set; }
         public float Price { get; set; }
+        public PowerTrainType PowerTrainType { get; set; }
+        public DriveTrainType DriveTrainType { get; set; }
 
         public VehicleModel(Vehicle ob)
         {
@@ -28,6 +30,8 @@ namespace API.Models.Return
             EngineSize = ob.EngineSize;
             Price = ob.Price;
             Year = ob.Year;
+            PowerTrainType = ob.PowerTrainType;
+            DriveTrainType = ob.DriveTrainType;
 
             if (ob.Image != null)
                 Image = ob.Image;
