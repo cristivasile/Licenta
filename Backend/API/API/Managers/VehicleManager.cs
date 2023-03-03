@@ -31,6 +31,38 @@ namespace API.Managers
             this.locationRepository = locationRepository;
         }
 
+        public async Task<DetailedVehicleModel> GetById(string id)
+        {
+            var vehicle = await vehicleRepository.GetById(id);
+
+            if (vehicle == null)
+                return null;
+
+            var groupedFeatures = vehicle.Features.OrderBy(x => -x.Desirability)
+                .ThenBy(x => x.Name).GroupBy(x => x.Desirability)
+                .ToDictionary(x => x.Key, x => x.Select(x => new FeatureModel(x)).ToList());
+
+            var returned = new DetailedVehicleModel(vehicle, groupedFeatures);
+
+            return returned;
+        }
+
+        public async Task<FullVehicleModel> GetByIdExtended(string id)
+        {
+            var vehicle = await vehicleRepository.GetById(id);
+
+            if (vehicle == null)
+                return null;
+
+            var groupedFeatures = vehicle.Features.OrderBy(x => -x.Desirability)
+                .ThenBy(x => x.Name).GroupBy(x => x.Desirability)
+                .ToDictionary(x => x.Key, x => x.Select(x => new FeatureModel(x)).ToList());
+
+            var returned = new FullVehicleModel(vehicle, groupedFeatures);
+
+            return returned;
+        }
+
         public async Task<List<VehicleModel>> GetAll(VehiclePaginationModel filters)
         {
             List<Vehicle> vehicles;
@@ -214,7 +246,7 @@ namespace API.Managers
             await vehicleRepository.Update(currentVehicle);
         }
 
-        public async Task UpdateStatus(string id, VehicleUpdateStatusModel updatedStatus)
+        public async Task UpdateStatus(string id, VehicleStatusUpdateModel updatedStatus)
         {
             var currentVehicle = await vehicleRepository.GetById(id);
 
@@ -245,22 +277,6 @@ namespace API.Managers
                 throw new Exception("Vehicle doesn't exist!");
 
             await vehicleRepository.Delete(currentVehicle);
-        }
-
-        public async Task<VehicleWithFeaturesModel> GetById(string id)
-        {
-            var vehicle = await vehicleRepository.GetById(id);
-
-            if (vehicle == null)
-                return null;
-
-            var groupedFeatures = vehicle.Features.OrderBy(x => -x.Desirability)
-                .ThenBy(x => x.Name).GroupBy(x => x.Desirability)
-                .ToDictionary(x => x.Key, x => x.Select(x => new FeatureModel(x)).ToList());
-
-            var returned = new VehicleWithFeaturesModel(vehicle, groupedFeatures);
-
-            return returned;
         }
 
         public Task<int> GetNumberOfVehicles()

@@ -60,6 +60,18 @@ namespace API.Controllers
             return Ok(vehicle);
         }
 
+        [HttpGet("admin/{id}")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> ReadByIdExtended([FromRoute] string id)
+        {
+            var vehicle = await vehicleManager.GetByIdExtended(id);
+
+            if (vehicle == null)
+                return NotFound();
+
+            return Ok(vehicle);
+        }
+
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateVehicle([FromBody] VehicleCreateModel vehicle)
@@ -97,7 +109,7 @@ namespace API.Controllers
 
         [HttpPut("setSold/{id}")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> UpdateVehicleStatus([FromRoute] string id, [FromBody] VehicleUpdateStatusModel newStatus)
+        public async Task<IActionResult> UpdateVehicleStatus([FromRoute] string id, [FromBody] VehicleStatusUpdateModel newStatus)
         {
             try
             {

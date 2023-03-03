@@ -1,28 +1,20 @@
 ﻿using API.Entities;
-using API.Models.Input;
+using static System.Net.Mime.MediaTypeNames;
 using System.Collections.Generic;
+using API.Models.Input;
 
 namespace API.Models.Return
 {
-    public class VehicleWithFeaturesModel : VehicleCreateModel
+    public class VehicleWithFeaturesModel : VehicleModel
     {
-        public string Id { get; set; }
-        public StatusModel Status { get; set; }
+        public string Description { get; set; }
+        public string LocationAddress { get; set; }
         public Dictionary<int, List<FeatureModel>> GroupedFeatures { get; set; }
 
-        public VehicleWithFeaturesModel(Vehicle ob, Dictionary<int, List<FeatureModel>> groupedFeatures)
+        public VehicleWithFeaturesModel(Vehicle ob, Dictionary<int, List<FeatureModel>> groupedFeatures) : base(ob)
         {
-            Id = ob.Id;
-            Brand = ob.Brand;
-            Model = ob.Model;
-            BodyType = ob.BodyTypeName;
             Description = ob.Description;
             LocationAddress = ob.LocationAddress;
-
-            if (ob.Status != null)
-            {
-                Status = new(ob.Status);
-            }
 
             if (ob.Image != null)
                 Image = ob.Image;

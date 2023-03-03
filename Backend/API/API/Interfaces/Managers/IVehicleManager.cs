@@ -14,10 +14,11 @@ namespace API.Interfaces.Managers
         /// Returns all available vehicles i.e. all vehicles that have not yet been sold
         /// </summary>
         Task<List<VehicleModel>> GetAvailable(VehicleFiltersModel filters);
-        Task<VehicleWithFeaturesModel> GetById(string id);
+        Task<DetailedVehicleModel> GetById(string id);
+        Task<FullVehicleModel> GetByIdExtended(string id);
         Task Create(VehicleCreateModel newVehicle);
         Task Update(string id, VehicleCreateModel updatedVehicle);
-        Task UpdateStatus(string id, VehicleUpdateStatusModel updatedStatus);
+        Task UpdateStatus(string id, VehicleStatusUpdateModel updatedStatus);
         Task Delete(string id);
     }
 }
