@@ -1,11 +1,14 @@
 ﻿using API.Interfaces.Managers;
+using API.Managers;
+using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [Route("api/Vehicle-type")]
+    [Route("api/Body-type")]
     [ApiController]
     public class BodyTypeController : ControllerBase
     {
@@ -16,20 +19,27 @@ namespace API.Controllers
             bodyTypeManager = manager;
         }
 
+        [HttpPost]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> CreateBodyType([FromBody] BodyTypeCreateModel bodyType)
+        {
+            try
+            {
+                await bodyTypeManager.Create(bodyType);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("getAll")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> ReadBodyTypes()
         {
             var vehicleTypes = await bodyTypeManager.GetAll();
             return Ok(vehicleTypes);
-        }
-
-        [HttpGet("getDictionary")]
-        [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> ReadVehicleTypesDictionary()
-        {
-            var vehicleTypesDictionary = await bodyTypeManager.GetBrandModelDictionary();
-            return Ok(vehicleTypesDictionary);
         }
 
         [HttpDelete("{typeName}")]
