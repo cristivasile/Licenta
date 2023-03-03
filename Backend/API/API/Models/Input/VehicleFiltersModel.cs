@@ -1,12 +1,26 @@
-﻿namespace API.Models.Input
+﻿using System.Text.Json.Serialization;
+
+namespace API.Models.Input
 {
-    public class VehicleFiltersModel
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum FiltersSortType : byte
     {
-        public string Brand { get; set; }
-        public int MaxMileage { get; set; }
-        public int MaxPrice { get; set; }
-        public int MinYear { get; set; }
-        public string Sort { get; set; }
-        public bool SortAsc { get; set; }
+        Name = 0,
+        Price = 1,
+        Mileage = 2,
+        Power = 3,
+    }
+
+    public class VehicleFiltersModel : VehiclePaginationModel
+    {
+#nullable enable
+        public string? Brand { get; set; }
+        public string? Model { get; set; }
+        public string? BodyType { get; set; }
+        public int? MaxMileage { get; set; }
+        public int? MaxPrice { get; set; }
+        public int? MinYear { get; set; }
+        public FiltersSortType? Sort { get; set; }
+        public bool? SortAsc { get; set; }
     }
 }

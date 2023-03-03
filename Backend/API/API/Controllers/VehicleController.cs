@@ -20,44 +20,31 @@ namespace API.Controllers
             this.vehicleManager = manager;
         }
         
-        [HttpGet("getAll")]
+        [HttpPost("getAll")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> ReadVehicles()
+        public async Task<IActionResult> ReadVehicles([FromBody] VehiclePaginationModel filters)
         {
-            var vehicles = await vehicleManager.GetAll();
+            var vehicles = await vehicleManager.GetAll(filters);
             return Ok(vehicles);
+        }
+
+        [HttpGet("getNumber")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> ReadNumberOfVehicles()
+        {
+            var numberOfVehicles = await vehicleManager.GetNumberOfVehicles();
+            return Ok(numberOfVehicles);
         }
 
         /// <summary>
-        /// Get all vehicles that have an associated "available" status.
+        /// Get all vehicles that have an associated "available" status. 
+        /// For no filters send an empty {} body
         /// </summary>
-        [HttpGet("getAvailable")]
+        [HttpPost("getAvailable")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> ReadAvailableVehicles()
+        public async Task<IActionResult> ReadAvailableVehicles([FromBody] VehicleFiltersModel filters)
         {
-            var vehicles = await vehicleManager.GetAvailable();
-            return Ok(vehicles);
-        }
-
-        // <summary>
-        /// Get all vehicles that have an associated "available" status, filtered by name.
-        /// </summary>
-        [HttpPost("getAvailableByName")]
-        [Authorize(Policy = "User")]
-        public async Task<IActionResult> ReadAvailableVehiclesByName([FromBody] VehicleSearchModel filter)
-        {
-            var vehicles = await vehicleManager.GetAvailable(filter);
-            return Ok(vehicles);
-        }
-
-        // <summary>
-        /// Get all vehicles that have an associated "available" status, filtered by given criteria.
-        /// </summary>
-        [HttpPost("getAvailableFiltered")]
-        [Authorize(Policy = "User")]
-        public async Task<IActionResult> ReadAvailableVehiclesFiltered([FromBody] VehicleFiltersModel filters)
-        {
-            var vehicles = await vehicleManager.GetAvailableFiltered(filters);
+            var vehicles = await vehicleManager.GetAvailable(filters);
             return Ok(vehicles);
         }
 

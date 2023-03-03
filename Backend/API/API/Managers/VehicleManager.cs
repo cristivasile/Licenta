@@ -31,70 +31,77 @@ namespace API.Managers
             this.locationRepository = locationRepository;
         }
 
-        public async Task<List<VehicleModel>> GetAll()
+        public async Task<List<VehicleModel>> GetAll(VehiclePaginationModel filters)
         {
-            var vehicles = (await vehicleRepository.GetAll())
-                               .Select(x => new VehicleModel(x))
-                               .ToList();
+            List<Vehicle> vehicles;
+            if (filters.StartAt != null && filters.NumberToGet != null)
+                vehicles = await vehicleRepository.GetRange(filters.StartAt.Value, filters.NumberToGet.Value);
+            else
+                vehicles = await vehicleRepository.GetAll();
 
-            return vehicles;
+            return vehicles.Select(x => new VehicleModel(x))
+                               .ToList();
         }
 
-        public async Task<List<VehicleModel>> GetAvailable(VehicleSearchModel filter)
+        public async Task<List<VehicleModel>> GetAvailable()
         {
             var vehicles = (await vehicleRepository.GetAvailable())
                                 .Select(x => new VehicleModel(x))
                                 .ToList();
 
-            if (filter != null)
-                vehicles = vehicles.Where(x => (x.Brand + x.Model).ToLower()
-                        .Contains(filter.Filter.Replace(" ", "").ToLower()))
-                        .ToList();
-
             return vehicles;
         }
 
-        public async Task<List<VehicleModel>> GetAvailableFiltered(VehicleFiltersModel filters)
+        public async Task<List<VehicleModel>> GetAvailable(VehicleFiltersModel filters)
         {
-            var vehicles = await GetAvailable(null);
+            var vehicles = await GetAvailable();
 
-            if (filters.Brand != "")
-                vehicles = vehicles.Where(x => x.Brand.ToLower() == filters.Brand.ToLower()).ToList();
+            //apply filters
+            IQueryable<VehicleModel> vehicleQueryable = vehicles.AsQueryable();
+            
+            if (filters.Brand != null)
+                vehicleQueryable = vehicleQueryable.Where(x => x.Brand.ToLower() == filters.Brand.ToLower());
+            if (filters.MaxMileage != null)
+                vehicleQueryable = vehicleQueryable.Where(x => x.Odometer <= filters.MaxMileage.Value);
+            if (filters.MaxPrice != null)
+                vehicleQueryable = vehicleQueryable.Where(x => x.Price <= filters.MaxPrice.Value);
+            if (filters.MinYear != null)
+                vehicleQueryable = vehicleQueryable.Where(x => x.Year >= filters.MinYear.Value);
+            
+            //assign filtered list
+            vehicles = vehicleQueryable.ToList();
 
-            if (filters.MaxMileage != 0)
-                vehicles = vehicles.Where(x => x.Odometer <= filters.MaxMileage).ToList();
-
-            if (filters.MaxPrice != 0)
-                vehicles = vehicles.Where(x => x.Price <= filters.MaxPrice).ToList();
-
-            if (filters.MinYear != 0)
-                vehicles = vehicles.Where(x => x.Year >= filters.MinYear).ToList();
-
-            if(filters.Sort != "")
+            //apply sorting
+            if (filters.Sort != null)
             {
-                if(filters.Sort.ToLower() == "type")
+                var sortMultiplier = 1;
+                if (filters.SortAsc != null && filters.SortAsc.Value == false)
+                    sortMultiplier = -1;
+                switch (filters.Sort.Value)
                 {
-                    if (filters.SortAsc == true)
-                        vehicles = vehicles.OrderBy(x => (x.Brand + x.Model)).ToList();
-                    else
-                        vehicles = vehicles.OrderByDescending(x => (x.Brand + x.Model)).ToList();
-                }
-                else
-                {
-                    var multiplier = 1;
-                    if (filters.SortAsc == false)
-                        multiplier = -1;
-
-                    if(filters.Sort.ToLower()=="price")
-                        vehicles = vehicles.OrderBy(x => multiplier * x.Price).ToList();
-
-                    else if(filters.Sort.ToLower() == "mileage")
-                        vehicles = vehicles.OrderBy(x => multiplier * x.Odometer).ToList();
-                    
-                    else
-                        vehicles = vehicles.OrderBy(x => multiplier * x.Power).ToList();
+                    case FiltersSortType.Name:
+                        if (filters.SortAsc.Value == true)
+                            vehicles = vehicles.OrderBy(x => x.Brand + x.Model).ToList();
+                        else
+                            vehicles = vehicles.OrderByDescending(x => x.Brand + x.Model).ToList();
+                        break;
+                    case FiltersSortType.Price:
+                        vehicles = vehicles.OrderBy(x => sortMultiplier * x.Price).ToList();
+                        break;
+                    case FiltersSortType.Mileage:
+                        vehicles = vehicles.OrderBy(x => sortMultiplier * x.Odometer).ToList();
+                        break;
+                    case FiltersSortType.Power:
+                        vehicles = vehicles.OrderBy(x => sortMultiplier * x.Power).ToList();
+                        break;
+                    default:
+                        break;
                 }
             }
+
+            //apply pagination
+            if (filters.StartAt != null && filters.NumberToGet != null)
+                vehicles = vehicles.Skip(filters.StartAt.Value).Take(filters.NumberToGet.Value).ToList();
 
             return vehicles;
         }
@@ -256,5 +263,9 @@ namespace API.Managers
             return returned;
         }
 
+        public Task<int> GetNumberOfVehicles()
+        {
+            return vehicleRepository.GetNumberOfVehicles();
+        }
     }
 }
