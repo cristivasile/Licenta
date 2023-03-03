@@ -3,7 +3,6 @@ using API.Entities;
 using API.Interfaces.Repositories;
 using API.Specifications.BodyTypeSpecifications;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Repositories

@@ -1,11 +1,9 @@
 ﻿using API.Context;
 using API.Entities;
 using API.Interfaces.Repositories;
-using API.Models;
 using API.Specifications.VehicleSpecifications;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Repositories

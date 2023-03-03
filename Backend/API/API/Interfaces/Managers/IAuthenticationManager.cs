@@ -1,9 +1,7 @@
 ﻿using API.Models;
 using API.Models.Input;
 using Microsoft.AspNetCore.Identity;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Interfaces.Managers
