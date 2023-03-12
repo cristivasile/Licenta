@@ -1,7 +1,5 @@
 ﻿using API.Entities;
-using static System.Net.Mime.MediaTypeNames;
 using System.Collections.Generic;
-using API.Models.Input;
 
 namespace API.Models.Return
 {
@@ -14,7 +12,9 @@ namespace API.Models.Return
         public VehicleWithFeaturesModel(Vehicle ob, Dictionary<int, List<FeatureModel>> groupedFeatures) : base(ob)
         {
             Description = ob.Description;
-            LocationAddress = ob.LocationAddress;
+
+            if(ob.Location != null)
+                LocationAddress = ob.Location.City + ", " + ob.Location.Address;
 
             if (ob.Image != null)
                 Image = ob.Image;

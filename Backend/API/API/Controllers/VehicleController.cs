@@ -17,7 +17,7 @@ namespace API.Controllers
 
         public VehicleController(IVehicleManager manager)
         {
-            this.vehicleManager = manager;
+            vehicleManager = manager;
         }
         
         [HttpPost("getAll")]

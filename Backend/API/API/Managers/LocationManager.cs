@@ -1,4 +1,5 @@
 ﻿using API.Entities;
+using API.Helpers;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Models.Input;
@@ -21,22 +22,24 @@ namespace API.Managers
 
         public async Task Create(LocationCreateModel newLocation)
         {
-            var location = await locationRepository.GetByAddress(newLocation.Address);
+            var location = await locationRepository.GetByCityAndAddress(newLocation.City, newLocation.Address);
 
             if (location != null)
                 throw new Exception("Location already exists!");
 
             var createdLocation = new Location()
             {
+                Id = Utilities.GetGUID(),
+                City = newLocation.City,
                 Address = newLocation.Address,
             };
 
             await locationRepository.Create(createdLocation); 
         }
 
-        public async Task Delete(string name)
+        public async Task Delete(string id)
         {
-            var location = await locationRepository.GetByAddress(name);
+            var location = await locationRepository.GetById(id);
 
             if (location == null)
                 throw new Exception("Location doesn't exist!");
@@ -52,25 +55,14 @@ namespace API.Managers
             return locations;
         }
 
-        public async Task<LocationModel> GetByAddress(string name)
+        public async Task Update(string id, LocationCreateModel updatedLocation)
         {
-            var location = await locationRepository.GetByAddress(name);
-
-            //404 not found
-            if (location == null)
-                return null;
-
-            var foundLocation = new LocationModel(location);
-            return foundLocation;
-        }
-
-        public async Task Update(string name, LocationCreateModel updatedLocation)
-        {
-            var location = await locationRepository.GetByAddress(name);
+            var location = await locationRepository.GetById(id);
 
             if (location == null)
                 throw new Exception("Location doesn't exist!");
 
+            location.City = updatedLocation.City;
             location.Address = updatedLocation.Address;
 
             await locationRepository.Update(location);

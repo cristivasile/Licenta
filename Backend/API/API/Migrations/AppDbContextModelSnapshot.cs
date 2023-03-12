@@ -47,10 +47,18 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Location", b =>
                 {
-                    b.Property<string>("Address")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Address");
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Locations");
                 });
@@ -218,7 +226,7 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("");
 
-                    b.Property<string>("LocationAddress")
+                    b.Property<string>("LocationId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Model")
@@ -246,7 +254,7 @@ namespace API.Migrations
 
                     b.HasIndex("BodyTypeName");
 
-                    b.HasIndex("LocationAddress");
+                    b.HasIndex("LocationId");
 
                     b.HasIndex("Brand", "Model");
 
@@ -414,7 +422,7 @@ namespace API.Migrations
 
                     b.HasOne("API.Entities.Location", "Location")
                         .WithMany("OwnedVehicles")
-                        .HasForeignKey("LocationAddress");
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("API.Entities.VehicleType", "VehicleType")
                         .WithMany("Vehicles")

@@ -25,16 +25,6 @@ namespace API.Controllers
             return Ok(locations);
         }
 
-        [HttpGet("{address}")]
-        [Authorize(Policy = "User")]
-        public async Task<IActionResult> ReadByAddress([FromRoute] string address)
-        {
-            var location = await locationManager.GetByAddress(address);
-            if (location == null)
-                return NotFound();
-            return Ok(location);
-        }
-
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateLocation([FromBody] LocationCreateModel newLocation)

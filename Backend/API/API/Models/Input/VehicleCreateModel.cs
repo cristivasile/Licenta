@@ -15,7 +15,7 @@ namespace API.Models.Input
         public int Year { get; set; }
         public float EngineSize { get; set; }
         public int Power { get; set; }
-        public string LocationAddress { get; set; }
+        public string LocationId { get; set; }
         public List<string> Features { get; set; }
         public float Price { get; set; }
         public PowerTrainType PowerTrainType { get; set; }

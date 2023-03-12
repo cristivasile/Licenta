@@ -12,9 +12,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230303200014_update-vehicles")]
+    [Migration("20230312164205_update-location-table")]
 #pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
-    partial class updatevehicles
+    partial class updatelocationtable
 #pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
         /// <inheritdoc />
@@ -52,10 +52,18 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Location", b =>
                 {
-                    b.Property<string>("Address")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Address");
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Locations");
                 });
@@ -223,7 +231,7 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("");
 
-                    b.Property<string>("LocationAddress")
+                    b.Property<string>("LocationId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Model")
@@ -251,7 +259,7 @@ namespace API.Migrations
 
                     b.HasIndex("BodyTypeName");
 
-                    b.HasIndex("LocationAddress");
+                    b.HasIndex("LocationId");
 
                     b.HasIndex("Brand", "Model");
 
@@ -419,7 +427,7 @@ namespace API.Migrations
 
                     b.HasOne("API.Entities.Location", "Location")
                         .WithMany("OwnedVehicles")
-                        .HasForeignKey("LocationAddress");
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("API.Entities.VehicleType", "VehicleType")
                         .WithMany("Vehicles")

@@ -28,7 +28,7 @@ namespace API.Configurations
             builder
                 .HasOne<Location>(x => x.Location)
                 .WithMany(x => x.OwnedVehicles)
-                .HasForeignKey(x => x.LocationAddress);
+                .HasForeignKey(x => x.LocationId);
 
             //1 - M : Vehicle <-> BodyType
             builder

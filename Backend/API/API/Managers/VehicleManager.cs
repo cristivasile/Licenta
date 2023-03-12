@@ -151,7 +151,7 @@ namespace API.Managers
         public async Task Create(VehicleCreateModel vehicle)
         {
             //check if location exists
-            if (await locationRepository.GetByAddress(vehicle.LocationAddress) == null)
+            if (await locationRepository.GetById(vehicle.LocationId) == null)
                 throw new Exception("Invalid location address!");
 
             //check if body type exists
@@ -172,7 +172,7 @@ namespace API.Managers
                 Model = vehicle.Model,
                 BodyTypeName = vehicle.BodyType,
                 Description = vehicle.Description,
-                LocationAddress = vehicle.LocationAddress,
+                LocationId = vehicle.LocationId,
                 Odometer = vehicle.Odometer,
                 EngineSize = vehicle.EngineSize,
                 Power = vehicle.Power,
@@ -214,7 +214,7 @@ namespace API.Managers
                 currentVehicle.Image = updatedVehicle.Image;
 
             //check if location exists
-            if (await locationRepository.GetByAddress(updatedVehicle.LocationAddress) == null)
+            if (await locationRepository.GetById(updatedVehicle.LocationId) == null)
                 throw new Exception("Invalid location address!");
 
             //check if body type exists
@@ -233,7 +233,7 @@ namespace API.Managers
             currentVehicle.EngineSize = updatedVehicle.EngineSize;
             currentVehicle.Power = updatedVehicle.Power;
             currentVehicle.Odometer = updatedVehicle.Odometer;
-            currentVehicle.LocationAddress = updatedVehicle.LocationAddress;
+            currentVehicle.LocationId = updatedVehicle.LocationId;
             currentVehicle.Year = updatedVehicle.Year;
             currentVehicle.Features = new List<Feature>();
             currentVehicle.PowerTrainType = updatedVehicle.PowerTrainType;

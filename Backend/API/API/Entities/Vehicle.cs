@@ -58,7 +58,7 @@ namespace API.Entities
         public string Model { get; set; }
         public virtual VehicleType VehicleType { get; set; }
 
-        public string LocationAddress { get; set; }
+        public string LocationId { get; set; }
         public virtual Location Location { get; set; }
 
         public string BodyTypeName { get; set; }

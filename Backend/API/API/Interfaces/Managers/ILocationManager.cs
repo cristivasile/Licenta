@@ -8,9 +8,8 @@ namespace API.Interfaces.Managers
     public interface ILocationManager
     {
         Task<List<LocationModel>> GetAll();
-        Task<LocationModel> GetByAddress(string name);
         Task Create(LocationCreateModel newVehicle);
-        Task Update(string name, LocationCreateModel updatedVehicle);
-        Task Delete(string name);
+        Task Update(string id, LocationCreateModel updatedVehicle);
+        Task Delete(string id);
     }
 }

@@ -14,7 +14,10 @@ namespace API.Repositories
             entitySet = context.Locations;
         }
 
-        public async Task<Location> GetByAddress(string address) 
-            => await ApplySpecification(new LocationByAddressSpecification(address)).FirstOrDefaultAsync();
+        public async Task<Location> GetByCityAndAddress(string city, string address)
+            => await ApplySpecification(new LocationByCityAndAddressSpecification(city, address)).FirstOrDefaultAsync();
+
+        public async Task<Location> GetById(string id) 
+            => await ApplySpecification(new LocationByIdSpecification(id)).FirstOrDefaultAsync();
     }
 }
