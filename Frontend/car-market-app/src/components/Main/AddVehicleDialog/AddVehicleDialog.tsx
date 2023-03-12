@@ -160,12 +160,12 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
     setLoading(true);
 
-    if (imageValue.size != 0) {
+    if (imageValue.size !== 0) {
       var compressedImage = await compressImage(imageValue, .5, 1024);  //compress the image in order to save bandwidth and reduce loading times
       var base64Image = imageValue.name !== "" ? await fileToBase64(compressedImage) : "";
     }
     else {
-      var base64Image = "";
+      base64Image = "";
     }
 
     var newVehicle: VehicleAddModel = {   //TODO - implement features
