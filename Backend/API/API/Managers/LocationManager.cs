@@ -20,21 +20,24 @@ namespace API.Managers
             locationRepository = repository;
         }
 
-        public async Task Create(LocationCreateModel newLocation)
+        public async Task<string> Create(LocationCreateModel newLocation)
         {
             var location = await locationRepository.GetByCityAndAddress(newLocation.City, newLocation.Address);
 
             if (location != null)
                 throw new Exception("Location already exists!");
 
+            string id = Utilities.GetGUID();
+
             var createdLocation = new Location()
             {
-                Id = Utilities.GetGUID(),
+                Id = id,
                 City = newLocation.City,
                 Address = newLocation.Address,
             };
 
-            await locationRepository.Create(createdLocation); 
+            await locationRepository.Create(createdLocation);
+            return id;
         }
 
         public async Task Delete(string id)

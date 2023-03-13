@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField } from '@mui/material';
 import React, { FC, useState } from 'react';
-import { useAppDispatch } from '../../../hooks';
-import { setVehicles } from '../../../redux/vehiclesStore';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
 import { getAvailableVehicles, postVehicle, VehicleAddModel } from '../../../services/vehiclesService';
 import { compressImage, fileToBase64 } from '../../../utils';
@@ -12,12 +12,12 @@ export interface AddVehicleDialogProps {
   isOpen: boolean,
   onClose: Function,
   loadingCallback: Function,
-  locations: string[],
 }
 
 const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProps) => {
 
   const today = new Date();
+  const locations = useAppSelector((state) => state.location.locations);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -96,17 +96,17 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
   function validate() {
     var hasError = false;
-    if (modelValue === "") {
+    if (modelValue.trim() === "") {
       setModelError(true);
       setModelErrorText("This field is mandatory!");
       hasError = true;
     }
-    if (brandValue === "") {
+    if (brandValue.trim() === "") {
       setBrandError(true);
       setBrandErrorText("This field is mandatory!");
       hasError = true;
     }
-    if (locationValue === "") {
+    if (locationValue.trim() === "") {
       setLocationError(true);
       setLocationErrorText("This field is mandatory!");
       hasError = true;
@@ -200,7 +200,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
             .then(async (response) => {
               if (response.status === 200) {
                 var json = await response.json();
-                dispatch(setVehicles(json));
+                dispatch(setVehiclesFromJson(json));
               }
               else {
                 generateToastError("The server returned " + response.status + ", please refresh the page manually!", 5000);
@@ -295,9 +295,9 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
             onChange={(event) => setLocationValue(event.target.value)}
             name="location" className="vehicleDialogField"
             error={locationError} helperText={locationErrorText}>
-            {props.locations.map((location) => (
-              <MenuItem key={location} value={location}>
-                {location}
+            {locations.map((location) => (
+              <MenuItem key={location.city + ", " + location.address} value={location.id}>
+                {location.city + ", " + location.address}
               </MenuItem>
             ))}
           </TextField>

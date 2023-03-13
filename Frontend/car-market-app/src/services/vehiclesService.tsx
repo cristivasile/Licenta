@@ -41,8 +41,9 @@ export const postVehicle = (newVehicle: VehicleAddModel): Promise<Response> => {
 export const getAvailableVehicles = (): Promise<Response> => {
     
     const requestOptions = {
-        method: 'GET',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
+        body: "{}", //empty body for no filters
     };
     return authenticatedFetch(apiUrl + "/api/Vehicle/getAvailable", requestOptions);
 }

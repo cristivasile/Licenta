@@ -7,11 +7,11 @@ export const vehicleSlice = createSlice({
         vehicles: new Array<VehicleModel>(),
     },
     reducers: {
-        setVehicles: (state, action) => {
+        setVehiclesFromJson: (state, action) => {
             state.vehicles = mapJsonToVehicleModels(action.payload);
         }
     }
 },);
 
-export const {setVehicles} = vehicleSlice.actions;
+export const {setVehiclesFromJson} = vehicleSlice.actions;
 export default vehicleSlice.reducer;

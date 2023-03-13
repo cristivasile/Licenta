@@ -31,8 +31,8 @@ namespace API.Controllers
         {
             try
             {
-                await locationManager.Create(newLocation);
-                return Ok();
+                var id = await locationManager.Create(newLocation);
+                return Ok(id);
             }
             catch
             {
@@ -41,13 +41,13 @@ namespace API.Controllers
         }
 
 
-        [HttpPut("{address}")]
+        [HttpPut("{id}")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> UpdateLocation([FromRoute] string address, [FromBody] LocationCreateModel updatedLocation)
+        public async Task<IActionResult> UpdateLocation([FromRoute] string id, [FromBody] LocationCreateModel updatedLocation)
         {
             try
             {
-                await locationManager.Update(address, updatedLocation);
+                await locationManager.Update(id, updatedLocation);
                 return Ok();
             }
             catch
@@ -56,13 +56,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("{address}")]
+        [HttpDelete("{id}")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> DeleteLocation([FromRoute] string address)
+        public async Task<IActionResult> DeleteLocation([FromRoute] string id)
         {
             try
             {
-                await locationManager.Delete(address);
+                await locationManager.Delete(id);
                 return Ok();
             }
             catch

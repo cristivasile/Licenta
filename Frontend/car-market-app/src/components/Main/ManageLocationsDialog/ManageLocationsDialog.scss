@@ -1,0 +1,15 @@
+.splitDiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .locationDialogField{
+        width: 48%;
+    }
+}
+
+.rightDiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+}

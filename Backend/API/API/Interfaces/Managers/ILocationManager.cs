@@ -7,9 +7,10 @@ namespace API.Interfaces.Managers
 {
     public interface ILocationManager
     {
+        //returns the id after creating
+        Task<string> Create(LocationCreateModel newVehicle);
         Task<List<LocationModel>> GetAll();
-        Task Create(LocationCreateModel newVehicle);
-        Task Update(string id, LocationCreateModel updatedVehicle);
+        Task Update(string id, LocationCreateModel updatedVehicle); 
         Task Delete(string id);
     }
 }

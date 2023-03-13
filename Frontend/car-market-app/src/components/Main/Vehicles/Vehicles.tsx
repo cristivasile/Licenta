@@ -2,22 +2,19 @@ import { Button } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import './Vehicles.scss';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import AddLocationDialog from '../AddLocationDialog/AddLocationDialog';
+import MenuIcon from '@mui/icons-material/Menu';
+import ManageLocationsDialog from '../ManageLocationsDialog/ManageLocationsDialog';
 import AddVehicleDialog, { AddVehicleDialogProps } from '../AddVehicleDialog/AddVehicleDialog';
 import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
-import { setLocations } from '../../../redux/locationsStore';
+import { setLocationsFromJson } from '../../../redux/locationsStore';
 import { getLocations } from '../../../services/locationsService';
 import { getAvailableVehicles } from '../../../services/vehiclesService';
-import { setVehicles } from '../../../redux/vehiclesStore';
+import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import VehicleItem from '../VehicleItem/VehicleItem';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
 
 interface VehiclesProps { }
-
-interface LocationsModel {
-  address: string
-}
 
 const adminRoleSet = new Set<string>(["admin", "sysadmin"]);
 /**
@@ -35,7 +32,6 @@ const Vehicles: FC<VehiclesProps> = () => {
   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const locations = useAppSelector((state) => state.location.locations);
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
   const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
   const dispatch = useAppDispatch();
@@ -46,7 +42,7 @@ const Vehicles: FC<VehiclesProps> = () => {
       .then(async (result) => {
         if (result.status === 200) {
           var json = await result.json();
-          dispatch(setVehicles(json));
+          dispatch(setVehiclesFromJson(json));
         }
         else {
           notifyBadResultCode(result.status);
@@ -62,7 +58,26 @@ const Vehicles: FC<VehiclesProps> = () => {
   }, []);
 
   function openLocationDialog() {
-    setLocationDialogOpen(true);
+    setLoading(true);
+
+    getLocations()
+    .then(async response => {
+      if (response.status !== 200) {
+        notifyBadResultCode(response.status);
+      }
+      else {
+        var json = await response.json();
+        dispatch(setLocationsFromJson(json));
+        setLocationDialogOpen(true);
+      }
+    })
+    .catch((err) => {
+      notifyFetchFail(err);
+      return;
+    })
+    .then(() => {
+      setLoading(false);
+    });
   }
 
   function closeLocationDialog() {
@@ -84,8 +99,7 @@ const Vehicles: FC<VehiclesProps> = () => {
         }
         else {
           var json = await response.json();
-          var locationsList = json.map((x: LocationsModel) => x.address);
-          dispatch(setLocations(locationsList));
+          dispatch(setLocationsFromJson(json));
           setVehicleDialogOpen(true);
         }
       })
@@ -106,20 +120,19 @@ const Vehicles: FC<VehiclesProps> = () => {
     isOpen: vehicleDialogOpen,
     onClose: closeVehicleDialog,
     loadingCallback: setLoading,
-    locations: locations,
   } as AddVehicleDialogProps;
 
   return (
     <div className="vehicles">
       {loading ? <Loading /> : <></>}
-      <AddLocationDialog {...locationDialogProps} />
+      <ManageLocationsDialog {...locationDialogProps} />
       <AddVehicleDialog {...vehicleDialogProps} />
       {/* only display the admin toolbar for admins 
         NOTE - if somebody manually changes their role they can see the menus but they can't use them because the requests will return 403 */
         showAdminCommands ?
           <div className="adminToolbar">
             <div className="adminToolbarButtons">
-              <Button disabled={loading} variant="contained" startIcon={<AddCircleIcon />} onClick={openLocationDialog}>Add location</Button>
+              <Button disabled={loading} variant="contained" startIcon={<MenuIcon />} onClick={openLocationDialog}>Manage locations</Button>
               <Button disabled={loading} variant="contained" startIcon={<AddCircleIcon />} onClick={openVehicleDialog}>Add vehicle</Button>
             </div>
           </div>
