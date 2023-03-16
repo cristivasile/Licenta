@@ -2,6 +2,7 @@
 using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -25,16 +26,6 @@ namespace API.Controllers
             return Ok(locations);
         }
 
-        [HttpGet("{id}")]
-        [Authorize(Policy = "User")]
-        public async Task<IActionResult> ReadById([FromRoute] string id)
-        {
-            var location = await featureManager.GetByName(id);
-            if (location == null)
-                return NotFound();
-            return Ok(location);
-        }
-
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateFeature([FromBody] FeatureCreateModel newFeature)
@@ -44,9 +35,9 @@ namespace API.Controllers
                 await featureManager.Create(newFeature);
                 return Ok();
             }
-            catch
+            catch(Exception ex)
             {
-                return BadRequest("Location already exists! Update or delete it!");
+                return BadRequest($"{ex.Message}");
             }
         }
 
