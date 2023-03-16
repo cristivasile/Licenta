@@ -20,3 +20,17 @@ export function TabPanel(props: any) {
       </Typography>
     );
   }
+
+  /**
+   * Used to notify the user of errors inside forms 
+   */
+  export const generateErrorMessage = (errorMessage: string) => (
+    <div className="errorMessage leftMargin">{errorMessage}</div>
+  );
+  
+  /**
+   * Used to notify the user of a successful operation inside forms 
+   */
+  export const generateSuccessMessage = (successMessage: string) => (
+    <div className="successMessage leftMargin">{successMessage}</div>
+  );

@@ -1,5 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField } from '@mui/material';
 import React, { FC, useState } from 'react';
+import { generateErrorMessage, generateSuccessMessage } from '../../../common';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
@@ -52,13 +53,6 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [priceErrorText, setPriceErrorText] = useState("");
 
   const dispatch = useAppDispatch();
-
-  const generateErrorMessage = () => (
-    <div className="errorMessage leftMargin">{errorMessage}</div>
-  );
-  const generateSuccessMessage = () => (
-    <div className="successMessage leftMargin">{successMessage}</div>
-  );
 
   function clearMessages() {
     setErrorMessage("");
@@ -315,8 +309,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
             multiline minRows={3} maxRows={5} name="description" className="vehicleDialogField" />
         </div>
       </DialogContent>
-      {generateErrorMessage()}
-      {generateSuccessMessage()}
+      {generateErrorMessage(errorMessage)}
+      {generateSuccessMessage(successMessage)}
       <DialogActions>
         <Button disabled={loading} onClick={() => { clearMessages(); props.onClose(); }} variant="contained">Cancel</Button>
         <Button disabled={loading} onClick={addVehicle} variant="contained">Add</Button>

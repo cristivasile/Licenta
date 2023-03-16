@@ -1,6 +1,7 @@
 import { Button, TextField } from '@mui/material';
 import React, { FC, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { generateErrorMessage } from '../../common';
 import { apiUrl } from '../../constants';
 import Loading from '../Loading/Loading';
 import './Auth.scss';
@@ -28,10 +29,6 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const generateErrorMessage = () => (
-    <div className="errorMessage">{errorMessage}</div>
-  );
 
   function validate(){
     var hasError = false;
@@ -151,7 +148,7 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
               type="password" placeholder="*******" name="repeat"
               error={repeatError} helperText={repeatErrorText} />
           </div>
-          {generateErrorMessage()}
+          {generateErrorMessage(errorMessage)}
           <div className="buttonDiv">
             <Button disabled={loading} variant="contained" type="submit">Register</Button>
           </div>

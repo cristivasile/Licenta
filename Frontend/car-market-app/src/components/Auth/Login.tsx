@@ -8,6 +8,7 @@ import { useAppDispatch } from '../../hooks';
 import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath, apiUrl } from '../../constants';
 import Loading from '../Loading/Loading';
 import { notifyFetchFail } from '../../services/toastNotificationsService';
+import { generateErrorMessage } from '../../common';
 
 interface LoginProps { 
   userName: string;
@@ -29,10 +30,6 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  const generateErrorMessage = () => (
-    <div className="errorMessage">{errorMessage}</div>
-  );
 
   function validate(){
     var hasError = false;
@@ -128,7 +125,7 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
               type="password" placeholder="*******" name="password" 
               error={passwordError} helperText={passwordErrorText}/>
           </div>
-          {generateErrorMessage()}
+          {generateErrorMessage(errorMessage)}
           <div className="buttonDiv">
             <Button disabled={loading} variant="contained" type="submit">Log in</Button>
           </div>

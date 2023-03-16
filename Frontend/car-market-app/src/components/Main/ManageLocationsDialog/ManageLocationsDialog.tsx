@@ -1,6 +1,6 @@
 import { Box, Button, Dialog, DialogActions, DialogTitle, MenuItem, Tab, Tabs, TextField } from '@mui/material';
 import { FC, useState } from 'react';
-import { TabPanel } from '../../../common';
+import { generateErrorMessage, generateSuccessMessage, TabPanel } from '../../../common';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { addLocation, removeLocationById, updateLocationById } from '../../../redux/locationsStore';
 import { postLocation, removeLocation, updateLocation } from '../../../services/locationsService';
@@ -31,13 +31,6 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
 
   const locations = useAppSelector((state) => state.location.locations);
   const dispatch = useAppDispatch();
-
-  const generateErrorMessage = () => (
-    <div className="errorMessage leftMargin">{errorMessage}</div>
-  );
-  const generateSuccessMessage = () => (
-    <div className="successMessage leftMargin">{successMessage}</div>
-  );
 
   function clearErrors() {
     setErrorMessage("");
@@ -260,15 +253,13 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
         </div>
       </TabPanel>
 
-      {generateErrorMessage()}
-      {generateSuccessMessage()}
+      {generateErrorMessage(errorMessage)}
+      {generateSuccessMessage(successMessage)}
       <DialogActions>
         <Button disabled={loading} onClick={() => props.onClose()} variant="contained">Close</Button>
       </DialogActions>
     </Dialog>
   );
 }
-
-
 
 export default ManageLocationsDialog;
