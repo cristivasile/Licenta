@@ -201,11 +201,11 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
           <TextField value={cityValue} label="City" margin="dense" fullWidth autoFocus
             onChange={(event) => setCityValue(event.target.value)}
             error={cityError} helperText={cityErrorText}
-            type="text" name="address" className="locationDialogField" />
+            type="text" name="address"/>
           <TextField value={addressValue} label="Address" margin="dense" fullWidth autoFocus
             error={addressError} helperText={addressErrorText}
             onChange={(event) => setAddressValue(event.target.value)}
-            type="text" name="address" className="locationDialogField" />
+            type="text" name="address"/>
         </div>
         <div className="rightDiv" style={{ marginTop: 20 }}>
           <Button disabled={loading} onClick={addLocationClick} variant="contained" >Add</Button>
@@ -215,7 +215,7 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
         <TextField value={locationValue} label="Select a location to modify" margin="dense" fullWidth autoFocus select
           onChange={(event) => setLocationValue(event.target.value)}
           error={locationError} helperText={locationErrorText}
-          name="location" className="vehicleDialogField">
+          name="location">
           {locations.map((location) => (
             <MenuItem key={location.city + ", " + location.address} value={location.id}>
               {location.city + ", " + location.address}
@@ -226,11 +226,11 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
           <TextField value={cityValue} label="City" margin="dense" fullWidth autoFocus
             onChange={(event) => setCityValue(event.target.value)}
             error={cityError} helperText={cityErrorText}
-            type="text" name="address" className="locationDialogField" />
+            type="text" name="address"/>
           <TextField value={addressValue} label="Address" margin="dense" fullWidth autoFocus
             error={addressError} helperText={addressErrorText}
             onChange={(event) => setAddressValue(event.target.value)}
-            type="text" name="address" className="locationDialogField" />
+            type="text" name="address"/>
         </div>
         <div className="rightDiv" style={{ marginTop: 20 }}>
           <Button disabled={loading} onClick={updateLocationClick} variant="contained">Update</Button>
@@ -240,7 +240,7 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
         <TextField value={locationValue} label="Select a location to remove" margin="dense" fullWidth autoFocus select
           onChange={(event) => setLocationValue(event.target.value)}
           error={locationError} helperText={locationErrorText}
-          name="location" className="vehicleDialogField">
+          name="location">
           {locations.map((location) => (
             <MenuItem key={location.city + ", " + location.address} value={location.id}>
               {location.city + ", " + location.address}

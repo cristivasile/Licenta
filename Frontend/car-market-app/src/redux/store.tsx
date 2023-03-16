@@ -3,6 +3,7 @@ import userReducer from './userStore';
 import locationsReducer from './locationsStore';
 import vehiclesReducer from './vehiclesStore';
 import featuresReducer from './featuresStore';
+import bodyTypesReducer from './bodyTypesStore';
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         location: locationsReducer,
         vehicle: vehiclesReducer,
         feature: featuresReducer,
+        bodyType: bodyTypesReducer,
     }
 });
 

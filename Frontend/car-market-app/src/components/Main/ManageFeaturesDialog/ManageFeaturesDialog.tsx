@@ -179,7 +179,7 @@ const ManageFeaturesDialog: FC<ManageFeaturessDialogProps> = (props: ManageFeatu
                 <TextField value={nameValue} label="Feature name" margin="dense" fullWidth autoFocus
                     onChange={(event) => setNameValue(event.target.value)}
                     error={nameError} helperText={nameErrorText}
-                    type="text" name="name" className="locationDialogField" />
+                    type="text" name="name" />
                 <div className="rightDiv" style={{ marginTop: 20 }}>
                     <Button disabled={loading} onClick={addFeatureClick} variant="contained" >Add</Button>
                 </div>
@@ -188,7 +188,7 @@ const ManageFeaturesDialog: FC<ManageFeaturessDialogProps> = (props: ManageFeatu
                 <TextField value={selectedFeatureValue} label="Select a feature to modify" margin="dense" fullWidth autoFocus select
                     onChange={(event) => setSelectedFeatureValue(event.target.value)}
                     error={selectedFeatureError} helperText={selectedFeatureErrorText}
-                    name="location" className="vehicleDialogField">
+                    name="location">
                     {features.map((feature) => (
                         <MenuItem key={feature.name} value={feature.id}>
                             {feature.name}
@@ -198,7 +198,7 @@ const ManageFeaturesDialog: FC<ManageFeaturessDialogProps> = (props: ManageFeatu
                 <TextField value={nameValue} label="Feature name" margin="dense" fullWidth autoFocus
                     onChange={(event) => setNameValue(event.target.value)}
                     error={nameError} helperText={nameErrorText}
-                    type="text" name="name" className="locationDialogField" />
+                    type="text" name="name"/>
                 <div className="rightDiv" style={{ marginTop: 20 }}>
                     <Button disabled={loading} onClick={updateFeatureClick} variant="contained">Update</Button>
                 </div>
@@ -207,7 +207,7 @@ const ManageFeaturesDialog: FC<ManageFeaturessDialogProps> = (props: ManageFeatu
                 <TextField value={selectedFeatureValue} label="Select a feature to remove" margin="dense" fullWidth autoFocus select
                     onChange={(event) => setSelectedFeatureValue(event.target.value)}
                     error={selectedFeatureError} helperText={selectedFeatureErrorText}
-                    name="location" className="vehicleDialogField">
+                    name="location">
                     {features.map((feature) => (
                         <MenuItem key={feature.name} value={feature.id}>
                             {feature.name}
