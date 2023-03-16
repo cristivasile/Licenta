@@ -13,6 +13,9 @@ import { getAvailableVehicles } from '../../../services/vehiclesService';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import VehicleItem from '../VehicleItem/VehicleItem';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
+import ManageFeaturesDialog from '../ManageFeaturesDialog/ManageFeaturesDialog';
+import { setFeaturesFromJson } from '../../../redux/featuresStore';
+import { getFeatures } from '../../../services/featuresService';
 
 interface VehiclesProps { }
 
@@ -30,6 +33,7 @@ function isAdmin(role: string): boolean {
 const Vehicles: FC<VehiclesProps> = () => {
 
   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
+  const [featureDialogOpen, setFeatureDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
@@ -89,6 +93,38 @@ const Vehicles: FC<VehiclesProps> = () => {
     onClose: closeLocationDialog
   }
 
+  function openFeatureDialog() {
+    setLoading(true);
+
+    getFeatures()
+    .then(async response => {
+      if (response.status !== 200) {
+        notifyBadResultCode(response.status);
+      }
+      else {
+        var json = await response.json();
+        dispatch(setFeaturesFromJson(json));
+        setFeatureDialogOpen(true);
+      }
+    })
+    .catch((err) => {
+      notifyFetchFail(err);
+      return;
+    })
+    .then(() => {
+      setLoading(false);
+    });
+  }
+
+  function closeFeatureDialog() {
+    setFeatureDialogOpen(false);
+  }
+
+  const featureDialogProps = {
+    isOpen: featureDialogOpen,
+    onClose: closeFeatureDialog
+  }
+
   function openVehicleDialog() {
     setLoading(true);
 
@@ -126,6 +162,7 @@ const Vehicles: FC<VehiclesProps> = () => {
     <div className="vehicles">
       {loading ? <Loading /> : <></>}
       <ManageLocationsDialog {...locationDialogProps} />
+      <ManageFeaturesDialog {...featureDialogProps} />
       <AddVehicleDialog {...vehicleDialogProps} />
       {/* only display the admin toolbar for admins 
         NOTE - if somebody manually changes their role they can see the menus but they can't use them because the requests will return 403 */
@@ -133,6 +170,7 @@ const Vehicles: FC<VehiclesProps> = () => {
           <div className="adminToolbar">
             <div className="adminToolbarButtons">
               <Button disabled={loading} variant="contained" startIcon={<MenuIcon />} onClick={openLocationDialog}>Manage locations</Button>
+              <Button disabled={loading} variant="contained" startIcon={<MenuIcon />} onClick={openFeatureDialog}>Manage features</Button>
               <Button disabled={loading} variant="contained" startIcon={<AddCircleIcon />} onClick={openVehicleDialog}>Add vehicle</Button>
             </div>
           </div>

@@ -44,3 +44,24 @@
 .vehicleItemContainer:hover{
     box-shadow: .2em .2em 2em gray;
 }
+
+.splitDiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .locationDialogField{
+        width: 48%;
+    }
+}
+
+.rightDiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+}
+
+.selectorBox{
+    margin-left: 3%;
+    margin-right: 3%;
+}

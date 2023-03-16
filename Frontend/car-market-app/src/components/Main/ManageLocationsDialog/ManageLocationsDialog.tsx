@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { addLocation, removeLocationById, updateLocationById } from '../../../redux/locationsStore';
 import { postLocation, removeLocation, updateLocation } from '../../../services/locationsService';
 import Loading from '../../Loading/Loading';
-import './ManageLocationsDialog.scss';
 
 interface ManageLocationsDialogProps {
   isOpen: boolean,
