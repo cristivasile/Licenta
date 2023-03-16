@@ -187,7 +187,7 @@ namespace API.Managers
             {
                 foreach (var featureName in vehicle.Features)
                 {
-                    newVehicle.Features.Add(await featureRepository.GetByName(featureName));
+                    newVehicle.Features.Add(await featureRepository.GetById(featureName));
                 }
             }
 
@@ -235,7 +235,7 @@ namespace API.Managers
             {
                 foreach (var featureName in updatedVehicle.Features)
                 {
-                    currentVehicle.Features.Add(await featureRepository.GetByName(featureName));
+                    currentVehicle.Features.Add(await featureRepository.GetById(featureName));
                 }
             }
 
@@ -245,7 +245,7 @@ namespace API.Managers
             {
                 foreach (var featureName in updatedVehicle.Features)
                 {
-                    features.Add(await featureRepository.GetByName(featureName));
+                    features.Add(await featureRepository.GetById(featureName));
                 }
             }
 

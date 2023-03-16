@@ -7,7 +7,8 @@ namespace API.Interfaces.Repositories
     public interface IFeatureRepository
     {
         Task<List<Feature>> GetAll();
-        Task<Feature> GetByName(string id);
+        Task<Feature> GetById(string id);
+        Task<Feature> GetByName(string name);
         Task Create(Feature newLocation);
         Task Update(Feature updatedLocation);
         Task Delete(Feature toDelete);

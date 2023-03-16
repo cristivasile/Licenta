@@ -3,6 +3,7 @@ using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -32,12 +33,12 @@ namespace API.Controllers
         {
             try
             {
-                await featureManager.Create(newFeature);
-                return Ok();
+                var id = await featureManager.Create(newFeature);
+                return Ok(id);
             }
             catch(Exception ex)
             {
-                return BadRequest($"{ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -50,9 +51,13 @@ namespace API.Controllers
                 await featureManager.Update(id, updatedFeature);
                 return Ok();
             }
-            catch
+            catch (KeyNotFoundException)
             {
                 return NotFound();
+            }
+            catch
+            {
+                return BadRequest("A feature with the given name already exists!");
             }
         }
 

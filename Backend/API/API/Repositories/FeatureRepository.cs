@@ -14,7 +14,10 @@ namespace API.Repositories
             entitySet = context.Features;
         }
 
-        public async Task<Feature> GetByName(string name) 
+        public async Task<Feature> GetById(string id) 
+            => await ApplySpecification(new FeatureByIdSpecification(id)).FirstOrDefaultAsync();
+
+        public async Task<Feature> GetByName(string name)
             => await ApplySpecification(new FeatureByNameSpecification(name)).FirstOrDefaultAsync();
     }
 }

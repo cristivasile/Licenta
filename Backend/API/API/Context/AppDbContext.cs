@@ -27,6 +27,7 @@ namespace API.Context
 
             modelBuilder.ApplyConfiguration(new VehicleConfiguration());
             modelBuilder.ApplyConfiguration(new StatusConfiguration());
+            modelBuilder.ApplyConfiguration(new FeatureConfiguration());
         }
         
     }
