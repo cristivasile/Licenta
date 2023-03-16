@@ -8,7 +8,6 @@ namespace API.Models.Return
         public FeatureModel(Feature ob)
         {
             Name = ob.Name;
-            Desirability = ob.Desirability;
         }
     }
 }

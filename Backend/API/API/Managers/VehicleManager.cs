@@ -48,11 +48,7 @@ namespace API.Managers
             if (vehicle == null)
                 return null;
 
-            var groupedFeatures = vehicle.Features.OrderBy(x => -x.Desirability)
-                .ThenBy(x => x.Name).GroupBy(x => x.Desirability)
-                .ToDictionary(x => x.Key, x => x.Select(x => new FeatureModel(x)).ToList());
-
-            var returned = new DetailedVehicleModel(vehicle, groupedFeatures);
+            var returned = new DetailedVehicleModel(vehicle);
 
             return returned;
         }
@@ -64,11 +60,7 @@ namespace API.Managers
             if (vehicle == null)
                 return null;
 
-            var groupedFeatures = vehicle.Features.OrderBy(x => -x.Desirability)
-                .ThenBy(x => x.Name).GroupBy(x => x.Desirability)
-                .ToDictionary(x => x.Key, x => x.Select(x => new FeatureModel(x)).ToList());
-
-            var returned = new FullVehicleModel(vehicle, groupedFeatures);
+            var returned = new FullVehicleModel(vehicle);
 
             return returned;
         }

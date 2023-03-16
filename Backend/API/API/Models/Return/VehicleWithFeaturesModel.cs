@@ -7,9 +7,9 @@ namespace API.Models.Return
     {
         public string Description { get; set; }
         public string LocationAddress { get; set; }
-        public Dictionary<int, List<FeatureModel>> GroupedFeatures { get; set; }
+        public List<FeatureModel> Features { get; set; }
 
-        public VehicleWithFeaturesModel(Vehicle ob, Dictionary<int, List<FeatureModel>> groupedFeatures) : base(ob)
+        public VehicleWithFeaturesModel(Vehicle ob) : base(ob)
         {
             Description = ob.Description;
 
@@ -19,14 +19,15 @@ namespace API.Models.Return
             if (ob.Image != null)
                 Image = ob.Image;
 
-            if (groupedFeatures != null)
-                GroupedFeatures = groupedFeatures;
-
             Odometer = ob.Odometer;
             Power = ob.Power;
             EngineSize = ob.EngineSize;
             Price = ob.Price;
             Year = ob.Year;
+
+            Features = new();
+            foreach(var feature in ob.Features)
+                Features.Add(new(feature));
         }
     }
 }

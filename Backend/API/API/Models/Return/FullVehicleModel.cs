@@ -7,7 +7,7 @@ namespace API.Models.Return
     {
         public FullStatusModel Status { get; set; }
 
-        public FullVehicleModel(Vehicle ob, Dictionary<int, List<FeatureModel>> groupedFeatures) : base(ob, groupedFeatures)
+        public FullVehicleModel(Vehicle ob) : base(ob)
         {
             if (ob.Status != null)
             {

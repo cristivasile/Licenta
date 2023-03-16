@@ -21,10 +21,14 @@ namespace API.Managers
 
         public async Task Create(FeatureCreateModel newFeature)
         {
+            var feature = await featureRepository.GetByName(newFeature.Name);
+
+            if (feature != null)
+                throw new Exception("Feature already exists!");
+
             var createdFeature = new Feature()
             {
                 Name = newFeature.Name,
-                Desirability = newFeature.Desirability
             };
 
             await featureRepository.Create(createdFeature);
@@ -49,18 +53,6 @@ namespace API.Managers
             return features;
         }
 
-        public async Task<FeatureModel> GetByName(string name)
-        {
-            var feature = await featureRepository.GetByName(name);
-
-            //404 not found
-            if (feature == null)
-                return null;
-
-            var foundFeature = new FeatureModel(feature);
-            return foundFeature;
-        }
-
         public async Task Update(string name, FeatureCreateModel updatedFeature)
         {
             var feature = await featureRepository.GetByName(name);
@@ -69,7 +61,6 @@ namespace API.Managers
                 throw new Exception("Feature doesn't exist!");
 
             feature.Name = updatedFeature.Name;
-            feature.Desirability = feature.Desirability;
 
             await featureRepository.Update(feature);
         }
