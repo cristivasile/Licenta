@@ -222,10 +222,10 @@ const Vehicles: FC<VehiclesProps> = () => {
         showAdminCommands ?
           <div className="adminToolbar">
             <div className="adminToolbarButtons">
-              <Button disabled={loading} variant="contained" startIcon={<MenuIcon />} onClick={openLocationDialog}>Manage locations</Button>
-              <Button disabled={loading} variant="contained" startIcon={<MenuIcon />} onClick={openFeatureDialog}>Manage features</Button>
-              <Button disabled={loading} variant="contained" startIcon={<MenuIcon />} onClick={openBodyTypeDialog}>Manage body types</Button>
               <Button disabled={loading} variant="contained" startIcon={<AddCircleIcon />} onClick={openVehicleDialog}>Add vehicle</Button>
+              <Button disabled={loading} variant="contained" startIcon={<MenuIcon />} onClick={openFeatureDialog}>Manage features</Button>
+              <Button disabled={loading} variant="contained" startIcon={<MenuIcon />} onClick={openLocationDialog}>Manage locations</Button>
+              <Button disabled={loading} variant="contained" startIcon={<MenuIcon />} onClick={openBodyTypeDialog}>Manage body types</Button>
             </div>
           </div>
           :
