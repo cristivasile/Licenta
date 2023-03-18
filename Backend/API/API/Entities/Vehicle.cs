@@ -9,11 +9,12 @@ namespace API.Entities
     {
         Diesel = 0,
         Petrol = 1,
-        HydrogenCell = 2,   //FCEV - fuel cell electric vehicle
-        FullElectric = 3,   //BEV - battery electric vehicle
-        Hybrid = 4,         //HEV
-        PlugInHybrid = 5,   //PHEV 
-        MildHybrid = 6      //MHEV
+        LPG = 2,            //LPG + petrol
+        HydrogenCell = 3,   //FCEV - fuel cell electric vehicle
+        FullElectric = 4,   //BEV - battery electric vehicle
+        Hybrid = 5,         //HEV
+        PlugInHybrid = 6,   //PHEV 
+        MildHybrid = 7      //MHEV
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -39,10 +40,11 @@ namespace API.Entities
         public int Odometer { get; set; }
         [Required]
         public int Year { get; set; }
-        [Required]
-        public float EngineSize { get; set; }
+        public int? EngineSize { get; set; }
         [Required]
         public int Power { get; set; }
+        [Required]
+        public int Torque { get; set; }
         [Required]
         public float Price { get; set; }
         [Required]

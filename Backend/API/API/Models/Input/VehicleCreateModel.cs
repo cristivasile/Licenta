@@ -14,8 +14,9 @@ namespace API.Models.Input
         public string Description { get; set; }
         public int Odometer { get; set; }
         public int Year { get; set; }
-        public float EngineSize { get; set; }
+        public int EngineSize { get; set; }
         public int Power { get; set; }
+        public int Torque { get; set; }
         public string LocationId { get; set; }
         public List<string> Features { get; set; }
         public float Price { get; set; }

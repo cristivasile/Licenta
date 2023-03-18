@@ -217,6 +217,7 @@ namespace API.Managers
                 Odometer = inputVehicle.Odometer,
                 EngineSize = inputVehicle.EngineSize,
                 Power = inputVehicle.Power,
+                Torque = inputVehicle.Torque,
                 Price = inputVehicle.Price,
                 Year = inputVehicle.Year,
                 PowerTrainType = inputVehicle.PowerTrainType,
@@ -276,6 +277,7 @@ namespace API.Managers
             currentVehicle.Price = updatedVehicle.Price;
             currentVehicle.EngineSize = updatedVehicle.EngineSize;
             currentVehicle.Power = updatedVehicle.Power;
+            currentVehicle.Torque = updatedVehicle.Torque;
             currentVehicle.Odometer = updatedVehicle.Odometer;
             currentVehicle.LocationId = updatedVehicle.LocationId;
             currentVehicle.Year = updatedVehicle.Year;

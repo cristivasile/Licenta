@@ -16,14 +16,8 @@ namespace API.Models.Return
             if(ob.Location != null)
                 LocationAddress = ob.Location.City + ", " + ob.Location.Address;
 
-            if (ob.Image != null)
+            if (ob.Image != null)   //'upgrade' image from thumbnail to full-size
                 Image = ob.Image;
-
-            Odometer = ob.Odometer;
-            Power = ob.Power;
-            EngineSize = ob.EngineSize;
-            Price = ob.Price;
-            Year = ob.Year;
 
             Features = new();
             foreach(var feature in ob.Features)

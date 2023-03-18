@@ -13,7 +13,8 @@ namespace API.Models.Return
         public string BodyType { get; set; }
         public int Odometer { get; set; }
         public int Power { get; set; }
-        public float EngineSize { get; set; }
+        public int Torque { get; set; }
+        public int? EngineSize { get; set; }
         public int Year { get; set; }
         public float Price { get; set; }
         public PowerTrainType PowerTrainType { get; set; }
@@ -27,6 +28,7 @@ namespace API.Models.Return
             BodyType = ob.BodyTypeName;
             Odometer = ob.Odometer;
             Power = ob.Power;
+            Torque = ob.Torque;
             EngineSize = ob.EngineSize;
             Price = ob.Price;
             Year = ob.Year;
