@@ -9,7 +9,7 @@ export enum PowerTrainType {
     MildHybrid = "MildHybrid"           //MHEV
 }
 
-export const PowerTrainsMap: Map<string, PowerTrainType> = new Map([
+export const getPowerTrainsMap: Map<string, PowerTrainType> = new Map([
     ["Diesel", PowerTrainType.Diesel] as [string, PowerTrainType],
     ["Petrol", PowerTrainType.Petrol] as [string, PowerTrainType],
     ["LPG", PowerTrainType.LPG] as [string, PowerTrainType],

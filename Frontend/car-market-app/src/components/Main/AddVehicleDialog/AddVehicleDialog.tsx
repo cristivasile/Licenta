@@ -9,7 +9,8 @@ import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../ser
 import Loading from '../../Loading/Loading';
 import './AddVehicleDialog.scss';
 import { dictFromVehicleTypeList as mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
-import { FeatureModel } from '../../../models/FeatureModel';
+import { DriveTrainType, getDriveTrainsMap as driveTrainsMap } from '../../../models/DriveTrainTypeEnum';
+import { getPowerTrainsMap as powerTrainsMap, PowerTrainType } from '../../../models/PowerTrainTypeEnum';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,
@@ -24,6 +25,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const bodyTypes = useAppSelector((state) => state.bodyType.bodyTypes);
   const features = useAppSelector((state) => state.feature.features);
   const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
+  const driveTrains = driveTrainsMap;
+  const powerTrains = powerTrainsMap;
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -42,6 +45,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [descriptionValue, setDescriptionValue] = useState("");
   const [imageValue, setImageValue] = useState(new File([""], ""));
   const [featuresValue, setFeaturesValue] = useState(new Array<string>());
+  const [driveTrainValue, setDriveTrainValue] = useState(DriveTrainType.FWD);
+  const [powerTrainValue, setPowerTrainValue] = useState(PowerTrainType.Diesel);
 
   const [brandError, setBrandError] = useState(false);
   const [brandErrorText, setBrandErrorText] = useState("");
@@ -212,7 +217,9 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       power: powerValue,
       torque: torqueValue,
       features: featuresValue,
-      price: priceValue
+      price: priceValue,
+      driveTrain: driveTrainValue,
+      powerTrain: powerTrainValue,
     };
 
     postVehicle(newVehicle)
@@ -328,6 +335,26 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
             error={odometerError} helperText={odometerErrorText} />
         </div>
         <div className="splitDiv">
+          <TextField value={driveTrainValue} label="Drive train*" margin="dense" fullWidth select
+            onChange={(event) => setDriveTrainValue(event.target.value as DriveTrainType)}
+            name="bodyType" className="halfSplitDialogField">
+            {Array.from(driveTrains.entries()).map((entry) => (
+              <MenuItem key={entry[0]} value={entry[1]}>
+                {entry[0]}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField value={powerTrainValue} label="Power train*" margin="dense" fullWidth select
+            onChange={(event) => setPowerTrainValue(event.target.value as PowerTrainType)}
+            name="powerTrain" className="halfSplitDialogField">
+            {Array.from(powerTrains.entries()).map((entry) => (
+              <MenuItem key={entry[0]} value={entry[1]}>
+                {entry[0]}
+              </MenuItem>
+            ))}
+          </TextField>
+        </div>
+        <div className="splitDiv">
           <TextField value={powerValue || ""} label="Power*" margin="dense" fullWidth
             onChange={(event) => handleNumericInput(event, setPowerValue)}
             type="number" name="power" className="thirdSplitDialogField"
@@ -337,7 +364,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
             error={powerError} helperText={powerErrorText} />
           <TextField value={torqueValue || ""} label="Torque*" margin="dense" fullWidth
             onChange={(event) => handleNumericInput(event, setPowerValue)}
-            type="number" name="power" className="thirdSplitDialogField"
+            type="number" name="torque" className="thirdSplitDialogField"
             InputProps={{
               endAdornment: <InputAdornment position="end">Nm</InputAdornment>,
             }}
