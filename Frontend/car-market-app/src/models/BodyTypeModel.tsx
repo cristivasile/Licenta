@@ -4,7 +4,7 @@ export interface BodyTypeModel {
 
 export function jsonToBodyTypeModel(json:any) : BodyTypeModel {
     return {
-        name: json.name,
+        name: json,
     } as BodyTypeModel;
 }
 

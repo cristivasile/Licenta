@@ -140,7 +140,7 @@ const ManageBodyTypesDialog: FC<ManageBodyTypesDialogProps> = (props: ManageBody
                 <TextField value={selectedBodyTypeValue} label="Select a body type to remove" margin="dense" fullWidth autoFocus select
                     onChange={(event) => setSelectedBodyTypeValue(event.target.value)}
                     error={selectedBodyTypeError} helperText={selectedBodyTypeErrorText}
-                    name="location">
+                    name="bodyType">
                     {bodyTypes.map((bodyType) => (
                         <MenuItem key={bodyType.name} value={bodyType.name}>
                             {bodyType.name}

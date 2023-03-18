@@ -20,6 +20,11 @@ namespace API.Managers
 
         public async Task Create(BodyTypeCreateModel newBodyType)
         {
+            var check = await bodyTypeRepository.GetByName(newBodyType.Name);
+
+            if (check != null)
+                throw new Exception("Body type already exists!");
+
             var toCreate = new BodyType()
             {
                Name= newBodyType.Name,
