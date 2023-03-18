@@ -17,8 +17,8 @@ namespace API.Models.Return
         public int? EngineSize { get; set; }
         public int Year { get; set; }
         public float Price { get; set; }
-        public PowerTrainType PowerTrainType { get; set; }
-        public DriveTrainType DriveTrainType { get; set; }
+        public PowerTrainTypeEnum PowerTrainType { get; set; }
+        public DriveTrainTypeEnum DriveTrainType { get; set; }
 
         public VehicleModel(Vehicle ob)
         {

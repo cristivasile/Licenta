@@ -19,6 +19,11 @@ export interface AddVehicleDialogProps {
   loadingCallback: Function,
 }
 
+const compressedImageSizeInMb: number = 0.5; 
+const maxCompressedImageWidth: number = 1024;
+const compressedThumbnailSizeInMb: number = 0.05; 
+const maxCompressedThumbnailWidth: number = 256;
+
 const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProps) => {
 
   const today = new Date();
@@ -118,6 +123,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     setLocationValue("");
     setDescriptionValue("");
     setImageValue(new File([""], ""));
+    setFeaturesValue(new Array<string>());
   }
 
   function validate() {
@@ -193,10 +199,12 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     setLoading(true);
 
     if (imageValue.size !== 0) {
-      var compressedImage = await compressImage(imageValue, .5, 1024);  //compress the image in order to save bandwidth and reduce loading times
+      //compress the image in order to save bandwidth and reduce loading times
+      var compressedImage = await compressImage(imageValue, compressedImageSizeInMb, maxCompressedImageWidth);  
       var base64Image = imageValue.name !== "" ? await fileToBase64(compressedImage) : "";
 
-      var compressedThumbnailImage = await compressImage(imageValue, .005, 256);  //compress the image further to use as thumbnail
+      //compress the image further to use as thumbnail
+      var compressedThumbnailImage = await compressImage(imageValue, compressedThumbnailSizeInMb, maxCompressedThumbnailWidth);  
       var base64ThumbnailImage = imageValue.name !== "" ? await fileToBase64(compressedThumbnailImage) : "";
     }
     else {
@@ -215,6 +223,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       odometer: odometerValue,
       year: yearValue,
       engineSize: Number.isNaN(engineSizeValue) ? null : engineSizeValue, //engine size can be empty
+      locationId: locationValue,
       power: powerValue,
       torque: torqueValue,
       features: featuresValue,
@@ -310,7 +319,9 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         <div className="splitDiv">
           <Autocomplete value={brandValue} fullWidth freeSolo className="thirdSplitDialogField"
             options={Array.from(vehicleTypesMap.keys())} sx={{ marginTop: '8px' }}
-            onChange={(_, value) => handleBrandSelection(value || "")}
+            onChange={(_, value) => 
+              {setBrandValue(value || '');
+              handleBrandSelection(value || "")}}
             renderInput={(params) =>
               <TextField {...params} autoFocus
                 onChange={(event) => {
@@ -320,11 +331,12 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
                 error={brandError} helperText={brandErrorText} label="Brand*" />} />
           <Autocomplete value={modelValue} fullWidth freeSolo className="thirdSplitDialogField"
             options={vehicleModelOptions} sx={{ marginTop: '8px' }}
+            onChange={(_, value) => setModelValue(value || '')}
             renderInput={(params) =>
               <TextField {...params} onChange={(event) => setModelValue(event.target.value)}
                 error={modelError} helperText={modelErrorText} label="Model*" />} />
           <TextField value={bodyTypeValue} label="Body type*" margin="dense" fullWidth autoFocus select
-            onChange={(event) => setLocationValue(event.target.value)}
+            onChange={(event) => setBodyTypeValue(event.target.value)}
             name="bodyType" className="thirdSplitDialogField"
             error={bodyTypeError} helperText={bodyTypeErrorText}>
             {bodyTypes.map((bodyType) => (
@@ -376,7 +388,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
             }}
             error={powerError} helperText={powerErrorText} />
           <TextField value={torqueValue || ""} label="Torque*" margin="dense" fullWidth
-            onChange={(event) => handleNumericInput(event, setPowerValue)}
+            onChange={(event) => handleNumericInput(event, setTorqueValue)}
             type="number" name="torque" className="thirdSplitDialogField"
             InputProps={{
               endAdornment: <InputAdornment position="end">Nm</InputAdornment>,

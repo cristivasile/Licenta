@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace API.Entities
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum PowerTrainType : byte
+    public enum PowerTrainTypeEnum : byte
     {
         Diesel = 0,
         Petrol = 1,
@@ -18,7 +18,7 @@ namespace API.Entities
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum DriveTrainType : byte
+    public enum DriveTrainTypeEnum : byte
     {
         FWD = 0,
         RWD = 1,
@@ -48,9 +48,9 @@ namespace API.Entities
         [Required]
         public float Price { get; set; }
         [Required]
-        public PowerTrainType PowerTrainType { get; set; }
+        public PowerTrainTypeEnum PowerTrainType { get; set; }
         [Required]
-        public DriveTrainType DriveTrainType { get; set; }
+        public DriveTrainTypeEnum DriveTrainType { get; set; }
         
         public virtual Status Status { get; set; }
         /// <summary>

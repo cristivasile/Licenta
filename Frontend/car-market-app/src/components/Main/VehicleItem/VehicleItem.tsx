@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { VehicleModel } from '../../../models/VehicleModel';
 import './VehicleItem.scss';
 import defaultImage from "../../../assets/no-image.png";
@@ -10,6 +10,11 @@ interface VehicleItemProps {
 const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
   const [image, setImage] = useState(props.vehicle.image);
   
+  //TODO -remove debug
+  useEffect(() => {
+    console.log(props.vehicle);
+  }, []);
+
   function setDefaultImage(){
     setImage(defaultImage);
   }

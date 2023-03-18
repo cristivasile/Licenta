@@ -20,7 +20,7 @@ namespace API.Models.Input
         public string LocationId { get; set; }
         public List<string> Features { get; set; }
         public float Price { get; set; }
-        public PowerTrainType PowerTrainType { get; set; }
-        public DriveTrainType DriveTrainType { get; set; }
+        public PowerTrainTypeEnum PowerTrainType { get; set; }
+        public DriveTrainTypeEnum DriveTrainType { get; set; }
     }
 }

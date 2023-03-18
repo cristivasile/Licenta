@@ -14,7 +14,7 @@ namespace API.Managers
     public class VehicleManager : IVehicleManager
     {
         private static readonly int maxImageSize = 1048576; //1 MB
-        private static readonly int maxThumbnailImageSize = 10240; //10 KB
+        private static readonly int maxThumbnailImageSize = 102400; //100 KB
         private readonly IVehicleRepository vehicleRepository;
         private readonly IFeatureRepository featureRepository;
         private readonly IBodyTypeRepository bodyTypeRepository;
@@ -178,9 +178,6 @@ namespace API.Managers
 
         public async Task Create(VehicleCreateModel inputVehicle)
         {
-            inputVehicle.Brand = Utilities.CapitalizeOnlyFirstLetter(inputVehicle.Brand);
-            inputVehicle.Model = Utilities.CapitalizeOnlyFirstLetter(inputVehicle.Model);
-            
             //will throw an exception if validation fails
             await ValidateInputVehicle(inputVehicle);
 
@@ -233,8 +230,8 @@ namespace API.Managers
                 DateSold = null
             };
 
-            await statusRepository.Create(newStatus);
             await vehicleRepository.Create(newVehicle);
+            await statusRepository.Create(newStatus);
         }
 
         public async Task Update(string id, VehicleCreateModel updatedVehicle)
@@ -243,9 +240,6 @@ namespace API.Managers
 
             if (currentVehicle == null)
                 throw new KeyNotFoundException("Vehicle doesn't exist!");
-
-            updatedVehicle.Brand = Utilities.CapitalizeOnlyFirstLetter(updatedVehicle.Brand);
-            updatedVehicle.Model = Utilities.CapitalizeOnlyFirstLetter(updatedVehicle.Model);
 
             //will throw an exception if validation fails
             await ValidateInputVehicle(updatedVehicle);
