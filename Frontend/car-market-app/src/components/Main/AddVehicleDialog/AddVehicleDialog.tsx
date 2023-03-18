@@ -1,13 +1,14 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField, Autocomplete } from '@mui/material';
 import React, { FC, useState } from 'react';
 import { generateErrorMessage, generateSuccessMessage } from '../../../common';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
 import { getAvailableVehicles, postVehicle, VehicleAddModel } from '../../../services/vehiclesService';
-import { compressImage, fileToBase64 } from '../../../services/utils';
+import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../services/utils';
 import Loading from '../../Loading/Loading';
 import './AddVehicleDialog.scss';
+import { dictFromVehicleTypeList as mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,
@@ -19,6 +20,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
   const today = new Date();
   const locations = useAppSelector((state) => state.location.locations);
+  const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -51,8 +53,16 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [locationErrorText, setLocationErrorText] = useState("");
   const [priceError, setPriceError] = useState(false);
   const [priceErrorText, setPriceErrorText] = useState("");
+  const [vehicleModelOptions, setVehicleModelOptions] = useState(new Array<string>());
 
   const dispatch = useAppDispatch();
+
+  // Sets the 'Model' options when the brand value is modified
+  function handleBrandSelection(brand: string){
+    brand = capitalizeFirstLetter(brand);
+    var options = vehicleTypesMap.get(brand) || new Array<string>();
+    setVehicleModelOptions(options);
+  }
 
   function clearMessages() {
     setErrorMessage("");
@@ -90,6 +100,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
   function validate() {
     var hasError = false;
+
     if (modelValue.trim() === "") {
       setModelError(true);
       setModelErrorText("This field is mandatory!");
@@ -249,14 +260,19 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         </div>
 
         <div className="splitDiv">
-          <TextField value={brandValue} label="Brand*" margin="dense" fullWidth autoFocus
-            onChange={(event) => setBrandValue(event.target.value)}
-            type="text" name="brand" className="splitDialogField"
-            error={brandError} helperText={brandErrorText} />
-          <TextField value={modelValue} label="Model*" margin="dense" fullWidth autoFocus
-            onChange={(event) => setModelValue(event.target.value)}
-            type="text" name="model" className="splitDialogField"
-            error={modelError} helperText={modelErrorText} />
+          <Autocomplete value={brandValue} fullWidth freeSolo className="splitDialogField"  
+            options={Array.from(vehicleTypesMap.keys())}
+            onChange={(event, value) => handleBrandSelection(value || "")}
+            renderInput={(params) =>
+              <TextField {...params} 
+              onChange={(event) => {setBrandValue(event.target.value); 
+                handleBrandSelection(event.target.value)}}
+                error={brandError} helperText={brandErrorText} label="Brand*" />} />
+          <Autocomplete value={modelValue} fullWidth freeSolo className="splitDialogField"  
+            options={vehicleModelOptions}
+            renderInput={(params) =>
+              <TextField {...params} onChange={(event) => setModelValue(event.target.value)}
+                error={modelError} helperText={modelErrorText} label="Model*" />} />
         </div>
         <div className="splitDiv">
           <TextField value={yearValue || ""} label="Year*" margin="dense" fullWidth autoFocus
@@ -318,7 +334,5 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     </Dialog>
   );
 }
-
-
 
 export default AddVehicleDialog;

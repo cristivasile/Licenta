@@ -142,6 +142,13 @@ namespace API.Managers
             return vehicles;
         }
 
+        public async Task<Dictionary<string, List<string>>> GetBrandModelDictionary()
+        {
+            var vehicleTypes = await vehicleTypeRepository.GetAll();
+            return vehicleTypes.GroupBy(type => type.Brand)
+                .ToDictionary(type => type.Key, type => type.Select(x => x.Model).ToList());
+        }
+
         /// <summary>
         /// Validates fields of an input vehicle.
         /// Doesn't check the features list, must be done separately.

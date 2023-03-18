@@ -80,6 +80,14 @@ namespace API.Controllers
             return Ok(vehicle);
         }
 
+        [HttpGet("getBrandModelDictionary")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> ReadBrandModelDictionary()
+        {
+            var dict = await vehicleManager.GetBrandModelDictionary();
+            return Ok(dict);
+        }
+
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> CreateVehicle([FromBody] VehicleCreateModel vehicle)

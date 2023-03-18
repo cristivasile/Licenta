@@ -9,7 +9,7 @@ import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setLocationsFromJson } from '../../../redux/locationsStore';
 import { getLocations } from '../../../services/locationsService';
-import { getAvailableVehicles } from '../../../services/vehiclesService';
+import { getAvailableVehicles, getVehicleTypesDictionary } from '../../../services/vehiclesService';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import VehicleItem from '../VehicleItem/VehicleItem';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
@@ -19,6 +19,7 @@ import { getFeatures } from '../../../services/featuresService';
 import { getBodyTypes } from '../../../services/bodyTypeService.';
 import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
 import ManageBodyTypesDialog from '../ManageBodyTypesDialog/ManageBodyTypesDialog';
+import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
 
 interface VehiclesProps { }
 
@@ -166,8 +167,8 @@ const Vehicles: FC<VehiclesProps> = () => {
 
     try {
       //run fetches in parallel
-      const [locationResponse, bodyTypeResponse, featuresResponse] = await Promise.all([
-        getLocations(), getBodyTypes(), getFeatures()
+      const [locationResponse, bodyTypeResponse, featuresResponse, vehicleTypesResponse] = await Promise.all([
+        getLocations(), getBodyTypes(), getFeatures(), getVehicleTypesDictionary()
       ]);
 
       if (locationResponse.status !== 200)
@@ -176,6 +177,8 @@ const Vehicles: FC<VehiclesProps> = () => {
         notifyBadResultCode(bodyTypeResponse.status);
       else if (featuresResponse.status !== 200)
         notifyBadResultCode(featuresResponse.status);
+      else if (vehicleTypesResponse.status !== 200)
+        notifyBadResultCode(vehicleTypesResponse.status);
       else
       {
         var json = await locationResponse.json();
@@ -184,6 +187,8 @@ const Vehicles: FC<VehiclesProps> = () => {
         dispatch(setBodyTypesFromJson(json));
         json = await featuresResponse.json();
         dispatch(setFeaturesFromJson(json));
+        json = await vehicleTypesResponse.json();
+        dispatch(setVehicleTypesFromJson(json));
 
         setVehicleDialogOpen(true);
       }

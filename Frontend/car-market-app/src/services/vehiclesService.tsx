@@ -47,3 +47,12 @@ export const getAvailableVehicles = (): Promise<Response> => {
     };
     return authenticatedFetch(apiUrl + "/api/Vehicle/getAvailable", requestOptions);
 }
+
+export const getVehicleTypesDictionary = (): Promise<Response> => {
+
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
+    };
+    return authenticatedFetch(apiUrl + "/api/Vehicle/getBrandModelDictionary", requestOptions);
+}

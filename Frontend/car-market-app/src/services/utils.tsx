@@ -29,3 +29,14 @@ export const fileToBase64 = (file: File | Blob): Promise<string> =>
     reader.readAsDataURL(file);
     reader.onerror = reject;
   });
+
+
+  /** 
+   * Capitalizes the first letter of a given string and makes the rest lowercase
+   */
+export const capitalizeFirstLetter = (input: string): string =>{
+  if(input.length === 0)
+    return "";
+  
+  return input[0].toUpperCase() + input.substring(1).toLowerCase();
+}

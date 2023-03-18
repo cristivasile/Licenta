@@ -6,7 +6,7 @@ function sortBodyTypes(input: BodyTypeModel[]): void {
 }
 
 export const bodyTypeSlice = createSlice({
-    name: "featureState",
+    name: "vehicleState",
     initialState: {
         bodyTypes: new Array<BodyTypeModel>(),
     },
@@ -14,9 +14,6 @@ export const bodyTypeSlice = createSlice({
         setBodyTypesFromJson: (state, action) => {
             state.bodyTypes = mapJsonToBodyTypeModels(action.payload);
             sortBodyTypes(state.bodyTypes);
-
-            console.log(action.payload);
-            console.log(state.bodyTypes);
         },
         addBodyType: (state, action) => {
             state.bodyTypes.push(action.payload);

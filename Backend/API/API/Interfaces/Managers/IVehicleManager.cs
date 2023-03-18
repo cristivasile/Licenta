@@ -17,6 +17,7 @@ namespace API.Interfaces.Managers
         Task<List<VehicleModel>> GetAvailable(VehicleFiltersModel filters);
         Task<DetailedVehicleModel> GetById(string id);
         Task<FullVehicleModel> GetByIdExtended(string id);
+        Task<Dictionary<string, List<string>>> GetBrandModelDictionary();
         Task Create(VehicleCreateModel newVehicle);
         Task Update(string id, VehicleCreateModel updatedVehicle);
         Task UpdateStatus(string id, VehicleStatusUpdateModel updatedStatus);

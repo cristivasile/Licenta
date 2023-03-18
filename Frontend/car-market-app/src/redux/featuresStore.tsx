@@ -6,7 +6,7 @@ function sortFeatures(input: FeatureModel[]): void {
 }
 
 export const featureSlice = createSlice({
-    name: "featureState",
+    name: "vehicleState",
     initialState: {
         features: new Array<FeatureModel>(),
     },

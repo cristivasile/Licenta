@@ -4,6 +4,7 @@ import locationsReducer from './locationsStore';
 import vehiclesReducer from './vehiclesStore';
 import featuresReducer from './featuresStore';
 import bodyTypesReducer from './bodyTypesStore';
+import vehicleTypesReducer from './vehicleTypesStore';
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         vehicle: vehiclesReducer,
         feature: featuresReducer,
         bodyType: bodyTypesReducer,
+        vehicleType: vehicleTypesReducer,
     }
 });
 

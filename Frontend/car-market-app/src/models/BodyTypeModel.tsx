@@ -9,15 +9,15 @@ export function jsonToBodyTypeModel(json:any) : BodyTypeModel {
 }
 
 export function mapJsonToBodyTypeModels(json: any): BodyTypeModel[] {
-    var featureList = new Array<BodyTypeModel>();
+    var bodyTypeList = new Array<BodyTypeModel>();
 
     if (json != null) {
         json.forEach(function (value: any) {
-            featureList.push(
+            bodyTypeList.push(
                 jsonToBodyTypeModel(value)
             );
         });
     }
 
-    return featureList;
+    return bodyTypeList;
 }
