@@ -34,6 +34,8 @@ namespace API.Entities
         [Required]
         public string Image { get; set; }
         [Required]
+        public string ThumbnailImage { get; set; }
+        [Required]
         public int Odometer { get; set; }
         [Required]
         public int Year { get; set; }

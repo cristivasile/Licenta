@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace API.Models.Return
 {
-    public class VehicleWithFeaturesModel : VehicleModel
+    public abstract class VehicleWithFeaturesModel : VehicleModel
     {
         public string Description { get; set; }
         public string LocationAddress { get; set; }

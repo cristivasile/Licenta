@@ -13,6 +13,8 @@ namespace API.Managers
 {
     public class VehicleManager : IVehicleManager
     {
+        private static readonly int maxImageSize = 1048576; //1 MB
+        private static readonly int maxThumbnailImageSize = 10240; //10 KB
         private readonly IVehicleRepository vehicleRepository;
         private readonly IFeatureRepository featureRepository;
         private readonly IBodyTypeRepository bodyTypeRepository;
@@ -140,39 +142,75 @@ namespace API.Managers
             return vehicles;
         }
 
-        public async Task Create(VehicleCreateModel vehicle)
+        private async Task ValidateInputVehicle(VehicleCreateModel inputVehicle)
         {
+            if (inputVehicle.Image.Length > maxImageSize)
+                throw new Exception("Image is too large!");
+
+            if (inputVehicle.ThumbnailImage.Length > maxThumbnailImageSize)
+                throw new Exception("Thumbnail image is too large!");
+
+            if (inputVehicle.Brand == "")
+                throw new Exception("Brand cannot be empty!");
+
+            if (inputVehicle.Model == "")
+                throw new Exception("Model cannot be empty!");
+
             //check if location exists
-            if (await locationRepository.GetById(vehicle.LocationId) == null)
-                throw new Exception("Invalid location address!");
+            if (await locationRepository.GetById(inputVehicle.LocationId) == null)
+                throw new Exception("Invalid location!");
 
             //check if body type exists
-            if (await bodyTypeRepository.GetByName(vehicle.BodyType) == null)
+            if (await bodyTypeRepository.GetByName(inputVehicle.BodyType) == null)
                 throw new Exception("Invalid body type!");
+        }
+
+        public async Task Create(VehicleCreateModel inputVehicle)
+        {
+            inputVehicle.Brand = Utilities.CapitalizeOnlyFirstLetter(inputVehicle.Brand);
+            inputVehicle.Model = Utilities.CapitalizeOnlyFirstLetter(inputVehicle.Model);
+            
+            //will throw an exception if validation fails
+            await ValidateInputVehicle(inputVehicle);
+
+            //validate features
+            List<Feature> featuresList = new();
+            if (inputVehicle.Features != null)
+            {
+                foreach (var featureName in inputVehicle.Features)
+                {
+                    var feature = await featureRepository.GetById(featureName);
+                    if (feature == null)
+                        throw new Exception("Invalid feature given!");
+
+                    featuresList.Add(feature);
+                }
+            }
 
             //check if given vehicle type exists and add otherwise
-            if (await vehicleTypeRepository.GetById(vehicle.Brand, vehicle.Model) == null)
-                await vehicleTypeRepository.Create(new() { Brand = vehicle.Brand, Model = vehicle.Model });
+            if (await vehicleTypeRepository.GetById(inputVehicle.Brand, inputVehicle.Model) == null)
+                await vehicleTypeRepository.Create(new() { Brand = inputVehicle.Brand, Model = inputVehicle.Model });
 
             var generatedId = Utilities.GetGUID();
 
             Vehicle newVehicle = new()
             {
                 Id = generatedId,
-                Image = vehicle.Image,
-                Brand = vehicle.Brand,
-                Model = vehicle.Model,
-                BodyTypeName = vehicle.BodyType,
-                Description = vehicle.Description,
-                LocationId = vehicle.LocationId,
-                Odometer = vehicle.Odometer,
-                EngineSize = vehicle.EngineSize,
-                Power = vehicle.Power,
-                Price = vehicle.Price,
-                Year = vehicle.Year,
-                PowerTrainType = vehicle.PowerTrainType,
-                DriveTrainType = vehicle.DriveTrainType,
-                Features = new List<Feature>()
+                Image = inputVehicle.Image,
+                ThumbnailImage = inputVehicle.ThumbnailImage,
+                Brand = inputVehicle.Brand,
+                Model = inputVehicle.Model,
+                BodyTypeName = inputVehicle.BodyType,
+                Description = inputVehicle.Description,
+                LocationId = inputVehicle.LocationId,
+                Odometer = inputVehicle.Odometer,
+                EngineSize = inputVehicle.EngineSize,
+                Power = inputVehicle.Power,
+                Price = inputVehicle.Price,
+                Year = inputVehicle.Year,
+                PowerTrainType = inputVehicle.PowerTrainType,
+                DriveTrainType = inputVehicle.DriveTrainType,
+                Features = featuresList
             };
 
             Status newStatus = new()
@@ -182,14 +220,6 @@ namespace API.Managers
                 DateAdded = System.DateTime.Now,
                 DateSold = null
             };
-
-            if (vehicle.Features != null)
-            {
-                foreach (var featureName in vehicle.Features)
-                {
-                    newVehicle.Features.Add(await featureRepository.GetById(featureName));
-                }
-            }
 
             await statusRepository.Create(newStatus);
             await vehicleRepository.Create(newVehicle);
@@ -202,21 +232,32 @@ namespace API.Managers
             if (currentVehicle == null)
                 throw new KeyNotFoundException("Vehicle doesn't exist!");
 
-            if (updatedVehicle.Image != "")
-                currentVehicle.Image = updatedVehicle.Image;
+            updatedVehicle.Brand = Utilities.CapitalizeOnlyFirstLetter(updatedVehicle.Brand);
+            updatedVehicle.Model = Utilities.CapitalizeOnlyFirstLetter(updatedVehicle.Model);
 
-            //check if location exists
-            if (await locationRepository.GetById(updatedVehicle.LocationId) == null)
-                throw new Exception("Invalid location address!");
+            //will throw an exception if validation fails
+            await ValidateInputVehicle(updatedVehicle);
 
-            //check if body type exists
-            if (await bodyTypeRepository.GetByName(updatedVehicle.BodyType) == null)
-                throw new Exception("Invalid body type!");
+            //validate features
+            List<Feature> featuresList = new();
+            if (updatedVehicle.Features != null)
+            {
+                foreach (var featureName in updatedVehicle.Features)
+                {
+                    var feature = await featureRepository.GetById(featureName);
+                    if (feature == null)
+                        throw new Exception("Invalid feature given!");
+
+                    featuresList.Add(feature);
+                }
+            }
 
             //check if given vehicle type exists and add otherwise
             if (await vehicleTypeRepository.GetById(updatedVehicle.Brand, updatedVehicle.Model) == null)
                 await vehicleTypeRepository.Create(new() { Brand = updatedVehicle.Brand, Model = updatedVehicle.Model });
 
+            currentVehicle.Image = updatedVehicle.Image;
+            currentVehicle.ThumbnailImage = updatedVehicle.ThumbnailImage;
             currentVehicle.Brand = updatedVehicle.Brand;
             currentVehicle.Model = updatedVehicle.Model;
             currentVehicle.BodyTypeName = updatedVehicle.BodyType;
@@ -227,27 +268,9 @@ namespace API.Managers
             currentVehicle.Odometer = updatedVehicle.Odometer;
             currentVehicle.LocationId = updatedVehicle.LocationId;
             currentVehicle.Year = updatedVehicle.Year;
-            currentVehicle.Features = new List<Feature>();
+            currentVehicle.Features = featuresList;
             currentVehicle.PowerTrainType = updatedVehicle.PowerTrainType;
             currentVehicle.DriveTrainType = updatedVehicle.DriveTrainType;
-
-            if (updatedVehicle.Features != null)
-            {
-                foreach (var featureName in updatedVehicle.Features)
-                {
-                    currentVehicle.Features.Add(await featureRepository.GetById(featureName));
-                }
-            }
-
-            var features = new List<Feature>();
-
-            if (updatedVehicle.Features != null)
-            {
-                foreach (var featureName in updatedVehicle.Features)
-                {
-                    features.Add(await featureRepository.GetById(featureName));
-                }
-            }
 
             await vehicleRepository.Update(currentVehicle);
         }

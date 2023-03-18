@@ -33,8 +33,8 @@ namespace API.Models.Return
             PowerTrainType = ob.PowerTrainType;
             DriveTrainType = ob.DriveTrainType;
 
-            if (ob.Image != null)
-                Image = ob.Image;
+            if (ob.ThumbnailImage != null)
+                Image = ob.ThumbnailImage;
         }
     }
 }
