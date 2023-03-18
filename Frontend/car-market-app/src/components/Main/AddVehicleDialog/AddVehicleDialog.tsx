@@ -9,8 +9,8 @@ import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../ser
 import Loading from '../../Loading/Loading';
 import './AddVehicleDialog.scss';
 import { dictFromVehicleTypeList as mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
-import { DriveTrainType, getDriveTrainsMap as driveTrainsMap } from '../../../models/DriveTrainTypeEnum';
-import { getPowerTrainsMap as powerTrainsMap, PowerTrainType } from '../../../models/PowerTrainTypeEnum';
+import { driveTrainsMap, DriveTrainType} from '../../../models/DriveTrainTypeEnum';
+import { powerTrainsMap, PowerTrainType } from '../../../models/PowerTrainTypeEnum';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,
