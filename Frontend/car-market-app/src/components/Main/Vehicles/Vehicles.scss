@@ -50,8 +50,12 @@
     flex-direction: row;
     justify-content: space-between;
 
-    .splitDialogField{
-        width: 48%;
+    .halfSplitDialogField{
+        width: 49%;
+    }
+
+    .thirdSplitDialogField{
+        width: 32%;
     }
 }
 

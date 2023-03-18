@@ -1,22 +1,29 @@
 import { apiUrl } from "../constants";
+import { DriveTrainType } from "../models/DriveTrainTypeEnum";
+import { PowerTrainType } from "../models/PowerTrainTypeEnum";
 import { store } from "../redux/store";
 import { authenticatedFetch } from "./fetchInterceptor";
 
-export interface VehicleAddModel{
+export interface VehiclePostModel{
     image: string,
+    thumbnailImage: string,
     brand: string,
     model: string,
+    bodyType: string,
     description: string,
     address: string,
     odometer: number,
     year: number,
-    engineSize: number,
+    //driveTrain: DriveTrainType,
+    //powerTrain: PowerTrainType,
+    engineSize: number | null,
     power: number,
+    torque: number,
     features: string[],
     price: number
 }
 
-export const postVehicle = (newVehicle: VehicleAddModel): Promise<Response> => {
+export const postVehicle = (newVehicle: VehiclePostModel): Promise<Response> => {
 
     const requestOptions = {
         method: 'POST',

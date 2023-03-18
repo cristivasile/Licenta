@@ -1,14 +1,15 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField, Autocomplete } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField, Autocomplete, FormControl, InputLabel, Select, OutlinedInput, ListItemText, Checkbox } from '@mui/material';
 import React, { FC, useState } from 'react';
 import { generateErrorMessage, generateSuccessMessage } from '../../../common';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
-import { getAvailableVehicles, postVehicle, VehicleAddModel } from '../../../services/vehiclesService';
+import { getAvailableVehicles, postVehicle, VehiclePostModel } from '../../../services/vehiclesService';
 import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../services/utils';
 import Loading from '../../Loading/Loading';
 import './AddVehicleDialog.scss';
 import { dictFromVehicleTypeList as mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
+import { FeatureModel } from '../../../models/FeatureModel';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,
@@ -20,6 +21,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
   const today = new Date();
   const locations = useAppSelector((state) => state.location.locations);
+  const bodyTypes = useAppSelector((state) => state.bodyType.bodyTypes);
+  const features = useAppSelector((state) => state.feature.features);
   const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -28,19 +31,24 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
   const [brandValue, setBrandValue] = useState("");
   const [modelValue, setModelValue] = useState("");
+  const [bodyTypeValue, setBodyTypeValue] = useState("");
   const [priceValue, setPriceValue] = useState(NaN);
   const [yearValue, setYearValue] = useState(NaN);
   const [engineSizeValue, setEngineSizeValue] = useState(NaN);
   const [powerValue, setPowerValue] = useState(NaN);
+  const [torqueValue, setTorqueValue] = useState(NaN);
   const [odometerValue, setOdometerValue] = useState(NaN);
   const [locationValue, setLocationValue] = useState("");
   const [descriptionValue, setDescriptionValue] = useState("");
   const [imageValue, setImageValue] = useState(new File([""], ""));
+  const [featuresValue, setFeaturesValue] = useState(new Array<string>());
 
   const [brandError, setBrandError] = useState(false);
   const [brandErrorText, setBrandErrorText] = useState("");
   const [modelError, setModelError] = useState(false);
   const [modelErrorText, setModelErrorText] = useState("");
+  const [bodyTypeError, setBodyTypeError] = useState(false);
+  const [bodyTypeErrorText, setBodyTypeErrorText] = useState("");
   const [yearError, setYearError] = useState(false);
   const [yearErrorText, setYearErrorText] = useState("");
   const [odometerError, setOdometerError] = useState(false);
@@ -49,6 +57,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [engineSizeErrorText, setEngineSizeErorrText] = useState("");
   const [powerError, setPowerError] = useState(false);
   const [powerErrorText, setPowerErrorText] = useState("");
+  const [torqueError, setTorqueError] = useState(false);
+  const [torqueErrorText, setTorqueErrorText] = useState("");
   const [locationError, setLocationError] = useState(false);
   const [locationErrorText, setLocationErrorText] = useState("");
   const [priceError, setPriceError] = useState(false);
@@ -57,8 +67,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
   const dispatch = useAppDispatch();
 
-  // Sets the 'Model' options when the brand value is modified
-  function handleBrandSelection(brand: string){
+  // Sets the 'Model' autocomplete options when the brand value is modified
+  function handleBrandSelection(brand: string) {
     brand = capitalizeFirstLetter(brand);
     var options = vehicleTypesMap.get(brand) || new Array<string>();
     setVehicleModelOptions(options);
@@ -71,6 +81,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     setBrandErrorText("");
     setModelError(false);
     setModelErrorText("");
+    setBodyTypeError(false);
+    setBodyTypeErrorText("");
     setYearError(false);
     setYearErrorText("");
     setOdometerError(false);
@@ -79,6 +91,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     setEngineSizeErorrText("");
     setPowerError(false);
     setPowerErrorText("");
+    setTorqueError(false);
+    setTorqueErrorText("");
     setLocationError(false);
     setLocationErrorText("");
     setPriceError(false);
@@ -88,10 +102,12 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   function clearInputs() {
     setBrandValue("");
     setModelValue("");
+    setBodyTypeValue("");
     setYearValue(NaN);
     setPriceValue(NaN);
     setEngineSizeValue(NaN);
     setPowerValue(NaN);
+    setTorqueValue(NaN);
     setOdometerValue(NaN);
     setLocationValue("");
     setDescriptionValue("");
@@ -109,6 +125,11 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     if (brandValue.trim() === "") {
       setBrandError(true);
       setBrandErrorText("This field is mandatory!");
+      hasError = true;
+    }
+    if (bodyTypeValue.trim() === "") {
+      setBodyTypeError(true);
+      setBodyTypeErrorText("This field is mandatory!");
       hasError = true;
     }
     if (locationValue.trim() === "") {
@@ -143,9 +164,9 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       setPowerErrorText("This field is mandatory!");
       hasError = true;
     }
-    if (Number.isNaN(engineSizeValue)) {
-      setEngineSizeError(true);
-      setEngineSizeErorrText("This field is mandatory!");
+    if (Number.isNaN(torqueValue)) {
+      setTorqueError(true);
+      setTorqueErrorText("This field is mandatory!");
       hasError = true;
     }
     if (Number.isNaN(priceValue)) {
@@ -168,22 +189,29 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     if (imageValue.size !== 0) {
       var compressedImage = await compressImage(imageValue, .5, 1024);  //compress the image in order to save bandwidth and reduce loading times
       var base64Image = imageValue.name !== "" ? await fileToBase64(compressedImage) : "";
+
+      var compressedThumbnailImage = await compressImage(imageValue, .005, 256);  //compress the image further to use as thumbnail
+      var base64ThumbnailImage = imageValue.name !== "" ? await fileToBase64(compressedThumbnailImage) : "";
     }
     else {
       base64Image = "";
+      base64ThumbnailImage = "";
     }
 
-    var newVehicle: VehicleAddModel = {   //TODO - implement features
+    var newVehicle: VehiclePostModel = {   //TODO - implement features
       image: base64Image,
+      thumbnailImage: base64ThumbnailImage,
       brand: brandValue,
       model: modelValue,
+      bodyType: bodyTypeValue,
       description: descriptionValue,
       address: locationValue,
       odometer: odometerValue,
       year: yearValue,
-      engineSize: engineSizeValue,
+      engineSize: Number.isNaN(engineSizeValue) ? null : engineSizeValue, //engine size can be empty
       power: powerValue,
-      features: [],
+      torque: torqueValue,
+      features: featuresValue,
       price: priceValue
     };
 
@@ -260,50 +288,88 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         </div>
 
         <div className="splitDiv">
-          <Autocomplete value={brandValue} fullWidth freeSolo className="splitDialogField"  
-            options={Array.from(vehicleTypesMap.keys())}
-            onChange={(event, value) => handleBrandSelection(value || "")}
+          <Autocomplete value={brandValue} fullWidth freeSolo className="thirdSplitDialogField"
+            options={Array.from(vehicleTypesMap.keys())} sx={{ marginTop: '8px' }}
+            onChange={(_, value) => handleBrandSelection(value || "")}
             renderInput={(params) =>
-              <TextField {...params} 
-              onChange={(event) => {setBrandValue(event.target.value); 
-                handleBrandSelection(event.target.value)}}
+              <TextField {...params} autoFocus
+                onChange={(event) => {
+                  setBrandValue(event.target.value);
+                  handleBrandSelection(event.target.value)
+                }}
                 error={brandError} helperText={brandErrorText} label="Brand*" />} />
-          <Autocomplete value={modelValue} fullWidth freeSolo className="splitDialogField"  
-            options={vehicleModelOptions}
+          <Autocomplete value={modelValue} fullWidth freeSolo className="thirdSplitDialogField"
+            options={vehicleModelOptions} sx={{ marginTop: '8px' }}
             renderInput={(params) =>
               <TextField {...params} onChange={(event) => setModelValue(event.target.value)}
                 error={modelError} helperText={modelErrorText} label="Model*" />} />
+          <TextField value={bodyTypeValue} label="Body type*" margin="dense" fullWidth autoFocus select
+            onChange={(event) => setLocationValue(event.target.value)}
+            name="bodyType" className="thirdSplitDialogField"
+            error={bodyTypeError} helperText={bodyTypeErrorText}>
+            {bodyTypes.map((bodyType) => (
+              <MenuItem key={bodyType.name} value={bodyType.name}>
+                {bodyType.name}
+              </MenuItem>
+            ))}
+          </TextField>
         </div>
         <div className="splitDiv">
-          <TextField value={yearValue || ""} label="Year*" margin="dense" fullWidth autoFocus
+          <TextField value={yearValue || ""} label="Year*" margin="dense" fullWidth
             onChange={(event) => handleNumericInput(event, setYearValue)}
-            type="number" name="year" className="splitDialogField"
+            type="number" name="year" className="halfSplitDialogField"
             error={yearError} helperText={yearErrorText} />
-          <TextField value={odometerValue || ""} label="Odometer*" margin="dense" fullWidth autoFocus
+          <TextField value={odometerValue || ""} label="Odometer*" margin="dense" fullWidth
             onChange={(event) => handleNumericInput(event, setOdometerValue)}
-            type="number" name="odometer" className="splitDialogField"
+            type="number" name="odometer" className="halfSplitDialogField"
             InputProps={{
               endAdornment: <InputAdornment position="end">km</InputAdornment>,
             }}
             error={odometerError} helperText={odometerErrorText} />
         </div>
         <div className="splitDiv">
-          <TextField value={engineSizeValue || ""} label="Engine size*" margin="dense" fullWidth autoFocus
-            onChange={(event) => handleNumericInput(event, setEngineSizeValue)}
-            type="number" name="engineSize" className="splitDialogField"
-            error={engineSizeError} helperText={engineSizeErrorText} />
-          <TextField value={powerValue || ""} label="Power*" margin="dense" fullWidth autoFocus
+          <TextField value={powerValue || ""} label="Power*" margin="dense" fullWidth
             onChange={(event) => handleNumericInput(event, setPowerValue)}
-            type="number" name="power" className="splitDialogField"
+            type="number" name="power" className="thirdSplitDialogField"
             InputProps={{
               endAdornment: <InputAdornment position="end">hp</InputAdornment>,
             }}
             error={powerError} helperText={powerErrorText} />
+          <TextField value={torqueValue || ""} label="Torque*" margin="dense" fullWidth
+            onChange={(event) => handleNumericInput(event, setPowerValue)}
+            type="number" name="power" className="thirdSplitDialogField"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">Nm</InputAdornment>,
+            }}
+            error={torqueError} helperText={torqueErrorText} />
+          <TextField value={engineSizeValue || ""} label="Engine size" margin="dense" fullWidth
+            onChange={(event) => handleNumericInput(event, setEngineSizeValue)}
+            type="number" name="engineSize" className="thirdSplitDialogField"
+            error={engineSizeError} helperText={engineSizeErrorText} />
+        </div>
+        <div className="fullDiv">
+          <FormControl sx={{ marginTop: '8px', width: '100%' }}>
+            <InputLabel>Select features</InputLabel>
+            <Select
+              multiple
+              value={featuresValue}
+              onChange={(event) => setFeaturesValue(event.target.value as string[])}
+              input={<OutlinedInput label="Tag" />}
+              renderValue={(selected) => "Selected features: " + selected.length}
+            >
+              {features.map((feature) => (
+                <MenuItem key={feature.id} value={feature.id}>
+                  <Checkbox checked={featuresValue.indexOf(feature.id) > -1} />
+                  <ListItemText primary={feature.name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </div>
         <div className="splitDiv">
-          <TextField value={locationValue} label="Location*" margin="dense" fullWidth autoFocus select
+          <TextField value={locationValue} label="Location*" margin="dense" fullWidth select
             onChange={(event) => setLocationValue(event.target.value)}
-            name="location" className="splitDialogField"
+            name="location" className="halfSplitDialogField"
             error={locationError} helperText={locationErrorText}>
             {locations.map((location) => (
               <MenuItem key={location.city + ", " + location.address} value={location.id}>
@@ -311,16 +377,16 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
               </MenuItem>
             ))}
           </TextField>
-          <TextField value={priceValue || ""} label="Price*" margin="dense" fullWidth autoFocus
+          <TextField value={priceValue || ""} label="Price*" margin="dense" fullWidth
             onChange={(event) => handleNumericInput(event, setPriceValue, true)}
-            type="number" name="price" className="splitDialogField"
+            type="number" name="price" className="halfSplitDialogField"
             InputProps={{
               startAdornment: <InputAdornment position="start">€</InputAdornment>,
             }}
             error={priceError} helperText={priceErrorText} />
         </div>
         <div className="fullDiv">
-          <TextField value={descriptionValue || ""} label="Description" margin="dense" fullWidth autoFocus
+          <TextField value={descriptionValue || ""} label="Description" margin="dense" fullWidth
             onChange={(event) => setDescriptionValue(event.target.value)}
             multiline minRows={3} maxRows={5} name="description" className="vehicleDialogField" />
         </div>
