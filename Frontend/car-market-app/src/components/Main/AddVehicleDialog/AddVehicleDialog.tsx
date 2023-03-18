@@ -25,8 +25,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const bodyTypes = useAppSelector((state) => state.bodyType.bodyTypes);
   const features = useAppSelector((state) => state.feature.features);
   const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
-  const driveTrains = driveTrainsMap;
-  const powerTrains = powerTrainsMap;
+  const driveTrains = Array.from(driveTrainsMap.entries());
+  const powerTrains = Array.from(powerTrainsMap.entries());
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -338,7 +338,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
           <TextField value={driveTrainValue} label="Drive train*" margin="dense" fullWidth select
             onChange={(event) => setDriveTrainValue(event.target.value as DriveTrainType)}
             name="bodyType" className="halfSplitDialogField">
-            {Array.from(driveTrains.entries()).map((entry) => (
+            {driveTrains.map((entry) => (
               <MenuItem key={entry[0]} value={entry[1]}>
                 {entry[0]}
               </MenuItem>
@@ -347,7 +347,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
           <TextField value={powerTrainValue} label="Power train*" margin="dense" fullWidth select
             onChange={(event) => setPowerTrainValue(event.target.value as PowerTrainType)}
             name="powerTrain" className="halfSplitDialogField">
-            {Array.from(powerTrains.entries()).map((entry) => (
+            {powerTrains.map((entry) => (
               <MenuItem key={entry[0]} value={entry[1]}>
                 {entry[0]}
               </MenuItem>
