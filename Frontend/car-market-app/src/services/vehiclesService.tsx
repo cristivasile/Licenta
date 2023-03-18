@@ -4,7 +4,7 @@ import { PowerTrainType } from "../models/PowerTrainTypeEnum";
 import { store } from "../redux/store";
 import { authenticatedFetch } from "./fetchInterceptor";
 
-export interface VehiclePostModel{
+export interface VehicleCreateModel{
     image: string,
     thumbnailImage: string,
     brand: string,
@@ -23,7 +23,7 @@ export interface VehiclePostModel{
     price: number
 }
 
-export const postVehicle = (newVehicle: VehiclePostModel): Promise<Response> => {
+export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> => {
 
     const requestOptions = {
         method: 'POST',

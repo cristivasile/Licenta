@@ -1,16 +1,17 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField, Autocomplete, FormControl, InputLabel, Select, OutlinedInput, ListItemText, Checkbox } from '@mui/material';
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import { generateErrorMessage, generateSuccessMessage } from '../../../common';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
-import { getAvailableVehicles, postVehicle, VehiclePostModel } from '../../../services/vehiclesService';
+import { getAvailableVehicles, postVehicle, VehicleCreateModel } from '../../../services/vehiclesService';
 import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../services/utils';
-import Loading from '../../Loading/Loading';
-import './AddVehicleDialog.scss';
 import { dictFromVehicleTypeList as mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
-import { driveTrainsMap, DriveTrainType} from '../../../models/DriveTrainTypeEnum';
+import { driveTrainsMap, DriveTrainType } from '../../../models/DriveTrainTypeEnum';
 import { powerTrainsMap, PowerTrainType } from '../../../models/PowerTrainTypeEnum';
+import Loading from '../../Loading/Loading';
+import defaultImage from "../../../assets/no-image.png";
+import './AddVehicleDialog.scss';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,
@@ -203,7 +204,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       base64ThumbnailImage = "";
     }
 
-    var newVehicle: VehiclePostModel = {   //TODO - implement features
+    var newVehicle: VehicleCreateModel = {   //TODO - implement features
       image: base64Image,
       thumbnailImage: base64ThumbnailImage,
       brand: brandValue,
@@ -262,6 +263,13 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       });
   }
 
+  function getImage(imageValue: File | Blob): string {
+    if (imageValue.size !== 0) 
+      return URL.createObjectURL(imageValue);
+    else
+      return defaultImage;
+  }
+
   function handleNumericInput(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<number>>, isFloat = false) {
     var value = event.target.value;
     var number;
@@ -289,8 +297,13 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
             <input type="file" hidden accept={"image/png, image/jpeg"}
               onChange={(event) => event.target.files !== null ? setImageValue(event.target.files![0]) : {}} />
           </Button>
-          <div>
-            {imageValue.name !== "" ? imageValue.name : "No image selected"}
+          <div id="imageInfoDiv">
+            <div>
+              {imageValue.name !== "" ? imageValue.name : "No image selected"}
+            </div>
+            <div id="previewImageDiv">
+              <img src={getImage(imageValue)} alt="" id="previewImage" />
+            </div>
           </div>
         </div>
 
