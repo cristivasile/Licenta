@@ -67,7 +67,7 @@ namespace API.Managers
             if (feature == null)
                 throw new KeyNotFoundException("Feature doesn't exist!");
 
-            if (nameCheck != null)
+            if (nameCheck != null && nameCheck.Id != feature.Id)    //check if a different feature has the given name
                 throw new Exception("A feature with the given name already exists!");
 
             feature.Name = updatedFeature.Name;
