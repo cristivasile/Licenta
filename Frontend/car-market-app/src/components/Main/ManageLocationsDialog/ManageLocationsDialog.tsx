@@ -201,11 +201,11 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
           <TextField value={cityValue} label="City" margin="dense" fullWidth autoFocus
             onChange={(event) => setCityValue(event.target.value)}
             error={cityError} helperText={cityErrorText}
-            type="text" name="address"/>
+            type="text" name="address" className="splitDialogField"/>
           <TextField value={addressValue} label="Address" margin="dense" fullWidth autoFocus
             error={addressError} helperText={addressErrorText}
             onChange={(event) => setAddressValue(event.target.value)}
-            type="text" name="address"/>
+            type="text" name="address" className="splitDialogField"/>
         </div>
         <div className="rightDiv" style={{ marginTop: 20 }}>
           <Button disabled={loading} onClick={addLocationClick} variant="contained" >Add</Button>
@@ -226,11 +226,11 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
           <TextField value={cityValue} label="City" margin="dense" fullWidth autoFocus
             onChange={(event) => setCityValue(event.target.value)}
             error={cityError} helperText={cityErrorText}
-            type="text" name="address"/>
+            type="text" name="address" className="splitDialogField"/>
           <TextField value={addressValue} label="Address" margin="dense" fullWidth autoFocus
             error={addressError} helperText={addressErrorText}
             onChange={(event) => setAddressValue(event.target.value)}
-            type="text" name="address"/>
+            type="text" name="address" className="splitDialogField"/>
         </div>
         <div className="rightDiv" style={{ marginTop: 20 }}>
           <Button disabled={loading} onClick={updateLocationClick} variant="contained">Update</Button>
