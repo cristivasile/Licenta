@@ -55,7 +55,7 @@ const Vehicles: FC<VehiclesProps> = () => {
         else {
           notifyBadResultCode(result.status);
         }
-      })            
+      })
       .catch((err) => {
         notifyFetchFail(err);
       })
@@ -69,23 +69,23 @@ const Vehicles: FC<VehiclesProps> = () => {
     setLoading(true);
 
     getLocations()
-    .then(async response => {
-      if (response.status !== 200) {
-        notifyBadResultCode(response.status);
-      }
-      else {
-        var json = await response.json();
-        dispatch(setLocationsFromJson(json));
-        setLocationDialogOpen(true);
-      }
-    })
-    .catch((err) => {
-      notifyFetchFail(err);
-      return;
-    })
-    .then(() => {
-      setLoading(false);
-    });
+      .then(async response => {
+        if (response.status !== 200) {
+          notifyBadResultCode(response.status);
+        }
+        else {
+          var json = await response.json();
+          dispatch(setLocationsFromJson(json));
+          setLocationDialogOpen(true);
+        }
+      })
+      .catch((err) => {
+        notifyFetchFail(err);
+        return;
+      })
+      .then(() => {
+        setLoading(false);
+      });
   }
 
   function closeLocationDialog() {
@@ -101,23 +101,23 @@ const Vehicles: FC<VehiclesProps> = () => {
     setLoading(true);
 
     getFeatures()
-    .then(async response => {
-      if (response.status !== 200) {
-        notifyBadResultCode(response.status);
-      }
-      else {
-        var json = await response.json();
-        dispatch(setFeaturesFromJson(json));
-        setFeatureDialogOpen(true);
-      }
-    })
-    .catch((err) => {
-      notifyFetchFail(err);
-      return;
-    })
-    .then(() => {
-      setLoading(false);
-    });
+      .then(async response => {
+        if (response.status !== 200) {
+          notifyBadResultCode(response.status);
+        }
+        else {
+          var json = await response.json();
+          dispatch(setFeaturesFromJson(json));
+          setFeatureDialogOpen(true);
+        }
+      })
+      .catch((err) => {
+        notifyFetchFail(err);
+        return;
+      })
+      .then(() => {
+        setLoading(false);
+      });
   }
 
   function closeFeatureDialog() {
@@ -133,23 +133,23 @@ const Vehicles: FC<VehiclesProps> = () => {
     setLoading(true);
 
     getBodyTypes()
-    .then(async response => {
-      if (response.status !== 200) {
-        notifyBadResultCode(response.status);
-      }
-      else {
-        var json = await response.json();
-        dispatch(setBodyTypesFromJson(json));
-        setBodyTypeDialogOpen(true);
-      }
-    })
-    .catch((err) => {
-      notifyFetchFail(err);
-      return;
-    })
-    .then(() => {
-      setLoading(false);
-    });
+      .then(async response => {
+        if (response.status !== 200) {
+          notifyBadResultCode(response.status);
+        }
+        else {
+          var json = await response.json();
+          dispatch(setBodyTypesFromJson(json));
+          setBodyTypeDialogOpen(true);
+        }
+      })
+      .catch((err) => {
+        notifyFetchFail(err);
+        return;
+      })
+      .then(() => {
+        setLoading(false);
+      });
   }
 
   function closeBodyTypeDialog() {
@@ -161,27 +161,38 @@ const Vehicles: FC<VehiclesProps> = () => {
     onClose: closeBodyTypeDialog
   }
 
-  function openVehicleDialog() {
+  async function openVehicleDialog() {
     setLoading(true);
 
-    getLocations()
-      .then(async response => {
-        if (response.status !== 200) {
-          notifyBadResultCode(response.status);
-        }
-        else {
-          var json = await response.json();
-          dispatch(setLocationsFromJson(json));
-          setVehicleDialogOpen(true);
-        }
-      })
-      .catch((err) => {
-        notifyFetchFail(err);
-        return;
-      })
-      .then(() => {
-        setLoading(false);
-      });
+    try {
+      //run fetches in parallel
+      const [locationResponse, bodyTypeResponse, featuresResponse] = await Promise.all([
+        getLocations(), getBodyTypes(), getFeatures()
+      ]);
+
+      if (locationResponse.status !== 200)
+        notifyBadResultCode(locationResponse.status);
+      else if (bodyTypeResponse.status !== 200)
+        notifyBadResultCode(bodyTypeResponse.status);
+      else if (featuresResponse.status !== 200)
+        notifyBadResultCode(featuresResponse.status);
+      else
+      {
+        var json = await locationResponse.json();
+        dispatch(setLocationsFromJson(json));
+        json = await bodyTypeResponse.json();
+        dispatch(setBodyTypesFromJson(json));
+        json = await featuresResponse.json();
+        dispatch(setFeaturesFromJson(json));
+
+        setVehicleDialogOpen(true);
+      }
+    }
+    catch (err: any) {
+      notifyFetchFail(err);
+    }
+
+    setLoading(false);
   }
 
   function closeVehicleDialog() {

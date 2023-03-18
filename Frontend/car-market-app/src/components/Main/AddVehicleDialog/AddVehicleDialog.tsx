@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
 import { getAvailableVehicles, postVehicle, VehicleAddModel } from '../../../services/vehiclesService';
-import { compressImage, fileToBase64 } from '../../../utils';
+import { compressImage, fileToBase64 } from '../../../services/utils';
 import Loading from '../../Loading/Loading';
 import './AddVehicleDialog.scss';
 
@@ -251,21 +251,21 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         <div className="splitDiv">
           <TextField value={brandValue} label="Brand*" margin="dense" fullWidth autoFocus
             onChange={(event) => setBrandValue(event.target.value)}
-            type="text" name="brand" className="vehicleDialogField"
+            type="text" name="brand" className="splitDialogField"
             error={brandError} helperText={brandErrorText} />
           <TextField value={modelValue} label="Model*" margin="dense" fullWidth autoFocus
             onChange={(event) => setModelValue(event.target.value)}
-            type="text" name="model" className="vehicleDialogField"
+            type="text" name="model" className="splitDialogField"
             error={modelError} helperText={modelErrorText} />
         </div>
         <div className="splitDiv">
           <TextField value={yearValue || ""} label="Year*" margin="dense" fullWidth autoFocus
             onChange={(event) => handleNumericInput(event, setYearValue)}
-            type="number" name="year" className="vehicleDialogField"
+            type="number" name="year" className="splitDialogField"
             error={yearError} helperText={yearErrorText} />
           <TextField value={odometerValue || ""} label="Odometer*" margin="dense" fullWidth autoFocus
             onChange={(event) => handleNumericInput(event, setOdometerValue)}
-            type="number" name="odometer" className="vehicleDialogField"
+            type="number" name="odometer" className="splitDialogField"
             InputProps={{
               endAdornment: <InputAdornment position="end">km</InputAdornment>,
             }}
@@ -274,11 +274,11 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         <div className="splitDiv">
           <TextField value={engineSizeValue || ""} label="Engine size*" margin="dense" fullWidth autoFocus
             onChange={(event) => handleNumericInput(event, setEngineSizeValue)}
-            type="number" name="engineSize" className="vehicleDialogField"
+            type="number" name="engineSize" className="splitDialogField"
             error={engineSizeError} helperText={engineSizeErrorText} />
           <TextField value={powerValue || ""} label="Power*" margin="dense" fullWidth autoFocus
             onChange={(event) => handleNumericInput(event, setPowerValue)}
-            type="number" name="power" className="vehicleDialogField"
+            type="number" name="power" className="splitDialogField"
             InputProps={{
               endAdornment: <InputAdornment position="end">hp</InputAdornment>,
             }}
@@ -287,7 +287,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         <div className="splitDiv">
           <TextField value={locationValue} label="Location*" margin="dense" fullWidth autoFocus select
             onChange={(event) => setLocationValue(event.target.value)}
-            name="location" className="vehicleDialogField"
+            name="location" className="splitDialogField"
             error={locationError} helperText={locationErrorText}>
             {locations.map((location) => (
               <MenuItem key={location.city + ", " + location.address} value={location.id}>
@@ -297,7 +297,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
           </TextField>
           <TextField value={priceValue || ""} label="Price*" margin="dense" fullWidth autoFocus
             onChange={(event) => handleNumericInput(event, setPriceValue, true)}
-            type="number" name="price" className="vehicleDialogField"
+            type="number" name="price" className="splitDialogField"
             InputProps={{
               startAdornment: <InputAdornment position="start">€</InputAdornment>,
             }}

@@ -142,6 +142,10 @@ namespace API.Managers
             return vehicles;
         }
 
+        /// <summary>
+        /// Validates fields of an input vehicle.
+        /// Doesn't check the features list, must be done separately.
+        /// </summary>
         private async Task ValidateInputVehicle(VehicleCreateModel inputVehicle)
         {
             if (inputVehicle.Image.Length > maxImageSize)
