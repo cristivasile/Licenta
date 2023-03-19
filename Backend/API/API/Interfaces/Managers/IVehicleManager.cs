@@ -9,12 +9,12 @@ namespace API.Interfaces.Managers
     {
         Task<int> GetNumberOfVehicles();
         Task<int> GetNumberOfAvailableVehicles();
-        Task<List<VehicleModel>> GetAll(VehiclePaginationModel filters);
-        Task<List<VehicleModel>> GetAvailable();
+        Task<VehiclesPageModel> GetAll(VehicleFiltersModel filters);
+        Task<IEnumerable<VehicleModel>> GetAvailable();
         /// <summary>
         /// Returns all available vehicles i.e. all vehicles that have not yet been sold
         /// </summary>
-        Task<List<VehicleModel>> GetAvailable(VehicleFiltersModel filters);
+        Task<VehiclesPageModel> GetAvailable(VehicleFiltersModel filters);
         Task<DetailedVehicleModel> GetById(string id);
         Task<FullVehicleModel> GetByIdExtended(string id);
         Task<Dictionary<string, List<string>>> GetBrandModelDictionary();

@@ -28,22 +28,6 @@ namespace API.Controllers
             return Ok(vehicles);
         }
 
-        [HttpGet("getNumber")]
-        [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> ReadNumberOfVehicles()
-        {
-            var numberOfVehicles = await vehicleManager.GetNumberOfVehicles();
-            return Ok(numberOfVehicles);
-        }
-
-        [HttpGet("getAvailableNumber")]
-        [Authorize(Policy = "User")]
-        public async Task<IActionResult> ReadNumberOfAvailableVehicles()
-        {
-            var numberOfVehicles = await vehicleManager.GetNumberOfVehicles();
-            return Ok(numberOfVehicles);
-        }
-
         /// <summary>
         /// Get all vehicles that have an associated "available" status. 
         /// For no filters send an empty {} body

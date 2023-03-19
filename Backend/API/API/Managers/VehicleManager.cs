@@ -67,34 +67,11 @@ namespace API.Managers
             return returned;
         }
 
-        public async Task<List<VehicleModel>> GetAll(VehiclePaginationModel filters)
+        /// <summary>
+        /// Given a queryable collection applies filters and sorting.
+        /// </summary>
+        private IEnumerable<VehicleModel> ApplyFilters(IQueryable<VehicleModel> vehicleQueryable, VehicleFiltersModel filters)
         {
-            List<Vehicle> vehicles;
-            if (filters.StartAt != null && filters.NumberToGet != null)
-                vehicles = await vehicleRepository.GetRange(filters.StartAt.Value, filters.NumberToGet.Value);
-            else
-                vehicles = await vehicleRepository.GetAll();
-
-            return vehicles.Select(x => new VehicleModel(x))
-                               .ToList();
-        }
-
-        public async Task<List<VehicleModel>> GetAvailable()
-        {
-            var vehicles = (await vehicleRepository.GetAvailable())
-                                .Select(x => new VehicleModel(x))
-                                .ToList();
-
-            return vehicles;
-        }
-
-        public async Task<List<VehicleModel>> GetAvailable(VehicleFiltersModel filters)
-        {
-            var vehicles = await GetAvailable();
-
-            //apply filters
-            IQueryable<VehicleModel> vehicleQueryable = vehicles.AsQueryable();
-            
             if (filters.Brand != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Brand.ToLower() == filters.Brand.ToLower());
             if (filters.MaxMileage != null)
@@ -103,9 +80,9 @@ namespace API.Managers
                 vehicleQueryable = vehicleQueryable.Where(x => x.Price <= filters.MaxPrice.Value);
             if (filters.MinYear != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Year >= filters.MinYear.Value);
-            
+
             //assign filtered list
-            vehicles = vehicleQueryable.ToList();
+            var result = vehicleQueryable.ToList();
 
             //apply sorting
             if (filters.Sort != null)
@@ -117,29 +94,62 @@ namespace API.Managers
                 {
                     case FiltersSortType.Name:
                         if (filters.SortAsc.Value == true)
-                            vehicles = vehicles.OrderBy(x => x.Brand + x.Model).ToList();
+                            result = result.OrderBy(x => x.Brand + x.Model).ToList();
                         else
-                            vehicles = vehicles.OrderByDescending(x => x.Brand + x.Model).ToList();
+                            result = result.OrderByDescending(x => x.Brand + x.Model).ToList();
                         break;
                     case FiltersSortType.Price:
-                        vehicles = vehicles.OrderBy(x => sortMultiplier * x.Price).ToList();
+                        result = result.OrderBy(x => sortMultiplier * x.Price).ToList();
                         break;
                     case FiltersSortType.Mileage:
-                        vehicles = vehicles.OrderBy(x => sortMultiplier * x.Odometer).ToList();
+                        result = result.OrderBy(x => sortMultiplier * x.Odometer).ToList();
                         break;
                     case FiltersSortType.Power:
-                        vehicles = vehicles.OrderBy(x => sortMultiplier * x.Power).ToList();
+                        result = result.OrderBy(x => sortMultiplier * x.Power).ToList();
                         break;
                     default:
                         break;
                 }
             }
 
-            //apply pagination
-            if (filters.StartAt != null && filters.NumberToGet != null)
-                vehicles = vehicles.Skip(filters.StartAt.Value).Take(filters.NumberToGet.Value).ToList();
+            return result;
+        }
 
-            return vehicles;
+        private IEnumerable<VehicleModel> ApplyPagination(IEnumerable<VehicleModel> vehicles, VehiclePaginationModel pagination)
+        {
+            if (pagination.StartAt != null && pagination.NumberToGet != null)
+                return vehicles.Skip(pagination.StartAt.Value).Take(pagination.NumberToGet.Value);
+            else
+                return vehicles;
+        }
+
+        private VehiclesPageModel GetFilteredPage(IEnumerable<VehicleModel> vehicles, VehicleFiltersModel filters)
+        {
+            vehicles = ApplyFilters(vehicles.AsQueryable(), filters);
+            var count = vehicles.Count();
+            vehicles = ApplyPagination(vehicles, filters);
+
+            return new()
+            {
+                TotalCount = count,
+                Vehicles = vehicles.ToList(),
+            };
+        }
+
+        public async Task<VehiclesPageModel> GetAll(VehicleFiltersModel filters)
+        {
+            var vehicles = (await vehicleRepository.GetAll())
+                                .Select(x => new VehicleModel(x));
+
+            return GetFilteredPage(vehicles, filters);
+        }
+
+        public async Task<VehiclesPageModel> GetAvailable(VehicleFiltersModel filters)
+        {
+            var vehicles = (await vehicleRepository.GetAvailable())
+                                .Select(x => new VehicleModel(x));
+
+            return GetFilteredPage(vehicles, filters);
         }
 
         public async Task<Dictionary<string, List<string>>> GetBrandModelDictionary()

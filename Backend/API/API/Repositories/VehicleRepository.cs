@@ -37,8 +37,5 @@ namespace API.Repositories
         {
             return await entitySet.CountAsync();
         }
-
-        public async Task<List<Vehicle>> GetRange(int startWith, int take)
-            => await entitySet.Skip(startWith).Take(take).ToListAsync();
     }
 }

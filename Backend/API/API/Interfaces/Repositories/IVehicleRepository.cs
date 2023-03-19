@@ -10,7 +10,6 @@ namespace API.Interfaces.Repositories
         Task<int> GetNumberOfVehicles();
         Task<int> GetNumberOfAvailableVehicles();
         Task<List<Vehicle>> GetAll();
-        Task<List<Vehicle>> GetRange(int startWith, int take);
         Task<List<Vehicle>> GetAvailable();
         Task<List<Vehicle>> GetAvailable(VehicleFiltersModel filters);
         Task<Vehicle> GetById(string id);

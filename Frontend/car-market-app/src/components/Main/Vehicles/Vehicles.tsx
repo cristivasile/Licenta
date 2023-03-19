@@ -41,7 +41,7 @@ const Vehicles: FC<VehiclesProps> = () => {
       .then(async (result) => {
         if (result.status === 200) {
           var json = await result.json();
-          dispatch(setVehiclesFromJson(json));
+          dispatch(setVehiclesFromJson(json.vehicles));
         }
         else {
           notifyBadResultCode(result.status);
