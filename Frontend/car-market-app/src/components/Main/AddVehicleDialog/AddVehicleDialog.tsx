@@ -7,8 +7,8 @@ import { generateToastError, notifyFetchFail } from '../../../services/toastNoti
 import { getAvailableVehicles, postVehicle, VehicleCreateModel } from '../../../services/vehiclesService';
 import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../services/utils';
 import { dictFromVehicleTypeList as mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
-import { driveTrainsMap, DriveTrainType } from '../../../models/DriveTrainTypeEnum';
-import { powerTrainsMap, PowerTrainType } from '../../../models/PowerTrainTypeEnum';
+import { driveTrainsMap, DriveTrainTypeEnum } from '../../../models/DriveTrainTypeEnum';
+import { powerTrainsMap, PowerTrainTypeEnum } from '../../../models/PowerTrainTypeEnum';
 import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
 import './AddVehicleDialog.scss';
@@ -51,8 +51,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [descriptionValue, setDescriptionValue] = useState("");
   const [imageValue, setImageValue] = useState(new File([""], ""));
   const [featuresValue, setFeaturesValue] = useState(new Array<string>());
-  const [driveTrainValue, setDriveTrainValue] = useState(DriveTrainType.FWD);
-  const [powerTrainValue, setPowerTrainValue] = useState(PowerTrainType.Diesel);
+  const [driveTrainValue, setDriveTrainValue] = useState(DriveTrainTypeEnum.FWD);
+  const [powerTrainValue, setPowerTrainValue] = useState(PowerTrainTypeEnum.Diesel);
 
   const [brandError, setBrandError] = useState(false);
   const [brandErrorText, setBrandErrorText] = useState("");
@@ -361,7 +361,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         </div>
         <div className="splitDiv">
           <TextField value={driveTrainValue} label="Drive train*" margin="dense" fullWidth select
-            onChange={(event) => setDriveTrainValue(event.target.value as DriveTrainType)}
+            onChange={(event) => setDriveTrainValue(event.target.value as DriveTrainTypeEnum)}
             name="bodyType" className="halfSplitDialogField">
             {driveTrains.map((entry) => (
               <MenuItem key={entry[0]} value={entry[1]}>
@@ -370,7 +370,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
             ))}
           </TextField>
           <TextField value={powerTrainValue} label="Power train*" margin="dense" fullWidth select
-            onChange={(event) => setPowerTrainValue(event.target.value as PowerTrainType)}
+            onChange={(event) => setPowerTrainValue(event.target.value as PowerTrainTypeEnum)}
             name="powerTrain" className="halfSplitDialogField">
             {powerTrains.map((entry) => (
               <MenuItem key={entry[0]} value={entry[1]}>

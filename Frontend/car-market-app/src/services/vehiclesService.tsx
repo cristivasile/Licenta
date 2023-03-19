@@ -1,10 +1,11 @@
 import { apiUrl } from "../constants";
-import { DriveTrainType } from "../models/DriveTrainTypeEnum";
-import { PowerTrainType } from "../models/PowerTrainTypeEnum";
+import { DriveTrainTypeEnum } from "../models/DriveTrainTypeEnum";
+import { PowerTrainTypeEnum } from "../models/PowerTrainTypeEnum";
+import { SortTypeEnum } from "../models/SortTypeEnumModel";
 import { store } from "../redux/store";
 import { authenticatedFetch } from "./fetchInterceptor";
 
-export interface VehicleCreateModel{
+export interface VehicleCreateModel {
     image: string,
     thumbnailImage: string,
     brand: string,
@@ -14,8 +15,8 @@ export interface VehicleCreateModel{
     address: string,
     odometer: number,
     year: number,
-    driveTrain: DriveTrainType,
-    powerTrain: PowerTrainType,
+    driveTrain: DriveTrainTypeEnum,
+    powerTrain: PowerTrainTypeEnum,
     engineSize: number | null,
     locationId: string,
     power: number,
@@ -28,7 +29,7 @@ export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> =
 
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " +  store.getState().user.token },
+        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
         body: JSON.stringify({
             image: newVehicle.image,
             thumbnailImage: newVehicle.thumbnailImage,
@@ -54,8 +55,22 @@ export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> =
     return authenticatedFetch(apiUrl + "/api/Vehicle", requestOptions);
 }
 
+export interface VehicleFiltersModel {
+    startAt: number,
+    numberToGet: number,
+    brand: string | null,
+    model: string | null,
+    bodyType: string | null,
+    maxMileage: number | null,
+    minPrice: number | null,
+    maxPrice: number | null,
+    minYear: number | null,
+    sort: SortTypeEnum | null,
+    sortAsc: boolean,
+}
+
 export const getAvailableVehicles = (): Promise<Response> => {
-    
+
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },

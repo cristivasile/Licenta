@@ -94,12 +94,12 @@ namespace API.Managers
             if (filters.Sort != null)
             {
                 var sortMultiplier = 1;
-                if (filters.SortAsc != null && filters.SortAsc.Value == false)
+                if (filters.SortAsc == false)
                     sortMultiplier = -1;
                 switch (filters.Sort.Value)
                 {
                     case FiltersSortType.Name:
-                        if (filters.SortAsc.Value == true)
+                        if (filters.SortAsc == true)
                             result = result.OrderBy(x => x.Brand + x.Model).ToList();
                         else
                             result = result.OrderByDescending(x => x.Brand + x.Model).ToList();

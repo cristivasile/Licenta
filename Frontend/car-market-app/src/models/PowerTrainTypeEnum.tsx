@@ -1,4 +1,4 @@
-export enum PowerTrainType {
+export enum PowerTrainTypeEnum {
     Diesel = "Diesel",
     Petrol = "Petrol",
     LPG = "LPG",                        //LPG + petrol
@@ -9,13 +9,13 @@ export enum PowerTrainType {
     MildHybrid = "MildHybrid"           //MHEV
 }
 
-export const powerTrainsMap: Map<string, PowerTrainType> = new Map([
-    ["Diesel", PowerTrainType.Diesel] as [string, PowerTrainType],
-    ["Petrol", PowerTrainType.Petrol] as [string, PowerTrainType],
-    ["LPG", PowerTrainType.LPG] as [string, PowerTrainType],
-    ["Hydrogen cell (FCEV)", PowerTrainType.HydrogenCell] as [string, PowerTrainType],
-    ["Full electric (BEV)", PowerTrainType.FullElectric] as [string, PowerTrainType],
-    ["Hybrid (HEV)", PowerTrainType.Hybrid] as [string, PowerTrainType],
-    ["Plug in hybrid (PHEV)", PowerTrainType.PlugInHybrid] as [string, PowerTrainType],
-    ["MildHybrid (MHEV)", PowerTrainType.MildHybrid] as [string, PowerTrainType],
+export const powerTrainsMap: Map<string, PowerTrainTypeEnum> = new Map([
+    ["Diesel", PowerTrainTypeEnum.Diesel] as [string, PowerTrainTypeEnum],
+    ["Petrol", PowerTrainTypeEnum.Petrol] as [string, PowerTrainTypeEnum],
+    ["LPG", PowerTrainTypeEnum.LPG] as [string, PowerTrainTypeEnum],
+    ["Hydrogen cell (FCEV)", PowerTrainTypeEnum.HydrogenCell] as [string, PowerTrainTypeEnum],
+    ["Full electric (BEV)", PowerTrainTypeEnum.FullElectric] as [string, PowerTrainTypeEnum],
+    ["Hybrid (HEV)", PowerTrainTypeEnum.Hybrid] as [string, PowerTrainTypeEnum],
+    ["Plug in hybrid (PHEV)", PowerTrainTypeEnum.PlugInHybrid] as [string, PowerTrainTypeEnum],
+    ["MildHybrid (MHEV)", PowerTrainTypeEnum.MildHybrid] as [string, PowerTrainTypeEnum],
 ]);
