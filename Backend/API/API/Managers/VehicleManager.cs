@@ -76,6 +76,8 @@ namespace API.Managers
                 vehicleQueryable = vehicleQueryable.Where(x => x.Brand.ToLower() == filters.Brand.ToLower());
             if (filters.MaxMileage != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Odometer <= filters.MaxMileage.Value);
+            if (filters.MinPrice != null)
+                vehicleQueryable = vehicleQueryable.Where(x => x.Price >= filters.MinPrice.Value);
             if (filters.MaxPrice != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Price <= filters.MaxPrice.Value);
             if (filters.MinYear != null)

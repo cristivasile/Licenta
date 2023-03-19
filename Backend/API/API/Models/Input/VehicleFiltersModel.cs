@@ -18,6 +18,7 @@ namespace API.Models.Input
         public string? Model { get; set; }
         public string? BodyType { get; set; }
         public int? MaxMileage { get; set; }
+        public int? MinPrice { get; set; }
         public int? MaxPrice { get; set; }
         public int? MinYear { get; set; }
         public FiltersSortType? Sort { get; set; }
