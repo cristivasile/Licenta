@@ -24,6 +24,6 @@ namespace API.Models.Input
         public int? MaxPrice { get; set; }
         public int? MinYear { get; set; }
         public FiltersSortType? Sort { get; set; }
-        public bool SortAsc { get; set; }
+        public bool? SortAsc { get; set; }
     }
 }

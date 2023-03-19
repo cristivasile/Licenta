@@ -83,7 +83,7 @@ namespace API.Managers
             if (filters.MinPower != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Power >= filters.MinPower.Value);
             if (filters.MaxPower != null)
-                vehicleQueryable = vehicleQueryable.Where(x => x.Price <= filters.MaxPower.Value);
+                vehicleQueryable = vehicleQueryable.Where(x => x.Power <= filters.MaxPower.Value);
             if (filters.MinYear != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Year >= filters.MinYear.Value);
 
@@ -94,12 +94,13 @@ namespace API.Managers
             if (filters.Sort != null)
             {
                 var sortMultiplier = 1;
-                if (filters.SortAsc == false)
+                if (filters.SortAsc != null && filters.SortAsc.Value == false)
                     sortMultiplier = -1;
+
                 switch (filters.Sort.Value)
                 {
                     case FiltersSortType.Name:
-                        if (filters.SortAsc == true)
+                        if (filters.SortAsc != null && filters.SortAsc.Value == false)
                             result = result.OrderBy(x => x.Brand + x.Model).ToList();
                         else
                             result = result.OrderByDescending(x => x.Brand + x.Model).ToList();
