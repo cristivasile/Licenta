@@ -80,6 +80,10 @@ namespace API.Managers
                 vehicleQueryable = vehicleQueryable.Where(x => x.Price >= filters.MinPrice.Value);
             if (filters.MaxPrice != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Price <= filters.MaxPrice.Value);
+            if (filters.MinPower != null)
+                vehicleQueryable = vehicleQueryable.Where(x => x.Power >= filters.MinPower.Value);
+            if (filters.MaxPower != null)
+                vehicleQueryable = vehicleQueryable.Where(x => x.Price <= filters.MaxPower.Value);
             if (filters.MinYear != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Year >= filters.MinYear.Value);
 

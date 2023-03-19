@@ -10,7 +10,6 @@ namespace API.Interfaces.Managers
         Task<int> GetNumberOfVehicles();
         Task<int> GetNumberOfAvailableVehicles();
         Task<VehiclesPageModel> GetAll(VehicleFiltersModel filters);
-        Task<IEnumerable<VehicleModel>> GetAvailable();
         /// <summary>
         /// Returns all available vehicles i.e. all vehicles that have not yet been sold
         /// </summary>

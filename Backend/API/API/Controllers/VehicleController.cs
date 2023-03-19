@@ -22,7 +22,7 @@ namespace API.Controllers
         
         [HttpPost("getAll")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> ReadVehicles([FromBody] VehiclePaginationModel filters)
+        public async Task<IActionResult> ReadVehicles([FromBody] VehicleFiltersModel filters)
         {
             var vehicles = await vehicleManager.GetAll(filters);
             return Ok(vehicles);
