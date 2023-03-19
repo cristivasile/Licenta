@@ -20,19 +20,9 @@ import { getBodyTypes } from '../../../services/bodyTypeService.';
 import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
 import ManageBodyTypesDialog from '../ManageBodyTypesDialog/ManageBodyTypesDialog';
 import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
+import { isAdmin } from '../../../services/authenticationService';
 
 interface VehiclesProps { }
-
-const adminRoleSet = new Set<string>(["admin", "sysadmin"]);
-/**
- * Checks whether the current user is an admin
- * @param role the user's role
- */
-function isAdmin(role: string): boolean {
-  if (adminRoleSet.has(role.toLowerCase()))
-    return true;
-  return false;
-}
 
 const Vehicles: FC<VehiclesProps> = () => {
 

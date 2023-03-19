@@ -1,8 +1,8 @@
 import { Button, TextField } from '@mui/material';
-import React, { FC, FormEvent, useState } from 'react';
+import { FC, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { generateErrorMessage } from '../../common';
-import { apiUrl } from '../../constants';
+import { signUp } from '../../services/authenticationService';
 import Loading from '../Loading/Loading';
 import './Auth.scss';
 
@@ -83,12 +83,7 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
 
     setLoading(true);
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: emailValue, username: usernameValue, password: passwordValue })
-    };
-    fetch(apiUrl + "/api/auth/signUp", requestOptions)
+    signUp(usernameValue, passwordValue, emailValue)
       .then(async response => {
         if (response.status !== 200) {
           setErrorMessage(await response.text());

@@ -5,10 +5,11 @@ import './Auth.scss';
 import { Button } from '@mui/material';
 import { login, setRole, setToken, setUser} from '../../redux/userStore';
 import { useAppDispatch } from '../../hooks';
-import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath, apiUrl } from '../../constants';
+import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath } from '../../constants';
 import Loading from '../Loading/Loading';
 import { notifyFetchFail } from '../../services/toastNotificationsService';
 import { generateErrorMessage } from '../../common';
+import { logIn } from '../../services/authenticationService';
 
 interface LoginProps { 
   userName: string;
@@ -66,12 +67,7 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
     //disable login button
     setLoading(true);
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: usernameValue, password: passwordValue })
-    };
-    fetch(apiUrl + "/api/auth/login", requestOptions)
+    logIn(usernameValue, passwordValue)
       .then(async response => {
         if (response.status !== 200) {
           setErrorMessage(await response.text());
