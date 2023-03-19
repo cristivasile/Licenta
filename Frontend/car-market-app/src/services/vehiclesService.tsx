@@ -69,12 +69,24 @@ export interface VehicleFiltersModel {
     sortAsc: boolean,
 }
 
-export const getAvailableVehicles = (): Promise<Response> => {
+export const getAvailableVehicles = (filters: VehicleFiltersModel): Promise<Response> => {
 
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
-        body: "{}", //empty body for no filters
+        body: JSON.stringify({
+            startAt: filters.startAt,
+            numberToGet: filters.numberToGet,
+            brand: filters.brand,
+            model: filters.model,
+            bodyType: filters.bodyType,
+            maxMileage: filters.maxMileage,
+            minPrice: filters.minPrice,
+            maxPrice: filters.maxPrice,
+            minYear: filters.minYear,
+            sort: filters.sort,
+            sortAsc: filters.sortAsc,
+        })
     };
     return authenticatedFetch(apiUrl + "/api/Vehicle/getAvailable", requestOptions);
 }

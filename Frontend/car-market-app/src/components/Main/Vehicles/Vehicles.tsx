@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, Pagination } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import './Vehicles.scss';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -9,7 +9,7 @@ import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setLocationsFromJson } from '../../../redux/locationsStore';
 import { getLocations } from '../../../services/locationsService';
-import { getAvailableVehicles, getVehicleTypesDictionary } from '../../../services/vehiclesService';
+import { getAvailableVehicles, getVehicleTypesDictionary, VehicleFiltersModel } from '../../../services/vehiclesService';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import VehicleItem from '../VehicleItem/VehicleItem';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
@@ -24,35 +24,61 @@ import { isAdmin } from '../../../services/authenticationService';
 
 interface VehiclesProps { }
 
+const vehiclesPerPage: number = 5;
+
 const Vehicles: FC<VehiclesProps> = () => {
 
   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
   const [featureDialogOpen, setFeatureDialogOpen] = useState(false);
   const [bodyTypeDialogOpen, setBodyTypeDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
+  const [vehicleNumber, setVehicleNumber] = useState(1);
+  const [selectedPage, setSelectedPage] = useState(1);
+  const pageCount = Math.ceil(vehicleNumber / vehiclesPerPage);
+
   const [loading, setLoading] = useState(false);
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
   const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
   const dispatch = useAppDispatch();
 
+  function fetchVehicles (selectedPage: number): void
+  {
+    var filters: VehicleFiltersModel = {
+      startAt: (selectedPage - 1) * vehiclesPerPage,
+      numberToGet: vehiclesPerPage,
+      brand: null,
+      model: null,
+      bodyType: null,
+      maxMileage: null,
+      minPrice: null,
+      maxPrice: null,
+      minYear: null,
+      sort: null,
+      sortAsc: true
+    };
+
+    getAvailableVehicles(filters)
+    .then(async (result) => {
+      if (result.status === 200) {
+        var json = await result.json();
+        dispatch(setVehiclesFromJson(json.vehicles));
+        setVehicleNumber(json.totalCount);
+      }
+      else {
+        notifyBadResultCode(result.status);
+      }
+    })
+    .catch((err) => {
+      notifyFetchFail(err);
+    })
+    .then(() => {
+      setLoading(false);
+    });
+  }
+
   useEffect(() => {
     setLoading(true);
-    getAvailableVehicles()
-      .then(async (result) => {
-        if (result.status === 200) {
-          var json = await result.json();
-          dispatch(setVehiclesFromJson(json.vehicles));
-        }
-        else {
-          notifyBadResultCode(result.status);
-        }
-      })
-      .catch((err) => {
-        notifyFetchFail(err);
-      })
-      .then(() => {
-        setLoading(false);
-      });
+    fetchVehicles(1);
     // eslint-disable-next-line 
   }, []);
 
@@ -200,6 +226,12 @@ const Vehicles: FC<VehiclesProps> = () => {
     loadingCallback: setLoading,
   } as AddVehicleDialogProps;
 
+  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
+    setSelectedPage(value);
+    setLoading(true);
+    fetchVehicles(value);
+  };
+
   return (
     <div className="vehicles">
       {loading ? <Loading /> : <></>}
@@ -227,6 +259,9 @@ const Vehicles: FC<VehiclesProps> = () => {
             <VehicleItem vehicle={vehicle} />
           </div>
         ))}
+      </div>
+      <div className="paginationContainer">
+        <Pagination disabled={loading} count={pageCount} page={selectedPage} onChange={handlePageChange} color="primary"/>
       </div>
     </div>
   );

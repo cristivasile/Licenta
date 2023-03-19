@@ -212,7 +212,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       base64ThumbnailImage = "";
     }
 
-    var newVehicle: VehicleCreateModel = {   //TODO - implement features
+    var newVehicle: VehicleCreateModel = {
       image: base64Image,
       thumbnailImage: base64ThumbnailImage,
       brand: brandValue,
@@ -244,24 +244,6 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
           //notify the user that the vehicles list is loading
           props.loadingCallback(true);
-
-          //refresh the vehciles list
-          getAvailableVehicles()
-            .then(async (response) => {
-              if (response.status === 200) {
-                var json = await response.json();
-                dispatch(setVehiclesFromJson(json));
-              }
-              else {
-                generateToastError("The server returned " + response.status + ", please refresh the page manually!", 5000);
-              }
-            })
-            .catch((err) => {
-              notifyFetchFail(err);
-            })
-            .then(() => {
-              props.loadingCallback(false);
-            })
         }
       })
       .catch((err) => {
