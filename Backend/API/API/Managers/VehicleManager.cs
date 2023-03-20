@@ -62,7 +62,7 @@ namespace API.Managers
             if(images.Count > 0 && images[0] != null)
                 returned.Image = images[0].Id;
             else
-                vehicle.Image = "";
+                returned.Image = "";
 
             return returned;
         }
@@ -80,7 +80,7 @@ namespace API.Managers
             if (images.Count > 0 && images[0] != null)
                 returned.Image = images[0].Id;
             else
-                vehicle.Image = "";
+                returned.Image = "";
 
             return returned;
         }
