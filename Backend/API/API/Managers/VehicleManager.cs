@@ -236,6 +236,7 @@ namespace API.Managers
                 Year = inputVehicle.Year,
                 PowerTrainType = inputVehicle.PowerTrainType,
                 DriveTrainType = inputVehicle.DriveTrainType,
+                TransmissionType = inputVehicle.TransmissionType,
                 Features = featuresList
             };
 
@@ -295,6 +296,7 @@ namespace API.Managers
             currentVehicle.Features = featuresList;
             currentVehicle.PowerTrainType = updatedVehicle.PowerTrainType;
             currentVehicle.DriveTrainType = updatedVehicle.DriveTrainType;
+            currentVehicle.TransmissionType = updatedVehicle.TransmissionType;
 
             await vehicleRepository.Update(currentVehicle);
         }

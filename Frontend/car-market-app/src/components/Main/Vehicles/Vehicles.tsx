@@ -23,6 +23,7 @@ import { isAdmin } from '../../../services/authenticationService';
 import './Vehicles.scss';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import TuneIcon from '@mui/icons-material/Tune';
+import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
 
 interface VehiclesProps { }
 
@@ -30,6 +31,8 @@ const vehiclesPerPage: number = 5;
 
 const Vehicles: FC<VehiclesProps> = () => {
 
+  const [loading, setLoading] = useState(false);
+  const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
   const [featureDialogOpen, setFeatureDialogOpen] = useState(false);
   const [bodyTypeDialogOpen, setBodyTypeDialogOpen] = useState(false);
@@ -37,11 +40,22 @@ const Vehicles: FC<VehiclesProps> = () => {
   const [vehicleCount, setVehicleCount] = useState(0);
   const [selectedPage, setSelectedPage] = useState(1);
   const pageCount = Math.ceil(vehicleCount / vehiclesPerPage);
-
-  const [loading, setLoading] = useState(false);
-  const vehicles = useAppSelector((state) => state.vehicle.vehicles);
-  const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
   const dispatch = useAppDispatch();
+
+  //filter values
+  /*
+  const [brandFilter, setBrandFilter] = useState("");
+  const [modelFilter, setModelFilter] = useState("");
+  const [bodyTypeFilter, setBodyTypeFilter] = useState("");
+  const [minPriceFilter, setMinPriceFilter] = useState(NaN);
+  const [maxPriceFilter, setMaxPriceFilter] = useState(NaN);
+  const [minPowerFilter, setMinPowerFilter] = useState(NaN);
+  const [engineSizeValue, setEngineSizeValue] = useState(NaN);
+  const bodyTypes = useAppSelector((state) => state.bodyType.bodyTypes);
+  const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
+  */
+  //collection values
+  const vehicles = useAppSelector((state) => state.vehicle.vehicles);
 
   function fetchVehicles(selectedPage: number): void {
     var filters: VehicleFiltersModel = {
@@ -79,7 +93,31 @@ const Vehicles: FC<VehiclesProps> = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchVehicles(1);
+    fetchVehicles(selectedPage);
+    fetchData();
+
+    async function fetchData(){
+      try {
+        //run fetches in parallel
+        const [bodyTypeResponse, vehicleTypesResponse] = await Promise.all([
+          getLocations(), getBodyTypes(), getFeatures(), getVehicleTypesDictionary()
+        ]);
+  
+        if (bodyTypeResponse.status !== 200)
+          notifyBadResultCode(bodyTypeResponse.status);
+        else if (vehicleTypesResponse.status !== 200)
+          notifyBadResultCode(vehicleTypesResponse.status);
+        else {
+          var json = await bodyTypeResponse.json();
+          dispatch(setBodyTypesFromJson(json));
+          json = await vehicleTypesResponse.json();
+          dispatch(setVehicleTypesFromJson(json));
+        }
+      }
+      catch (err: any) {
+        notifyFetchFail(err);
+      }
+    }
     // eslint-disable-next-line 
   }, []);
 
@@ -223,7 +261,6 @@ const Vehicles: FC<VehiclesProps> = () => {
   const vehicleDialogProps = {
     isOpen: vehicleDialogOpen,
     onClose: closeVehicleDialog,
-    loadingCallback: setLoading,
   } as AddVehicleDialogProps;
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
@@ -248,7 +285,7 @@ const Vehicles: FC<VehiclesProps> = () => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <div className="FiltersDiv">
+          <div className="filtersDiv">
             
           </div>
         </AccordionDetails>

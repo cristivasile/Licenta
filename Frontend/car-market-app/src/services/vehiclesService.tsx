@@ -2,6 +2,7 @@ import { apiUrl } from "../constants";
 import { DriveTrainTypeEnum } from "../models/DriveTrainTypeEnum";
 import { PowerTrainTypeEnum } from "../models/PowerTrainTypeEnum";
 import { SortTypeEnum } from "../models/SortTypeEnumModel";
+import { TransmissionTypeEnum } from "../models/TransmissionTypeEnum";
 import { store } from "../redux/store";
 import { authenticatedFetch } from "./fetchInterceptor";
 
@@ -17,6 +18,7 @@ export interface VehicleCreateModel {
     year: number,
     driveTrain: DriveTrainTypeEnum,
     powerTrain: PowerTrainTypeEnum,
+    transmission: TransmissionTypeEnum,
     engineSize: number | null,
     locationId: string,
     power: number,
@@ -42,6 +44,7 @@ export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> =
             year: newVehicle.year,
             driveTrainType: newVehicle.driveTrain,
             powerTrainType: newVehicle.powerTrain,
+            transmissionType: newVehicle.transmission,
             engineSize: newVehicle.engineSize,
             power: newVehicle.power,
             torque: newVehicle.torque,

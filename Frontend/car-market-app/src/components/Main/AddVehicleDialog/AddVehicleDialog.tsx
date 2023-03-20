@@ -1,22 +1,21 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField, Autocomplete, FormControl, InputLabel, Select, OutlinedInput, ListItemText, Checkbox } from '@mui/material';
 import { FC, useState } from 'react';
 import { generateErrorMessage, generateSuccessMessage } from '../../../common';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
-import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
-import { generateToastError, notifyFetchFail } from '../../../services/toastNotificationsService';
-import { getAvailableVehicles, postVehicle, VehicleCreateModel } from '../../../services/vehiclesService';
+import { useAppSelector } from '../../../hooks';
+import { notifyFetchFail } from '../../../services/toastNotificationsService';
+import { postVehicle, VehicleCreateModel } from '../../../services/vehiclesService';
 import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../services/utils';
-import { dictFromVehicleTypeList as mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
+import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
 import { driveTrainsMap, DriveTrainTypeEnum } from '../../../models/DriveTrainTypeEnum';
 import { powerTrainsMap, PowerTrainTypeEnum } from '../../../models/PowerTrainTypeEnum';
 import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
 import './AddVehicleDialog.scss';
+import { TransmissionTypeEnum, transmissionTypesMap } from '../../../models/TransmissionTypeEnum';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,
   onClose: Function,
-  loadingCallback: Function,
 }
 
 const compressedImageSizeInMb: number = 0.5; 
@@ -33,6 +32,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
   const driveTrains = Array.from(driveTrainsMap.entries());
   const powerTrains = Array.from(powerTrainsMap.entries());
+  const transmissions = Array.from(transmissionTypesMap.entries());
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -53,6 +53,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [featuresValue, setFeaturesValue] = useState(new Array<string>());
   const [driveTrainValue, setDriveTrainValue] = useState(DriveTrainTypeEnum.FWD);
   const [powerTrainValue, setPowerTrainValue] = useState(PowerTrainTypeEnum.Diesel);
+  const [transmissionValue, setTransmissionValue] = useState(TransmissionTypeEnum.Manual);
 
   const [brandError, setBrandError] = useState(false);
   const [brandErrorText, setBrandErrorText] = useState("");
@@ -75,8 +76,6 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [priceError, setPriceError] = useState(false);
   const [priceErrorText, setPriceErrorText] = useState("");
   const [vehicleModelOptions, setVehicleModelOptions] = useState(new Array<string>());
-
-  const dispatch = useAppDispatch();
 
   // Sets the 'Model' autocomplete options when the brand value is modified
   function handleBrandSelection(brand: string) {
@@ -230,6 +229,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       price: priceValue,
       driveTrain: driveTrainValue,
       powerTrain: powerTrainValue,
+      transmission: transmissionValue,
     };
 
     postVehicle(newVehicle)
@@ -241,9 +241,6 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         else {
           setSuccessMessage("Vehicle successfully added!");
           clearInputs();
-
-          //notify the user that the vehicles list is loading
-          props.loadingCallback(true);
         }
       })
       .catch((err) => {
@@ -344,7 +341,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         <div className="splitDiv">
           <TextField value={driveTrainValue} label="Drive train*" margin="dense" fullWidth select
             onChange={(event) => setDriveTrainValue(event.target.value as DriveTrainTypeEnum)}
-            name="bodyType" className="halfSplitDialogField">
+            name="bodyType" className="thirdSplitDialogField">
             {driveTrains.map((entry) => (
               <MenuItem key={entry[0]} value={entry[1]}>
                 {entry[0]}
@@ -353,8 +350,17 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
           </TextField>
           <TextField value={powerTrainValue} label="Power train*" margin="dense" fullWidth select
             onChange={(event) => setPowerTrainValue(event.target.value as PowerTrainTypeEnum)}
-            name="powerTrain" className="halfSplitDialogField">
+            name="powerTrain" className="thirdSplitDialogField">
             {powerTrains.map((entry) => (
+              <MenuItem key={entry[0]} value={entry[1]}>
+                {entry[0]}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField value={transmissionValue} label="Transmission*" margin="dense" fullWidth select
+            onChange={(event) => setTransmissionValue(event.target.value as TransmissionTypeEnum)}
+            name="transmission" className="thirdSplitDialogField">
+            {transmissions.map((entry) => (
               <MenuItem key={entry[0]} value={entry[1]}>
                 {entry[0]}
               </MenuItem>

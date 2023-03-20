@@ -19,6 +19,7 @@ namespace API.Models.Return
         public float Price { get; set; }
         public PowerTrainTypeEnum PowerTrainType { get; set; }
         public DriveTrainTypeEnum DriveTrainType { get; set; }
+        public TransmissionEnum TransmissionType { get; set; }
 
         public VehicleModel(Vehicle ob)
         {
@@ -34,6 +35,7 @@ namespace API.Models.Return
             Year = ob.Year;
             PowerTrainType = ob.PowerTrainType;
             DriveTrainType = ob.DriveTrainType;
+            TransmissionType = ob.TransmissionType;
 
             if (ob.ThumbnailImage != null)
                 Image = ob.ThumbnailImage;

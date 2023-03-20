@@ -13,7 +13,7 @@ export function mapJsonDictToVehicleTypeModels(json: any): VehicleTypeModel[] {
     return vehicleTypeList;
 }
 
-export function dictFromVehicleTypeList(list: VehicleTypeModel[]): Map<string, string[]>
+export function mapFromVehicleTypeList(list: VehicleTypeModel[]): Map<string, string[]>
 {
     return new Map(
         list.map(vehicleType => 

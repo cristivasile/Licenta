@@ -22,5 +22,6 @@ namespace API.Models.Input
         public float Price { get; set; }
         public PowerTrainTypeEnum PowerTrainType { get; set; }
         public DriveTrainTypeEnum DriveTrainType { get; set; }
+        public TransmissionEnum TransmissionType { get; set; }
     }
 }

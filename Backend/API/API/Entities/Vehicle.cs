@@ -26,6 +26,13 @@ namespace API.Entities
         FourWD = 3      //4WD, 4x4
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum TransmissionEnum : byte
+    {
+        Manual = 0,
+        Semi_automatic = 1,
+        Automatic = 2,
+    }
 
     public class Vehicle : Entity
     {
@@ -51,7 +58,9 @@ namespace API.Entities
         public PowerTrainTypeEnum PowerTrainType { get; set; }
         [Required]
         public DriveTrainTypeEnum DriveTrainType { get; set; }
-        
+        [Required]
+        public TransmissionEnum TransmissionType { get; set; }
+
         public virtual Status Status { get; set; }
         /// <summary>
         /// All features belonging to this vehicle.
