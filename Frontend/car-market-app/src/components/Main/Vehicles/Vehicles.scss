@@ -72,6 +72,14 @@
     margin-right: 3%;
 }
 
+.paginationInfoContainer{
+    display: flex;
+    padding-top: .1vh;
+    padding-bottom: .3vh;
+    padding-left: 1vw;
+    flex-direction: row;
+}
+
 .paginationContainer{
     display: flex;
     padding-bottom: 1vh;

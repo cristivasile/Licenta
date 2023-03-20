@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import './Main.scss';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath } from '../../constants';
 import { forcedLogout, logout } from '../../redux/userStore';
 import { Navigate, Route, Routes } from 'react-router-dom';
@@ -47,7 +47,9 @@ const Main: FC<MainProps> = (props: MainProps) => {
             <div className="mainContainer">
                 <div className="header">
                     <div className="messageContainer">
-                        Hello, <span className="usernameSpan">{" " + userName} </span> !
+                        <Typography fontSize={20}>
+                            Hello,<span className="usernameSpan">{" " + userName}</span>!
+                        </Typography>
                     </div>
                     <div className="fillerDiv" />
                     <div className="buttonContainer">

@@ -1,6 +1,5 @@
-import { Button, Pagination } from '@mui/material';
+import { Accordion, AccordionDetails, Button, Pagination, TextField, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
-import './Vehicles.scss';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import ManageLocationsDialog from '../ManageLocationsDialog/ManageLocationsDialog';
@@ -21,6 +20,9 @@ import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
 import ManageBodyTypesDialog from '../ManageBodyTypesDialog/ManageBodyTypesDialog';
 import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
 import { isAdmin } from '../../../services/authenticationService';
+import './Vehicles.scss';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import TuneIcon from '@mui/icons-material/Tune';
 
 interface VehiclesProps { }
 
@@ -32,17 +34,16 @@ const Vehicles: FC<VehiclesProps> = () => {
   const [featureDialogOpen, setFeatureDialogOpen] = useState(false);
   const [bodyTypeDialogOpen, setBodyTypeDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
-  const [vehicleNumber, setVehicleNumber] = useState(1);
+  const [vehicleCount, setVehicleCount] = useState(0);
   const [selectedPage, setSelectedPage] = useState(1);
-  const pageCount = Math.ceil(vehicleNumber / vehiclesPerPage);
+  const pageCount = Math.ceil(vehicleCount / vehiclesPerPage);
 
   const [loading, setLoading] = useState(false);
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
   const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
   const dispatch = useAppDispatch();
 
-  function fetchVehicles (selectedPage: number): void
-  {
+  function fetchVehicles(selectedPage: number): void {
     var filters: VehicleFiltersModel = {
       startAt: (selectedPage - 1) * vehiclesPerPage,
       numberToGet: vehiclesPerPage,
@@ -58,22 +59,22 @@ const Vehicles: FC<VehiclesProps> = () => {
     };
 
     getAvailableVehicles(filters)
-    .then(async (result) => {
-      if (result.status === 200) {
-        var json = await result.json();
-        dispatch(setVehiclesFromJson(json.vehicles));
-        setVehicleNumber(json.totalCount);
-      }
-      else {
-        notifyBadResultCode(result.status);
-      }
-    })
-    .catch((err) => {
-      notifyFetchFail(err);
-    })
-    .then(() => {
-      setLoading(false);
-    });
+      .then(async (result) => {
+        if (result.status === 200) {
+          var json = await result.json();
+          dispatch(setVehiclesFromJson(json.vehicles));
+          setVehicleCount(json.totalCount);
+        }
+        else {
+          notifyBadResultCode(result.status);
+        }
+      })
+      .catch((err) => {
+        notifyFetchFail(err);
+      })
+      .then(() => {
+        setLoading(false);
+      });
   }
 
   useEffect(() => {
@@ -195,8 +196,7 @@ const Vehicles: FC<VehiclesProps> = () => {
         notifyBadResultCode(featuresResponse.status);
       else if (vehicleTypesResponse.status !== 200)
         notifyBadResultCode(vehicleTypesResponse.status);
-      else
-      {
+      else {
         var json = await locationResponse.json();
         dispatch(setLocationsFromJson(json));
         json = await bodyTypeResponse.json();
@@ -234,13 +234,28 @@ const Vehicles: FC<VehiclesProps> = () => {
 
   return (
     <div className="vehicles">
-      {loading ? <Loading /> : <></>}
       <ManageLocationsDialog {...locationDialogProps} />
       <ManageFeaturesDialog {...featureDialogProps} />
       <ManageBodyTypesDialog {...bodyTypeDialogProps} />
       <AddVehicleDialog {...vehicleDialogProps} />
+      {loading ? <Loading /> : <></>}
+
+      <Accordion>
+        <AccordionSummary>
+          <TuneIcon color='primary' sx={{marginRight: '5px'}}/>
+          <Typography>
+            Filters
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className="FiltersDiv">
+            
+          </div>
+        </AccordionDetails>
+      </Accordion>
+
       {/* only display the admin toolbar for admins 
-        NOTE - if somebody manually changes their role they can see the menus but they can't use them because the requests will return 403 */
+        NOTE - if somebody manually changes their role they can see the buttons but they can't use them because the requests will return 403 Unauthorized */
         showAdminCommands ?
           <div className="adminToolbar">
             <div className="adminToolbarButtons">
@@ -253,6 +268,12 @@ const Vehicles: FC<VehiclesProps> = () => {
           :
           <></>
       }
+      <div className="paginationInfoContainer">
+        {loading ? "Fetching..." :
+          vehicleCount === 0 ? "The query returned 0 results."
+            : "Displaying results " + ((selectedPage - 1) * vehiclesPerPage + 1) + " - "
+            + ((selectedPage * vehiclesPerPage) < vehicleCount ? selectedPage * vehiclesPerPage : vehicleCount) + ":"}
+      </div>
       <div className="vehiclesListContainer">
         {vehicles.map((vehicle) => (
           <div className="vehicleItemContainer" key={vehicle.id}>
@@ -261,7 +282,7 @@ const Vehicles: FC<VehiclesProps> = () => {
         ))}
       </div>
       <div className="paginationContainer">
-        <Pagination disabled={loading} count={pageCount} page={selectedPage} onChange={handlePageChange} color="primary"/>
+        <Pagination disabled={loading} count={pageCount} page={selectedPage} onChange={handlePageChange} color="primary" />
       </div>
     </div>
   );
