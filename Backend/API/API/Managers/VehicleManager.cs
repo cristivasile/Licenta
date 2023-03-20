@@ -330,6 +330,17 @@ namespace API.Managers
                 throw new Exception("Vehicle doesn't exist!");
 
             await vehicleRepository.Delete(currentVehicle);
+
+            var brand = currentVehicle.Brand;
+            var model = currentVehicle.Model;
+
+            //check if brand and model is still used
+            var vehicles = await vehicleRepository.GetAll();
+            var filteredVehicles = vehicles.Where(x => x.Brand == brand && x.Model == model);
+
+            //remove if necessary
+            if (filteredVehicles.Count() == 0)
+                await vehicleTypeRepository.Delete(await vehicleTypeRepository.GetById(brand, model));
         }
     }
 }
