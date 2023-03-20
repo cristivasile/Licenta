@@ -4,6 +4,7 @@ using API.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230320212042_optimize-images")]
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
+    partial class optimizeimages
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,14 +153,7 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VehicleId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("VehicleId")
-                        .IsUnique()
-                        .HasFilter("[VehicleId] IS NOT NULL");
 
                     b.ToTable("Thumbnails");
                 });
@@ -285,6 +283,9 @@ namespace API.Migrations
                         .HasColumnType("real")
                         .HasDefaultValue(0f);
 
+                    b.Property<string>("ThumbnailId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Torque")
                         .HasColumnType("int");
 
@@ -299,6 +300,10 @@ namespace API.Migrations
                     b.HasIndex("BodyTypeName");
 
                     b.HasIndex("LocationId");
+
+                    b.HasIndex("ThumbnailId")
+                        .IsUnique()
+                        .HasFilter("[ThumbnailId] IS NOT NULL");
 
                     b.HasIndex("Brand", "Model");
 
@@ -450,15 +455,6 @@ namespace API.Migrations
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("API.Entities.Thumbnail", b =>
-                {
-                    b.HasOne("API.Entities.Vehicle", "Vehicle")
-                        .WithOne("Thumbnail")
-                        .HasForeignKey("API.Entities.Thumbnail", "VehicleId");
-
-                    b.Navigation("Vehicle");
-                });
-
             modelBuilder.Entity("API.Entities.UserRole", b =>
                 {
                     b.HasOne("API.Entities.Role", null)
@@ -486,6 +482,10 @@ namespace API.Migrations
                         .WithMany("OwnedVehicles")
                         .HasForeignKey("LocationId");
 
+                    b.HasOne("API.Entities.Thumbnail", "Thumbnail")
+                        .WithOne("Vehicle")
+                        .HasForeignKey("API.Entities.Vehicle", "ThumbnailId");
+
                     b.HasOne("API.Entities.VehicleType", "VehicleType")
                         .WithMany("Vehicles")
                         .HasForeignKey("Brand", "Model")
@@ -495,6 +495,8 @@ namespace API.Migrations
                     b.Navigation("BodyType");
 
                     b.Navigation("Location");
+
+                    b.Navigation("Thumbnail");
 
                     b.Navigation("VehicleType");
                 });
@@ -560,6 +562,11 @@ namespace API.Migrations
                     b.Navigation("OwnedVehicles");
                 });
 
+            modelBuilder.Entity("API.Entities.Thumbnail", b =>
+                {
+                    b.Navigation("Vehicle");
+                });
+
             modelBuilder.Entity("API.Entities.User", b =>
                 {
                     b.Navigation("PurchasedVehicleStatuses");
@@ -570,8 +577,6 @@ namespace API.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Status");
-
-                    b.Navigation("Thumbnail");
                 });
 
             modelBuilder.Entity("API.Entities.VehicleType", b =>

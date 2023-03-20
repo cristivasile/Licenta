@@ -40,10 +40,6 @@ namespace API.Entities
         public string Id { get; set; }
         public string Description { get; set; }
         [Required]
-        public string Image { get; set; }
-        [Required]
-        public string ThumbnailImage { get; set; }
-        [Required]
         public int Odometer { get; set; }
         [Required]
         public int Year { get; set; }
@@ -62,10 +58,6 @@ namespace API.Entities
         public TransmissionEnum TransmissionType { get; set; }
 
         public virtual Status Status { get; set; }
-        /// <summary>
-        /// All features belonging to this vehicle.
-        /// </summary>
-        public virtual ICollection<Feature> Features { get; set; }
 
         public string Brand { get; set; }
         public string Model { get; set; }
@@ -76,6 +68,14 @@ namespace API.Entities
 
         public string BodyTypeName { get; set; }
         public virtual BodyType BodyType { get; set; }
+
+        public virtual Thumbnail Thumbnail { get; set; }
+
+        /// <summary>
+        /// All features belonging to this vehicle.
+        /// </summary>
+        public virtual ICollection<Feature> Features { get; set; }
+        public virtual ICollection<Picture> Images { get; set; }
     }
 }
 

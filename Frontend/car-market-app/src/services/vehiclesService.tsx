@@ -67,8 +67,11 @@ export interface VehicleFiltersModel {
     maxMileage: number | null,
     minPrice: number | null,
     maxPrice: number | null,
+    minPower: number | null,
+    maxPower: number | null,
     minYear: number | null,
-    sort: SortTypeEnum | null,
+    transmissionType: string | null,
+    sort: string | null,
     sortAsc: boolean,
 }
 
@@ -86,7 +89,10 @@ export const getAvailableVehicles = (filters: VehicleFiltersModel): Promise<Resp
             maxMileage: filters.maxMileage,
             minPrice: filters.minPrice,
             maxPrice: filters.maxPrice,
+            minPower: filters.minPower,
+            maxPower: filters.maxPower,
             minYear: filters.minYear,
+            transmission: filters.transmissionType,
             sort: filters.sort,
             sortAsc: filters.sortAsc,
         })

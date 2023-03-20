@@ -1,9 +1,10 @@
-﻿using System.Text.Json.Serialization;
+﻿using API.Entities;
+using System.Text.Json.Serialization;
 
 namespace API.Models.Input
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum FiltersSortType : byte
+    public enum FiltersSortTypeEnum : byte
     {
         Name = 0,
         Price = 1,
@@ -23,7 +24,8 @@ namespace API.Models.Input
         public int? MaxPower { get; set; }
         public int? MaxPrice { get; set; }
         public int? MinYear { get; set; }
-        public FiltersSortType? Sort { get; set; }
+        public TransmissionEnum? Transmission { get; set; }
+        public FiltersSortTypeEnum? Sort { get; set; }
         public bool? SortAsc { get; set; }
     }
 }

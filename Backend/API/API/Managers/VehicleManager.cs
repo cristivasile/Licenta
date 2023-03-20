@@ -7,6 +7,7 @@ using API.Models.Return;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace API.Managers
@@ -21,9 +22,12 @@ namespace API.Managers
         private readonly IVehicleTypeRepository vehicleTypeRepository;
         private readonly IStatusRepository statusRepository;
         private readonly ILocationRepository locationRepository;
+        private readonly IThumbnailRepostory thumbnailRepository;
+        private readonly IPictureRepository pictureRepository;
 
         public VehicleManager(IVehicleRepository vehicleRepository, IFeatureRepository featureRepository, ILocationRepository locationRepository,
-            IBodyTypeRepository bodyTypeRepository, IVehicleTypeRepository vehicleTypeRepository, IStatusRepository statusRepository)
+            IBodyTypeRepository bodyTypeRepository, IVehicleTypeRepository vehicleTypeRepository, IStatusRepository statusRepository, 
+            IPictureRepository pictureRepository, IThumbnailRepostory thumbnailRepository)
         {
             this.vehicleRepository = vehicleRepository;
             this.featureRepository = featureRepository;
@@ -31,6 +35,8 @@ namespace API.Managers
             this.vehicleTypeRepository = vehicleTypeRepository;
             this.statusRepository = statusRepository;
             this.locationRepository = locationRepository;
+            this.pictureRepository = pictureRepository;
+            this.thumbnailRepository = thumbnailRepository;
         }
 
         public Task<int> GetNumberOfVehicles()
@@ -51,6 +57,7 @@ namespace API.Managers
                 return null;
 
             var returned = new DetailedVehicleModel(vehicle);
+            returned.Image = (await pictureRepository.GetByVehicleId(vehicle.Id))[0].Id;
 
             return returned;
         }
@@ -63,6 +70,7 @@ namespace API.Managers
                 return null;
 
             var returned = new FullVehicleModel(vehicle);
+            returned.Image = (await pictureRepository.GetByVehicleId(vehicle.Id))[0].Id;
 
             return returned;
         }
@@ -86,6 +94,8 @@ namespace API.Managers
                 vehicleQueryable = vehicleQueryable.Where(x => x.Power <= filters.MaxPower.Value);
             if (filters.MinYear != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Year >= filters.MinYear.Value);
+            if (filters.Transmission != null)
+                vehicleQueryable = vehicleQueryable.Where(x => x.TransmissionType == filters.Transmission);
 
             //assign filtered list
             var result = vehicleQueryable.ToList();
@@ -99,19 +109,19 @@ namespace API.Managers
 
                 switch (filters.Sort.Value)
                 {
-                    case FiltersSortType.Name:
+                    case FiltersSortTypeEnum.Name:
                         if (filters.SortAsc != null && filters.SortAsc.Value == false)
                             result = result.OrderBy(x => x.Brand + x.Model).ToList();
                         else
                             result = result.OrderByDescending(x => x.Brand + x.Model).ToList();
                         break;
-                    case FiltersSortType.Price:
+                    case FiltersSortTypeEnum.Price:
                         result = result.OrderBy(x => sortMultiplier * x.Price).ToList();
                         break;
-                    case FiltersSortType.Mileage:
+                    case FiltersSortTypeEnum.Mileage:
                         result = result.OrderBy(x => sortMultiplier * x.Odometer).ToList();
                         break;
-                    case FiltersSortType.Power:
+                    case FiltersSortTypeEnum.Power:
                         result = result.OrderBy(x => sortMultiplier * x.Power).ToList();
                         break;
                     default:
@@ -130,11 +140,16 @@ namespace API.Managers
                 return vehicles;
         }
 
-        private VehiclesPageModel GetFilteredPage(IEnumerable<VehicleModel> vehicles, VehicleFiltersModel filters)
+        private async Task<VehiclesPageModel> GetFilteredPage(IEnumerable<VehicleModel> vehicles, VehicleFiltersModel filters)
         {
             vehicles = ApplyFilters(vehicles.AsQueryable(), filters);
             var count = vehicles.Count();
             vehicles = ApplyPagination(vehicles, filters);
+
+            foreach (var vehicle in vehicles) 
+            {
+                vehicle.Image = (await thumbnailRepository.GetByVehicleId(vehicle.Id)).Base64Image;    
+            }
 
             return new()
             {
@@ -148,7 +163,7 @@ namespace API.Managers
             var vehicles = (await vehicleRepository.GetAll())
                                 .Select(x => new VehicleModel(x));
 
-            return GetFilteredPage(vehicles, filters);
+            return await GetFilteredPage(vehicles, filters);
         }
 
         public async Task<VehiclesPageModel> GetAvailable(VehicleFiltersModel filters)
@@ -156,7 +171,7 @@ namespace API.Managers
             var vehicles = (await vehicleRepository.GetAvailable())
                                 .Select(x => new VehicleModel(x));
 
-            return GetFilteredPage(vehicles, filters);
+            return await GetFilteredPage(vehicles, filters);
         }
 
         public async Task<Dictionary<string, List<string>>> GetBrandModelDictionary()
@@ -217,12 +232,11 @@ namespace API.Managers
                 await vehicleTypeRepository.Create(new() { Brand = inputVehicle.Brand, Model = inputVehicle.Model });
 
             var generatedId = Utilities.GetGUID();
+            var thumbnailId = Utilities.GetGUID();
 
             Vehicle newVehicle = new()
             {
                 Id = generatedId,
-                Image = inputVehicle.Image,
-                ThumbnailImage = inputVehicle.ThumbnailImage,
                 Brand = inputVehicle.Brand,
                 Model = inputVehicle.Model,
                 BodyTypeName = inputVehicle.BodyType,
@@ -248,8 +262,23 @@ namespace API.Managers
                 DateSold = null
             };
 
+            Thumbnail newThumbnail = new()
+            {
+                Id = thumbnailId,
+                Base64Image = inputVehicle.ThumbnailImage,
+            };
+
+            Picture newImage = new()
+            {
+                Id = Utilities.GetGUID(),
+                Base64Image = inputVehicle.Image,
+                VehicleId = newVehicle.Id,
+            };
+
             await vehicleRepository.Create(newVehicle);
+            await thumbnailRepository.Create(newThumbnail);
             await statusRepository.Create(newStatus);
+            await pictureRepository.Create(newImage);
         }
 
         public async Task Update(string id, VehicleCreateModel updatedVehicle)
@@ -280,8 +309,30 @@ namespace API.Managers
             if (await vehicleTypeRepository.GetById(updatedVehicle.Brand, updatedVehicle.Model) == null)
                 await vehicleTypeRepository.Create(new() { Brand = updatedVehicle.Brand, Model = updatedVehicle.Model });
 
-            currentVehicle.Image = updatedVehicle.Image;
-            currentVehicle.ThumbnailImage = updatedVehicle.ThumbnailImage;
+            //remove old thumbnail
+            var thumbnail = await thumbnailRepository.GetByVehicleId(currentVehicle.Id);
+            if (thumbnail != null)
+                await thumbnailRepository.Delete(thumbnail);
+
+            //remove old pictures
+            var images = await pictureRepository.GetByVehicleId(currentVehicle.Id);
+            foreach (var image in images)
+                await pictureRepository.Delete(image);
+
+            Thumbnail newThumbnail = new()
+            {
+                Id = Utilities.GetGUID(),
+                Base64Image = updatedVehicle.ThumbnailImage,
+                VehicleId = currentVehicle.Id,
+            };
+
+            Picture newImage = new()
+            {
+                Id = Utilities.GetGUID(),
+                Base64Image = updatedVehicle.Image,
+                VehicleId = currentVehicle.Id,
+            };
+
             currentVehicle.Brand = updatedVehicle.Brand;
             currentVehicle.Model = updatedVehicle.Model;
             currentVehicle.BodyTypeName = updatedVehicle.BodyType;
@@ -299,6 +350,8 @@ namespace API.Managers
             currentVehicle.TransmissionType = updatedVehicle.TransmissionType;
 
             await vehicleRepository.Update(currentVehicle);
+            await thumbnailRepository.Create(newThumbnail);
+            await pictureRepository.Create(newImage);
         }
 
         public async Task UpdateStatus(string id, VehicleStatusUpdateModel updatedStatus)
@@ -343,6 +396,16 @@ namespace API.Managers
             //remove if necessary
             if (filteredVehicles.Count() == 0)
                 await vehicleTypeRepository.Delete(await vehicleTypeRepository.GetById(brand, model));
+
+            //remove thumbnail
+            var thumbnail = await thumbnailRepository.GetByVehicleId(currentVehicle.Id);
+            if (thumbnail != null)
+                await thumbnailRepository.Delete(thumbnail);
+
+            //remove pictures
+            var images = await pictureRepository.GetByVehicleId(currentVehicle.Id);
+            foreach (var image in images)
+                await pictureRepository.Delete(image);
         }
     }
 }

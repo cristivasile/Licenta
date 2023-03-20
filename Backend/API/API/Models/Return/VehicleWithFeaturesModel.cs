@@ -16,8 +16,9 @@ namespace API.Models.Return
             if(ob.Location != null)
                 LocationAddress = ob.Location.City + ", " + ob.Location.Address;
 
-            if (ob.Image != null)   //'upgrade' image from thumbnail to full-size
-                Image = ob.Image;
+            if (ob.Images != null)   //'upgrade' image from thumbnail to full-size
+                foreach (var image in ob.Images)
+                    Image = image.Base64Image;
 
             Features = new();
             foreach(var feature in ob.Features)

@@ -37,8 +37,8 @@ namespace API.Models.Return
             DriveTrainType = ob.DriveTrainType;
             TransmissionType = ob.TransmissionType;
 
-            if (ob.ThumbnailImage != null)
-                Image = ob.ThumbnailImage;
+            if (ob.Thumbnail != null)
+                Image = ob.Thumbnail.Base64Image;
         }
     }
 }

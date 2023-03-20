@@ -93,6 +93,8 @@ namespace API
             services.AddScoped<IVehicleTypeRepository, VehicleTypeRepository>();
 
             services.AddScoped<IStatusRepository, StatusRepository>();
+            services.AddScoped<IPictureRepository, PictureRepository>();
+            services.AddScoped<IThumbnailRepostory, ThumbnailRepository>();
 
             services.AddDbContext<AppDbContext>(options => options
                                                             .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))

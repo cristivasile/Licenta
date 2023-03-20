@@ -16,6 +16,8 @@ namespace API.Context
         public DbSet<Location> Locations { get; set; }
         public DbSet<Feature> Features { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Picture> Images { get; set; }
+        public DbSet<Thumbnail> Thumbnails { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

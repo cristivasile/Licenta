@@ -15,14 +15,16 @@ namespace API.Configurations
             builder.Property(x => x.Description)
                 .HasDefaultValue("");
 
-            builder.Property(x => x.Image)
-                .HasDefaultValue("");
-
             //1 - 1: Vehicle <-> Status
             builder
                 .HasOne<Status>(x => x.Status)
                 .WithOne(x => x.Vehicle)
                 .IsRequired();
+
+            //1 - 1: Vehicle <-> Thumbnail
+            builder
+                .HasOne<Thumbnail>(vehicle => vehicle.Thumbnail)
+                .WithOne(thumbnail => thumbnail.Vehicle);
 
             //1 - M : Vehicle <-> Location
             builder
@@ -43,6 +45,11 @@ namespace API.Configurations
                 .WithMany(model => model.Vehicles)
                 .HasForeignKey(vehicle => new {vehicle.Brand, vehicle.Model})
                 .IsRequired();
+
+            //M - 1 : Vehicle <-> Image
+            builder.
+                HasMany<Picture>(vehicle => vehicle.Images)
+                .WithOne(image => image.Vehicle);
         }
     }
 }

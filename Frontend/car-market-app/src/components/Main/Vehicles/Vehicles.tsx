@@ -24,6 +24,8 @@ import './Vehicles.scss';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import TuneIcon from '@mui/icons-material/Tune';
 import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
+import { TransmissionTypeEnum, transmissionTypesMap } from '../../../models/TransmissionTypeEnum';
+import { sortTypesMap } from '../../../models/SortTypeEnumModel';
 
 interface VehiclesProps { }
 
@@ -43,17 +45,24 @@ const Vehicles: FC<VehiclesProps> = () => {
   const dispatch = useAppDispatch();
 
   //filter values
-  /*
   const [brandFilter, setBrandFilter] = useState("");
   const [modelFilter, setModelFilter] = useState("");
   const [bodyTypeFilter, setBodyTypeFilter] = useState("");
+  const [maxMileageFilter, setMaxMileageFilter] = useState(NaN);
   const [minPriceFilter, setMinPriceFilter] = useState(NaN);
   const [maxPriceFilter, setMaxPriceFilter] = useState(NaN);
   const [minPowerFilter, setMinPowerFilter] = useState(NaN);
-  const [engineSizeValue, setEngineSizeValue] = useState(NaN);
+  const [maxPowerFilter, setMaxPowerFilter] = useState(NaN);
+  const [minYearFilter, setMinYearFilter] = useState(NaN);
+  const [transmissionFilter, setTransmissionFilter] = useState('');
+  const [sortType, setSortTypeValue] = useState("");
+  const [sortAscending, setSortAscending] = useState(true);
+
   const bodyTypes = useAppSelector((state) => state.bodyType.bodyTypes);
   const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
-  */
+  const transmissionTypes = Array.from(transmissionTypesMap.entries());
+  const sortTypes = Array.from(sortTypesMap.entries());
+
   //collection values
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
 
@@ -61,15 +70,18 @@ const Vehicles: FC<VehiclesProps> = () => {
     var filters: VehicleFiltersModel = {
       startAt: (selectedPage - 1) * vehiclesPerPage,
       numberToGet: vehiclesPerPage,
-      brand: null,
-      model: null,
-      bodyType: null,
-      maxMileage: null,
-      minPrice: null,
-      maxPrice: null,
-      minYear: null,
-      sort: null,
-      sortAsc: true
+      brand: brandFilter !== "" ? brandFilter : null,
+      model: modelFilter !== "" ? modelFilter : null,
+      bodyType: bodyTypeFilter !== "" ? bodyTypeFilter : null,
+      maxMileage: !Number.isNaN(maxMileageFilter) ? maxMileageFilter : null,
+      minPrice: !Number.isNaN(minPriceFilter) ? minPriceFilter : null,
+      maxPrice: !Number.isNaN(maxPriceFilter) ? maxPriceFilter : null,
+      minPower: !Number.isNaN(minPowerFilter) ? minPowerFilter : null,
+      maxPower: !Number.isNaN(maxPowerFilter) ? maxPowerFilter : null,
+      minYear: !Number.isNaN(minYearFilter) ? minYearFilter : null,
+      transmissionType: transmissionFilter !== "" ? transmissionFilter : null,
+      sort: sortType !== "" ? sortType : null,
+      sortAsc: sortAscending
     };
 
     getAvailableVehicles(filters)
