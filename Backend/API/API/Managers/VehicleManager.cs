@@ -57,7 +57,12 @@ namespace API.Managers
                 return null;
 
             var returned = new DetailedVehicleModel(vehicle);
-            returned.Image = (await pictureRepository.GetByVehicleId(vehicle.Id))[0].Id;
+
+            var images = await pictureRepository.GetByVehicleId(vehicle.Id);
+            if(images.Count > 0 && images[0] != null)
+                returned.Image = images[0].Id;
+            else
+                vehicle.Image = "";
 
             return returned;
         }
@@ -70,7 +75,12 @@ namespace API.Managers
                 return null;
 
             var returned = new FullVehicleModel(vehicle);
-            returned.Image = (await pictureRepository.GetByVehicleId(vehicle.Id))[0].Id;
+
+            var images = await pictureRepository.GetByVehicleId(vehicle.Id);
+            if (images.Count > 0 && images[0] != null)
+                returned.Image = images[0].Id;
+            else
+                vehicle.Image = "";
 
             return returned;
         }
@@ -148,7 +158,11 @@ namespace API.Managers
 
             foreach (var vehicle in vehicles) 
             {
-                vehicle.Image = (await thumbnailRepository.GetByVehicleId(vehicle.Id)).Base64Image;    
+                var thumbnail = await thumbnailRepository.GetByVehicleId(vehicle.Id);
+                if (thumbnail != null)
+                    vehicle.Image = thumbnail.Base64Image;
+                else
+                    vehicle.Image = "";
             }
 
             return new()
