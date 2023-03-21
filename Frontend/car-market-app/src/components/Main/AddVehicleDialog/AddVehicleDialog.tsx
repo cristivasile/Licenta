@@ -12,16 +12,12 @@ import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
 import './AddVehicleDialog.scss';
 import { TransmissionTypeEnum, transmissionTypesMap } from '../../../models/TransmissionTypeEnum';
+import { compressedImageSizeInMb, compressedThumbnailSizeInMb, maxCompressedImageWidth, maxCompressedThumbnailWidth } from '../../../constants';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,
   onClose: Function,
 }
-
-const compressedImageSizeInMb: number = 0.5; 
-const maxCompressedImageWidth: number = 1024;
-const compressedThumbnailSizeInMb: number = 0.05; 
-const maxCompressedThumbnailWidth: number = 256;
 
 const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProps) => {
 

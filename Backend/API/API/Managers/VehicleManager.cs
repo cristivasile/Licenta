@@ -14,8 +14,13 @@ namespace API.Managers
 {
     public class VehicleManager : IVehicleManager
     {
-        private static readonly int maxImageSize = 1048576; //1 MB
-        private static readonly int maxThumbnailImageSize = 102400; //100 KB
+        /// <summary>
+        /// Max image sizes accepted by the manager, any higher will cause errors.
+        /// The frontend is tasked with compressing images before upload.
+        /// </summary>
+        private static readonly int maxImageSize = 1048576; //1 MB in bytes
+        private static readonly int maxThumbnailImageSize = 512000; //500 KB in bytes
+
         private readonly IVehicleRepository vehicleRepository;
         private readonly IFeatureRepository featureRepository;
         private readonly IBodyTypeRepository bodyTypeRepository;
