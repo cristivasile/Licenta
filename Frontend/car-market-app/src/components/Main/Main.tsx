@@ -47,11 +47,10 @@ const Main: FC<MainProps> = (props: MainProps) => {
             <div className="mainContainer">
                 <div className="header">
                     <div className="messageContainer">
-                        <Typography fontSize={20}>
+                        <Typography fontSize={26}>
                             Hello,<span className="usernameSpan">{" " + userName}</span>!
                         </Typography>
                     </div>
-                    <div className="fillerDiv" />
                     <div className="buttonContainer">
                         <Button color="warning" variant="contained" size='small' onClick={logoutFunction}>
                             <LogoutIcon />

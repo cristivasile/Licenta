@@ -67,6 +67,9 @@ namespace API.Repositories
         /// </summary>
         protected IQueryable<EntityType> ApplySpecification(Specification<EntityType> specification)
         {
+            if (entitySet == null)
+                throw new System.Exception("The entity set was not initialised!");
+
             return SpecificationEvaluator.GetQuery(entitySet, specification);
         }
 

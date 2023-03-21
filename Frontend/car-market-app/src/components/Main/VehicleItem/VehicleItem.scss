@@ -2,66 +2,98 @@
 
 .vehicleItem{
     background-color: white;
-
+    
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    cursor: pointer;
 
-    .vehiclesHeader{
-        font-weight: bold;
-        font-size: 1.5em;
+    .vehicleHeader{
         width: 100%;
-        background-color: $accent1-color;
-        padding-bottom: 1%;
-        padding-top: 1%;
+        font-weight: lighter;
+        font-size: 1.5em;
+        background-color: $main-color;
+        padding-bottom: .2em;
+        padding-top: .2em;
         display: flex;
         color: white;
         flex-direction: row;
-        justify-content: space-between;
     
         .vehicleName{
-            margin-left: 10%;
-        }
-        .vehiclePrice{
-            margin-right: 10%;
+            margin-left: .8em;
         }
     }
 
-    .vehicleImageContainer{
-        width: 70%;
-        height: 11em;
+    .vehicleDetails{
         display: flex;
-        align-items:center;
-        margin-top:.4em;
-        margin-bottom:.4em;
-        justify-content: center;
-        
-        .vehicleImage{
-            object-fit: fit;
-            border: 1px solid gray;
-            max-height: 100%;
-            max-width: 100%;
-        }
-    }
-
-    .vehicleDescriptionContainer{
-        width: 90%;
-        display: flex;
-        font-size: 1.1em;
-        flex-direction: column;
-        margin-bottom: .2em;
-    }
-
-    .vehicleDescriptionRow{
+        height: auto;
         width: 100%;
-        display: flex;
         flex-direction: row;
-        justify-content: space-between;
-        margin-top: .1em;
+        flex-wrap: wrap;
+        align-items: stretch;
+        justify-content: space-evenly;
 
-        .descriptionTitle{
-            font-weight: bold;
-            color: $main-color;
+        .vehicleImageContainer{
+            margin-left: .5em;
+            width: 11em;
+            height: 10em;
+            display: flex;
+            align-items:center;
+            justify-content: center;
+            
+            .vehicleImage{
+                object-fit: fit;
+                max-height: 100%;
+                max-width: 100%;
+            }
+        }
+    
+        .vehicleDescriptionContainer{
+            display: flex;
+            flex-grow: 1;
+            flex-wrap: wrap;
+            font-size: 1.1em;
+            flex-direction: row;
+            margin-bottom: .2em;
+            align-items: stretch;
+            justify-content: space-between;
+
+            .vehicleDescriptionColumn{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                margin-top: .1em;
+                margin-left: 1em;
+                width: 15em;
+
+                .descriptionRow{
+                    width: 100%;
+                    text-align: left;
+                    display:flex;
+                    flex-direction: row;
+                    justify-content: left;
+
+                    .descriptionTitle{
+                        font-weight: 500;
+                        color: $main-color;
+                        margin-right: .5em;
+                    }
+                }
+            }
+
+            .vehiclePriceContainer{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 10em;
+
+                .priceTypography{
+                    color: $main-color;
+                    font-weight: bold;
+                }
+            }
         }
     }
 }

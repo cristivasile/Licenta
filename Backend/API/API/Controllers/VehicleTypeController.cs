@@ -26,7 +26,7 @@ namespace API.Controllers
         }
 
         [HttpGet("getDictionary")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> ReadVehicleTypesDictionary()
         {
             var vehicleTypesDictionary = await vehicleTypesManager.GetBrandModelDictionary();

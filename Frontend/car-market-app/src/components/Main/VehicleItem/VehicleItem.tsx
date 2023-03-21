@@ -1,46 +1,83 @@
-import React, { FC, useEffect, useState } from 'react';
-import { VehicleModel } from '../../../models/VehicleModel';
+import { FC, useState } from 'react';
+import { ShortVehicleModel } from '../../../models/VehicleModel';
 import './VehicleItem.scss';
 import defaultImage from "../../../assets/no-image.png";
+import { Typography } from '@mui/material';
 
 interface VehicleItemProps {
-  vehicle: VehicleModel
+  vehicle: ShortVehicleModel
 }
 
 const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
   const [image, setImage] = useState(props.vehicle.image);
-  
-  //TODO -remove debug
-  useEffect(() => {
-    console.log(props.vehicle);
-  }, []);
 
-  function setDefaultImage(){
+  function setDefaultImage() {
     setImage(defaultImage);
   }
 
   return (
     <div className="vehicleItem">
-      <div className="vehiclesHeader">
+      <div className="vehicleHeader">
         <div className="vehicleName">
           {props.vehicle.brand + " " + props.vehicle.model}
         </div>
-        <div className="vehiclePrice">
-          {props.vehicle.price.toLocaleString() + "€"}
-        </div>
       </div>
-      <div className="vehicleImageContainer">
-        <img src={image} alt="Empty" className="vehicleImage" onError={() => setDefaultImage()}/>
-      </div>
-      <div className="vehicleDescriptionContainer">
-        <div className="vehicleDescriptionRow"> 
-          <div><span className="descriptionTitle">Year: </span> {props.vehicle.year}</div>
-          <div><span className="descriptionTitle">Odometer: </span> {props.vehicle.odometer.toLocaleString() + " km"}</div>
+      <div className="vehicleDetails">
+        <div className="vehicleImageContainer">
+          <img src={image} alt="Empty" className="vehicleImage" onError={() => setDefaultImage()} />
         </div>
+        <div className="vehicleDescriptionContainer">
 
-        <div className="vehicleDescriptionRow"> 
-          <div><span className="descriptionTitle">Engine size: </span> {props.vehicle.engineSize}</div>
-          <div><span className="descriptionTitle">Power: </span> {props.vehicle.power + " hp"}</div>
+          <div className="vehicleDescriptionColumn">
+            <div className="descriptionRow">
+              <Typography fontSize={18}>
+                <span className="descriptionTitle">Year: </span> {props.vehicle.year}
+              </Typography>
+            </div>
+            <div className="descriptionRow">
+              <Typography fontSize={18}>
+                <span className="descriptionTitle">Odometer: </span> {props.vehicle.odometer.toLocaleString() + " km"}
+              </Typography>
+            </div>
+          </div>
+
+          <div className="vehicleDescriptionColumn">
+            <div className="descriptionRow">
+              <Typography fontSize={18}>
+                <span className="descriptionTitle">Body type: </span> {props.vehicle.bodyType}
+              </Typography>
+            </div>
+            <div className="descriptionRow">
+              <Typography fontSize={18}>
+                <span className="descriptionTitle">Transmission: </span> {props.vehicle.transmissionType}
+              </Typography>
+            </div>
+          </div>
+
+          <div className="vehicleDescriptionColumn">
+            <div className="descriptionRow">
+              <Typography fontSize={18}>
+                <span className="descriptionTitle">Power: </span> {props.vehicle.power + " hp"}
+              </Typography>
+            </div>
+            <div className="descriptionRow">
+              <Typography fontSize={18}>
+                <span className="descriptionTitle">Torque: </span> {props.vehicle.torque + " Nm"}
+              </Typography>
+            </div>
+            <div className="descriptionRow">
+              <Typography fontSize={18}>
+                <span className="descriptionTitle">Engine size: </span>
+                {(Math.round((props.vehicle.engineSize) / 100) / 10).toFixed(1) + "L"}
+              </Typography>
+            </div>
+          </div>
+
+          <div className="vehiclePriceContainer">
+            <Typography fontSize={26} className="priceTypography">
+              {props.vehicle.price.toLocaleString() + "€"}
+            </Typography>
+          </div>
         </div>
       </div>
     </div>

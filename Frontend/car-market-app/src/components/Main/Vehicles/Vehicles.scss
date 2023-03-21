@@ -12,34 +12,31 @@
     background-color: white;
 }
 
-.adminToolbarButtons{
+.adminToolbarButtonsDiv {
     width: 100%;
-    margin-top: .4em;
-    margin-bottom: .4em;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
+    flex-wrap: wrap;
 }
-
 .formTitle{
     color: $main-color;
 }
 
 .vehiclesListContainer{
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
+    flex-direction: column;
+    flex-wrap: nowrap;
     max-height: 100%;
     overflow-y: auto;
     padding-bottom: 1em;
 }
 
 .vehicleItemContainer{
-    width: 22%;
+    width: 100%;
     box-shadow: .2em .2em .8em gray;
-    margin-top: 1%;
+    margin-bottom: .9em;
 }
 
 .vehicleItemContainer:hover{
@@ -73,20 +70,27 @@
 }
 
 .paginationInfoContainer{
+    background-color: white;
+    border-bottom: 2px solid $main-color;
     display: flex;
-    padding-top: .1vh;
-    padding-bottom: .3vh;
-    padding-left: 1vw;
+    padding-top: .15em;
+    padding-bottom: .15em;
+    padding-left: 1em;
     flex-direction: row;
 }
 
 .paginationContainer{
+    background-color: white;
     display: flex;
-    padding-bottom: 1vh;
+    padding-bottom: .5vh;
+    border-radius: 10px 10px 0 0;
+    border: 2px solid $main-color;
+    border-bottom: 0px;
+    padding-top: .5vh;
     position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 0;
-    left: 0;
-    right: 0;
     flex-direction: row;
     justify-content: center;
 }
@@ -95,5 +99,18 @@
     width: 100%;
     display:flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.SortGroup{
+    display: flex;
+    justify-content: center;
+}
+
+.FilterButtonsDiv{
+    width: 100%;
+    display:flex;
+    align-items: center;
+    justify-content: right;
 }

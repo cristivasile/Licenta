@@ -1,21 +1,21 @@
-import { FeatureModel, mapJsonToFeatureModels } from "./FeatureModel";
-
-export interface VehicleModel {
+export interface ShortVehicleModel {
     id: string,
     image: string,
     brand: string,
     model: string,
+    bodyType: string,
     odometer: number,
     year: number,
     engineSize: number,
     power: number,
-    address: string,
+    torque: number,
     price: number,
-    features: FeatureModel[]
+    transmissionType: number,
+    isSold: boolean,
 };
 
-export function mapJsonToVehicleModels(json: any): VehicleModel[] {
-    var vehicleList = new Array<VehicleModel>();
+export function mapJsonToVehicleModels(json: any): ShortVehicleModel[] {
+    var vehicleList = new Array<ShortVehicleModel>();
 
     if (json !== null) {
         json.forEach(function (value: any) {
@@ -24,14 +24,16 @@ export function mapJsonToVehicleModels(json: any): VehicleModel[] {
                 image: value.image,
                 brand: value.brand,
                 model: value.model,
+                bodyType: value.bodyType,
                 odometer: value.odometer,
                 year: value.year,
                 engineSize: value.engineSize,
                 power: value.power,
-                address: value.locationAddress,
+                torque: value.torque,
+                transmissionType: value.transmissionType,
                 price: value.price,
-                features: mapJsonToFeatureModels(value.features)
-            } as VehicleModel);
+                isSold: value.isSold,
+            } as ShortVehicleModel);
         });
     }
     return vehicleList;

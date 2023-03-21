@@ -17,6 +17,15 @@ namespace API.Repositories
             entitySet = context.Vehicles;
         }
 
+        public override async Task<List<Vehicle>> GetAll()
+        {
+            if (entitySet == null)
+                throw new System.Exception("The entity set was not initialised!");
+
+            var objects = await entitySet.Include(x => x.Status).ToListAsync();
+            return objects;
+        }
+
         public async Task<List<Vehicle>> GetAvailable()
             => await ApplySpecification(new AvailableVehiclesSpecification()).ToListAsync();
 

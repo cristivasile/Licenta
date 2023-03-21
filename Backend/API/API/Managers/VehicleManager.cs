@@ -105,7 +105,10 @@ namespace API.Managers
             if (filters.MinYear != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Year >= filters.MinYear.Value);
             if (filters.Transmission != null)
-                vehicleQueryable = vehicleQueryable.Where(x => x.TransmissionType == filters.Transmission);
+            {
+                var filterString = filters.Transmission.ToString();
+                vehicleQueryable = vehicleQueryable.Where(x => x.TransmissionType == filterString);
+            }
 
             //assign filtered list
             var result = vehicleQueryable.ToList();
@@ -121,9 +124,9 @@ namespace API.Managers
                 {
                     case FiltersSortTypeEnum.Name:
                         if (filters.SortAsc != null && filters.SortAsc.Value == false)
-                            result = result.OrderBy(x => x.Brand + x.Model).ToList();
-                        else
                             result = result.OrderByDescending(x => x.Brand + x.Model).ToList();
+                        else
+                            result = result.OrderBy(x => x.Brand + x.Model).ToList();
                         break;
                     case FiltersSortTypeEnum.Price:
                         result = result.OrderBy(x => sortMultiplier * x.Price).ToList();

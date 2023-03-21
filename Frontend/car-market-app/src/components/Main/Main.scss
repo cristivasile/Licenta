@@ -13,21 +13,7 @@
     box-shadow: 0 0 2vw $accent1-color;
     display: flex;
     flex-direction: row;
-    align-items: center;
     background-color: $main-color;
-}
-
-.content{
-    height: 92%;
-    display: flex;
-    align-items: stretch;
-    border-radius: 0 0 .3em .3em;
-    box-shadow: 0 .5vw 1vw $accent1-color;
-    background-color: rgba(255,255,255,0.8);
-}
-
-.fillerDiv{
-    width: 75%;
 }
 
 .buttonContainer{
@@ -35,13 +21,14 @@
     height: 100%;
     margin: 0;
     display:flex;
+    margin-left: auto;
     align-items: center;
     padding-right: 1em;
     justify-content: right;
 }
 
 .messageContainer{
-    width: 15%;
+    width: auto;
     height: 100%;
     display: flex;
     justify-content: left;
@@ -54,10 +41,18 @@
 }
 
  .usernameSpan{
+    width: auto;
     color: $background-color;
-    font-weight: bold;
-    margin-left: .2em;
     margin-right: .1em;
     margin-top: .75em;
     margin-bottom: .75em;
  }
+
+ .content{
+    height: 92%;
+    display: flex;
+    align-items: stretch;
+    border-radius: 0 0 .3em .3em;
+    box-shadow: 0 .5vw 1vw $accent1-color;
+    background-color: rgba(255,255,255,0.8);
+}
