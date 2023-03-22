@@ -1,10 +1,10 @@
 import { Box, Button, Dialog, DialogActions, DialogTitle, MenuItem, Tab, Tabs, TextField } from '@mui/material';
 import { FC, useState } from 'react';
-import { generateErrorMessage, generateSuccessMessage, TabPanel } from '../../../common';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
-import { addLocation, removeLocationById, updateLocationById } from '../../../redux/locationsStore';
-import { postLocation, removeLocation, updateLocation } from '../../../services/locationsService';
-import Loading from '../../Loading/Loading';
+import { generateErrorMessage, generateSuccessMessage, TabPanel } from '../../../../common';
+import { useAppDispatch, useAppSelector } from '../../../../hooks';
+import { addLocation, removeLocationById, updateLocationById } from '../../../../redux/locationsStore';
+import { postLocation, removeLocation, updateLocation } from '../../../../services/locationsService';
+import Loading from '../../../Loading/Loading';
 
 interface ManageLocationsDialogProps {
   isOpen: boolean,

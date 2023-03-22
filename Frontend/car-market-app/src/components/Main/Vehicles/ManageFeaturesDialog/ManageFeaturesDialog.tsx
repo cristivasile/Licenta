@@ -1,10 +1,10 @@
 import { Box, Button, Dialog, DialogActions, DialogTitle, MenuItem, Tab, Tabs, TextField } from '@mui/material';
 import { FC, useState } from 'react';
-import { generateErrorMessage, generateSuccessMessage, TabPanel } from '../../../common';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
-import { addFeature, removeFeatureById, updateFeatureById } from '../../../redux/featuresStore';
-import { postFeature, removeFeature, updateFeature } from '../../../services/featuresService';
-import Loading from '../../Loading/Loading';
+import { generateErrorMessage, generateSuccessMessage, TabPanel } from '../../../../common';
+import { useAppDispatch, useAppSelector } from '../../../../hooks';
+import { addFeature, removeFeatureById, updateFeatureById } from '../../../../redux/featuresStore';
+import { postFeature, removeFeature, updateFeature } from '../../../../services/featuresService';
+import Loading from '../../../Loading/Loading';
 
 interface ManageFeaturessDialogProps {
     isOpen: boolean,

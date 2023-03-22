@@ -1,10 +1,10 @@
 import { Box, Button, Dialog, DialogActions, DialogTitle, MenuItem, Tab, Tabs, TextField } from '@mui/material';
 import { FC, useState } from 'react';
-import { generateErrorMessage, generateSuccessMessage, TabPanel } from '../../../common';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
-import { addBodyType, removeBodyTypeByName } from '../../../redux/bodyTypesStore';
-import { postBodyType, removeBodyType } from '../../../services/bodyTypeService.';
-import Loading from '../../Loading/Loading';
+import { generateErrorMessage, generateSuccessMessage, TabPanel } from '../../../../common';
+import { useAppDispatch, useAppSelector } from '../../../../hooks';
+import { addBodyType, removeBodyTypeByName } from '../../../../redux/bodyTypesStore';
+import { postBodyType, removeBodyType } from '../../../../services/bodyTypeService.';
+import Loading from '../../../Loading/Loading';
 
 interface ManageBodyTypesDialogProps {
     isOpen: boolean,

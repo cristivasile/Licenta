@@ -61,6 +61,7 @@ const Main: FC<MainProps> = (props: MainProps) => {
                     <Routes>
                         <Route path="" element={<Navigate to="vehicles" />} />
                         <Route path="vehicles" element={<Vehicles />} />
+                        {/*<Route path="vehicles/view/:id" element={<ViewVehicle />} />*/}
                         <Route path="*" element={<Error404 />} />  {/*Any other route goes to 404*/}
                     </Routes>
                 </div>

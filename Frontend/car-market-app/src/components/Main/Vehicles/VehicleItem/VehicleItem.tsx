@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
-import { ShortVehicleModel } from '../../../models/VehicleModel';
+import { ShortVehicleModel } from '../../../../models/VehicleModel';
 import './VehicleItem.scss';
-import defaultImage from "../../../assets/no-image.png";
+import defaultImage from "../../../../assets/no-image.png";
 import { Typography } from '@mui/material';
 
 interface VehicleItemProps {

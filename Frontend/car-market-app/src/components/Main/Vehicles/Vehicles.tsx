@@ -2,22 +2,19 @@ import { Accordion, AccordionDetails, Button, Checkbox, FormControlLabel, MenuIt
 import { FC, useEffect, useState } from 'react';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MenuIcon from '@mui/icons-material/Menu';
-import ManageLocationsDialog from '../ManageLocationsDialog/ManageLocationsDialog';
-import AddVehicleDialog, { AddVehicleDialogProps } from '../AddVehicleDialog/AddVehicleDialog';
+import AddVehicleDialog, { AddVehicleDialogProps } from './AddVehicleDialog/AddVehicleDialog';
 import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setLocationsFromJson } from '../../../redux/locationsStore';
 import { getLocations } from '../../../services/locationsService';
 import { getAvailableVehicles, getVehicleTypesDictionary, VehicleFiltersModel } from '../../../services/vehiclesService';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
-import VehicleItem from '../VehicleItem/VehicleItem';
+import VehicleItem from './VehicleItem/VehicleItem';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
-import ManageFeaturesDialog from '../ManageFeaturesDialog/ManageFeaturesDialog';
 import { setFeaturesFromJson } from '../../../redux/featuresStore';
 import { getFeatures } from '../../../services/featuresService';
 import { getBodyTypes } from '../../../services/bodyTypeService.';
 import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
-import ManageBodyTypesDialog from '../ManageBodyTypesDialog/ManageBodyTypesDialog';
 import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
 import { isAdmin } from '../../../services/authenticationService';
 import './Vehicles.scss';
@@ -26,6 +23,9 @@ import TuneIcon from '@mui/icons-material/Tune';
 import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
 import { transmissionTypesMap } from '../../../models/TransmissionTypeEnum';
 import { sortTypesMap } from '../../../models/SortTypeEnumModel';
+import ManageLocationsDialog from './ManageLocationsDialog/ManageLocationsDialog';
+import ManageFeaturesDialog from './ManageFeaturesDialog/ManageFeaturesDialog';
+import ManageBodyTypesDialog from './ManageBodyTypesDialog/ManageBodyTypesDialog';
 
 interface VehiclesProps { }
 
