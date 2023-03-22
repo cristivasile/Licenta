@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, Button, Checkbox, FormControlLabel, MenuItem, Pagination, TextField, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, Button, Checkbox, FormControlLabel, MenuItem, Pagination, Select, TextField, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -29,9 +29,9 @@ import { sortTypesMap } from '../../../models/SortTypeEnumModel';
 
 interface VehiclesProps { }
 
-const vehiclesPerPage: number = 5;
-
 const Vehicles: FC<VehiclesProps> = () => {
+
+  const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(false);
   const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
@@ -39,10 +39,12 @@ const Vehicles: FC<VehiclesProps> = () => {
   const [featureDialogOpen, setFeatureDialogOpen] = useState(false);
   const [bodyTypeDialogOpen, setBodyTypeDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
+
+  const [vehiclesPerPage, setVehiclesPerPage] = useState(5);
   const [vehicleCount, setVehicleCount] = useState(0);
   const [selectedPage, setSelectedPage] = useState(1);
   const pageCount = Math.ceil(vehicleCount / vehiclesPerPage);
-  const dispatch = useAppDispatch();
+  const pageSizeOptions: number[] = [5, 10, 15, 20];
 
   //filter values
   const [brandFilter, setBrandFilter] = useState("");
@@ -73,10 +75,10 @@ const Vehicles: FC<VehiclesProps> = () => {
   //collection values
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
 
-  function fetchVehicles(selectedPage: number): void {
+  function fetchVehicles(currentPage: number = selectedPage, pageSize: number = vehiclesPerPage): void {
     var filters: VehicleFiltersModel = {
-      startAt: (selectedPage - 1) * vehiclesPerPage,
-      numberToGet: vehiclesPerPage,
+      startAt: (currentPage - 1) * vehiclesPerPage,
+      numberToGet: pageSize,
       brand: brandFilter !== "" ? brandFilter : null,
       model: modelFilter !== "" ? modelFilter : null,
       bodyType: bodyTypeFilter !== "" ? bodyTypeFilter : null,
@@ -341,7 +343,7 @@ const Vehicles: FC<VehiclesProps> = () => {
         </AccordionSummary>
 
         <AccordionDetails>
-          <div className="fullWidth" style={{ width: "100%" }}>
+          <div style={{ width: "100%" }}>
             <div className="filtersDiv">
               <TextField value={brandFilter} label="Brand" margin="dense" fullWidth select
                 onChange={(event) => { setBrandFilter(event.target.value); handleBrandSelection(event.target.value); }}
@@ -446,13 +448,29 @@ const Vehicles: FC<VehiclesProps> = () => {
           <></>
       }
       <div className="paginationInfoContainer">
-        <div className="paginationInfoText">
+        <div>
           <Typography>
             {loading ? "Fetching..." :
               vehicleCount === 0 ? "The query returned 0 results."
                 : "Displaying results " + ((selectedPage - 1) * vehiclesPerPage + 1) + " - "
                 + ((selectedPage * vehiclesPerPage) < vehicleCount ? selectedPage * vehiclesPerPage : vehicleCount) + ":"}
           </Typography>
+        </div>
+        <div className="paginationSizeSelectorDiv">
+          <Typography>
+            Results per page:
+          </Typography>
+          <Select size="small" variant="standard"
+            value={vehiclesPerPage} onChange={(event) => {
+              setVehiclesPerPage(event.target.value as number);
+              setLoading(true); fetchVehicles(selectedPage, event.target.value as number)
+            }}>
+            {pageSizeOptions.map((pageSize) => (
+              <MenuItem key={pageSize} value={pageSize}>
+                {pageSize}
+              </MenuItem>
+            ))}
+          </Select>
         </div>
       </div>
       <div className="vehiclesListContainer">
@@ -462,7 +480,7 @@ const Vehicles: FC<VehiclesProps> = () => {
           </div>
         ))}
       </div>
-      <div className="paginationContainer">
+      <div className="paginationSelectorContainer">
         <Pagination disabled={loading} count={pageCount} page={selectedPage} onChange={handlePageChange} color="primary" />
       </div>
     </div>
