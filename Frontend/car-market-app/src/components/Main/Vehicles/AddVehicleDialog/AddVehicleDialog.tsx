@@ -3,7 +3,7 @@ import { FC, useState } from 'react';
 import { generateErrorMessage, generateSuccessMessage } from '../../../../common';
 import { useAppSelector } from '../../../../hooks';
 import { notifyFetchFail } from '../../../../services/toastNotificationsService';
-import { postVehicle, VehicleCreateModel } from '../../../../services/vehiclesService';
+import { postVehicle } from '../../../../services/vehiclesService';
 import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../../services/utils';
 import { mapFromVehicleTypeList } from '../../../../models/VehicleTypeModel';
 import { driveTrainsMap, DriveTrainTypeEnum } from '../../../../models/DriveTrainTypeEnum';
@@ -13,6 +13,7 @@ import defaultImage from "../../../../assets/no-image.png";
 import './AddVehicleDialog.scss';
 import { TransmissionTypeEnum, transmissionTypesMap } from '../../../../models/TransmissionTypeEnum';
 import { compressedImageSizeInMb, compressedThumbnailSizeInMb, maxCompressedImageWidth, maxCompressedThumbnailWidth } from '../../../../constants';
+import { VehicleCreateModel } from '../../../../models/VehicleModel';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,

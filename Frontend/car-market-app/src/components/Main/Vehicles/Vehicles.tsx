@@ -7,7 +7,7 @@ import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setLocationsFromJson } from '../../../redux/locationsStore';
 import { getLocations } from '../../../services/locationsService';
-import { getAvailableVehicles, getVehicleTypesDictionary, VehicleFiltersModel } from '../../../services/vehiclesService';
+import { getAvailableVehicles, getVehicleTypesDictionary } from '../../../services/vehiclesService';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import VehicleItem from './VehicleItem/VehicleItem';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
@@ -26,6 +26,7 @@ import { sortTypesMap } from '../../../models/SortTypeEnumModel';
 import ManageLocationsDialog from './ManageLocationsDialog/ManageLocationsDialog';
 import ManageFeaturesDialog from './ManageFeaturesDialog/ManageFeaturesDialog';
 import ManageBodyTypesDialog from './ManageBodyTypesDialog/ManageBodyTypesDialog';
+import { VehicleFiltersModel } from '../../../models/VehicleModel';
 
 interface VehiclesProps { }
 

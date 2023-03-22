@@ -3,6 +3,7 @@ import { ShortVehicleModel } from '../../../../models/VehicleModel';
 import './VehicleItem.scss';
 import defaultImage from "../../../../assets/no-image.png";
 import { Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 interface VehicleItemProps {
   vehicle: ShortVehicleModel
@@ -10,13 +11,19 @@ interface VehicleItemProps {
 
 const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
   const [image, setImage] = useState(props.vehicle.image);
+  
+  const navigate = useNavigate();
 
   function setDefaultImage() {
     setImage(defaultImage);
   }
 
+  function navigateToVehicle(){
+    navigate("./view/" + props.vehicle.id);
+  }
+
   return (
-    <div className="vehicleItem">
+    <div className="vehicleItem" onClick={navigateToVehicle}>
       <div className="vehicleHeader">
         <div className="vehicleName">
           {props.vehicle.brand + " " + props.vehicle.model}

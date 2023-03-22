@@ -1,6 +1,4 @@
 ﻿using API.Entities;
-using API.Models.Input;
-using System.Collections.Generic;
 
 namespace API.Models.Return
 {

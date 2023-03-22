@@ -1,31 +1,7 @@
 import { apiUrl } from "../constants";
-import { DriveTrainTypeEnum } from "../models/DriveTrainTypeEnum";
-import { PowerTrainTypeEnum } from "../models/PowerTrainTypeEnum";
-import { SortTypeEnum } from "../models/SortTypeEnumModel";
-import { TransmissionTypeEnum } from "../models/TransmissionTypeEnum";
+import { VehicleCreateModel, VehicleFiltersModel } from "../models/VehicleModel";
 import { store } from "../redux/store";
 import { authenticatedFetch } from "./fetchInterceptor";
-
-export interface VehicleCreateModel {
-    image: string,
-    thumbnailImage: string,
-    brand: string,
-    model: string,
-    bodyType: string,
-    description: string,
-    address: string,
-    odometer: number,
-    year: number,
-    driveTrain: DriveTrainTypeEnum,
-    powerTrain: PowerTrainTypeEnum,
-    transmission: TransmissionTypeEnum,
-    engineSize: number | null,
-    locationId: string,
-    power: number,
-    torque: number,
-    features: string[],
-    price: number
-}
 
 export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> => {
 
@@ -58,23 +34,6 @@ export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> =
     return authenticatedFetch(apiUrl + "/api/Vehicle", requestOptions);
 }
 
-export interface VehicleFiltersModel {
-    startAt: number,
-    numberToGet: number,
-    brand: string | null,
-    model: string | null,
-    bodyType: string | null,
-    maxMileage: number | null,
-    minPrice: number | null,
-    maxPrice: number | null,
-    minPower: number | null,
-    maxPower: number | null,
-    minYear: number | null,
-    transmissionType: string | null,
-    sort: string | null,
-    sortAsc: boolean,
-}
-
 export const getAvailableVehicles = (filters: VehicleFiltersModel): Promise<Response> => {
 
     const requestOptions = {
@@ -98,6 +57,15 @@ export const getAvailableVehicles = (filters: VehicleFiltersModel): Promise<Resp
         })
     };
     return authenticatedFetch(apiUrl + "/api/Vehicle/getAvailable", requestOptions);
+}
+
+export const getVehicleById = (id: string): Promise<Response> => {
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
+    };
+
+    return authenticatedFetch(apiUrl + "/api/Vehicle/" + id, requestOptions);
 }
 
 export const getVehicleTypesDictionary = (): Promise<Response> => {

@@ -1,3 +1,7 @@
+import { DriveTrainTypeEnum } from "./DriveTrainTypeEnum";
+import { PowerTrainTypeEnum } from "./PowerTrainTypeEnum";
+import { TransmissionTypeEnum } from "./TransmissionTypeEnum";
+
 export interface ShortVehicleModel {
     id: string,
     image: string,
@@ -10,11 +14,82 @@ export interface ShortVehicleModel {
     power: number,
     torque: number,
     price: number,
-    transmissionType: number,
+    transmissionType: string,
     isSold: boolean,
 };
 
-export function mapJsonToVehicleModels(json: any): ShortVehicleModel[] {
+export interface StatusModel{
+    isSold: boolean,
+    dateAdded: Date,
+    dateSold: Date | null,
+    purchasedBy: string | null,
+}
+
+export interface FeatureModel{
+    id: string,
+    name: string,
+}
+
+export interface DetailedVehicleModel {
+    id: string,
+    image: string,
+    brand: string,
+    model: string,
+    bodyType: string,
+    odometer: number,
+    year: number,
+    engineSize: number,
+    power: number,
+    torque: number,
+    price: number,
+    powerTrainType: string,
+    driveTrainType: string,
+    transmissionType: string,
+    description: string,
+    locationAddress: string,
+    features: FeatureModel[],
+    status: StatusModel,
+}
+
+export interface VehicleFiltersModel {
+    startAt: number,
+    numberToGet: number,
+    brand: string | null,
+    model: string | null,
+    bodyType: string | null,
+    maxMileage: number | null,
+    minPrice: number | null,
+    maxPrice: number | null,
+    minPower: number | null,
+    maxPower: number | null,
+    minYear: number | null,
+    transmissionType: string | null,
+    sort: string | null,
+    sortAsc: boolean,
+}
+
+export interface VehicleCreateModel {
+    image: string,
+    thumbnailImage: string,
+    brand: string,
+    model: string,
+    bodyType: string,
+    description: string,
+    address: string,
+    odometer: number,
+    year: number,
+    driveTrain: DriveTrainTypeEnum,
+    powerTrain: PowerTrainTypeEnum,
+    transmission: TransmissionTypeEnum,
+    engineSize: number | null,
+    locationId: string,
+    power: number,
+    torque: number,
+    features: string[],
+    price: number
+}
+
+export function mapJsonToShortVehicleModels(json: any): ShortVehicleModel[] {
     var vehicleList = new Array<ShortVehicleModel>();
 
     if (json !== null) {
@@ -38,3 +113,50 @@ export function mapJsonToVehicleModels(json: any): ShortVehicleModel[] {
     }
     return vehicleList;
 }
+
+export function mapJsonToDetailedVehicleModel(json: any): DetailedVehicleModel{
+    function mapJsonToStatusModel(json: any): StatusModel{
+        return {
+            isSold: json.isSold,
+            dateAdded: json.dateAdded,
+            dateSold: json.dateSold,
+            purchasedBy: json.purchasedBy,
+        } as StatusModel;
+    }
+
+    function mapJsonToFeaturesModel(json: any): FeatureModel[]{
+        var featureList = new Array<FeatureModel>();
+
+        if (json !== null) {
+            json.forEach(function (value: any) {
+                featureList.push({
+                    id: value.id,
+                    name: value.name,
+                } as FeatureModel);
+            });
+        }
+        return featureList;
+    }
+
+    return {
+        id: json.id,
+        image: json.image,
+        brand: json.brand,
+        model: json.model,
+        bodyType: json.bodyType,
+        odometer: json.odometer,
+        year: json.year,
+        engineSize: json.engineSize,
+        power: json.power,
+        torque: json.torque,
+        powerTrainType: json.powerTrainType,
+        driveTrainType: json.driveTrainType,
+        description: json.description,
+        locationAddress: json.locationAddress,
+        transmissionType: json.transmissionType,
+        price: json.price,
+        features: mapJsonToFeaturesModel(json.features),
+        status: mapJsonToStatusModel(json.status),
+    } as DetailedVehicleModel
+}
+
