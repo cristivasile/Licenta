@@ -5,6 +5,7 @@ import vehiclesReducer from './vehiclesStore';
 import featuresReducer from './featuresStore';
 import bodyTypesReducer from './bodyTypesStore';
 import vehicleTypesReducer from './vehicleTypesStore';
+import filtersReducer from './vehiclesMainFiltersStore';
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
         feature: featuresReducer,
         bodyType: bodyTypesReducer,
         vehicleType: vehicleTypesReducer,
+        vehiclesMainFiltersStore: filtersReducer,
     }
 });
 

@@ -27,6 +27,8 @@ import ManageLocationsDialog from './ManageLocationsDialog/ManageLocationsDialog
 import ManageFeaturesDialog from './ManageFeaturesDialog/ManageFeaturesDialog';
 import ManageBodyTypesDialog from './ManageBodyTypesDialog/ManageBodyTypesDialog';
 import { VehicleFiltersModel } from '../../../models/VehicleModel';
+import { setBodyTypeFilter, setBrandFilter, setMaxMileageFilter, setMaxPowerFilter, setMaxPriceFilter, setMinPowerFilter, setMinPriceFilter, 
+  setMinYearFilter, setModelFilter, setSelectedPage, setSortAscending, setTransmissionFilter, setVehiclesPerPage } from '../../../redux/vehiclesMainFiltersStore';
 
 interface VehiclesProps { }
 
@@ -41,25 +43,26 @@ const Vehicles: FC<VehiclesProps> = () => {
   const [bodyTypeDialogOpen, setBodyTypeDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
 
-  const [vehiclesPerPage, setVehiclesPerPage] = useState(5);
+  //get from redux store in order to keep state after navigating
+  const selectedPage = useAppSelector((state) => state.vehiclesMainFiltersStore.selectedPage);
+  const vehiclesPerPage = useAppSelector((state) => state.vehiclesMainFiltersStore.vehiclesPerPage);
   const [vehicleCount, setVehicleCount] = useState(0);
-  const [selectedPage, setSelectedPage] = useState(1);
   const pageCount = Math.ceil(vehicleCount / vehiclesPerPage);
   const pageSizeOptions: number[] = [5, 10, 15, 20];
 
-  //filter values
-  const [brandFilter, setBrandFilter] = useState("");
-  const [modelFilter, setModelFilter] = useState("");
-  const [bodyTypeFilter, setBodyTypeFilter] = useState("");
-  const [maxMileageFilter, setMaxMileageFilter] = useState(NaN);
-  const [minPriceFilter, setMinPriceFilter] = useState(NaN);
-  const [maxPriceFilter, setMaxPriceFilter] = useState(NaN);
-  const [minPowerFilter, setMinPowerFilter] = useState(NaN);
-  const [maxPowerFilter, setMaxPowerFilter] = useState(NaN);
-  const [minYearFilter, setMinYearFilter] = useState(NaN);
-  const [transmissionFilter, setTransmissionFilter] = useState('');
-  const [sortType, setSortTypeValue] = useState("");
-  const [sortAscending, setSortAscending] = useState(true);
+  //filter values, get from redux in order to keep state after navigating
+  const brandFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.brandFilter);
+  const modelFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.modelFilter);
+  const bodyTypeFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.bodyTypeFilter);
+  const maxMileageFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.maxMileageFilter);
+  const minPriceFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.minPriceFilter);
+  const maxPriceFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.maxPriceFilter);
+  const minPowerFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.minPowerFilter);
+  const maxPowerFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.maxPowerFilter);
+  const minYearFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.minYearFilter);
+  const transmissionFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.transmissionFilter);
+  const sortType = useAppSelector((state) => state.vehiclesMainFiltersStore.sortType);
+  const sortAscending = useAppSelector((state) => state.vehiclesMainFiltersStore.sortAscending);
 
   const bodyTypes = useAppSelector((state) => state.bodyType.bodyTypes);
   const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
@@ -291,27 +294,27 @@ const Vehicles: FC<VehiclesProps> = () => {
   }
 
   function clearFilters() {
-    setBrandFilter("");
-    setModelFilter("");
-    setBodyTypeFilter("");
-    setMaxMileageFilter(NaN);
-    setMinPriceFilter(NaN);
-    setMaxPriceFilter(NaN);
-    setMinPowerFilter(NaN);
-    setMaxPowerFilter(NaN);
-    setMinYearFilter(NaN);
-    setTransmissionFilter("");
-    setSortTypeValue("");
-    setSortAscending(true);
+    dispatch(setBrandFilter(""));
+    dispatch(setModelFilter(""));
+    dispatch(setBodyTypeFilter(""));
+    dispatch(setMaxMileageFilter(NaN));
+    dispatch(setMinPriceFilter(NaN));
+    dispatch(setMaxPriceFilter(NaN));
+    dispatch(setMinPowerFilter(NaN));
+    dispatch(setMaxPowerFilter(NaN));
+    dispatch(setMinYearFilter(NaN));
+    dispatch(setTransmissionFilter(""));
+    dispatch(setSortTypeValue(""));
+    dispatch(setSortAscending(true));
   }
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
-    setSelectedPage(value);
+    dispatch(setSelectedPage(value));
     setLoading(true);
     fetchVehicles(value);
   };
 
-  function handleNumericInput(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<number>>, isFloat = false) {
+  function handleNumericInput(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, isFloat = false): number {
     var value = event.target.value;
     var number;
 
@@ -324,7 +327,7 @@ const Vehicles: FC<VehiclesProps> = () => {
     else
       number = NaN;
 
-    setter(number);
+    return number;
   }
 
   return (
@@ -347,7 +350,7 @@ const Vehicles: FC<VehiclesProps> = () => {
           <div style={{ width: "100%" }}>
             <div className="filtersDiv">
               <TextField value={brandFilter} label="Brand" margin="dense" fullWidth select
-                onChange={(event) => { setBrandFilter(event.target.value); handleBrandSelection(event.target.value); }}
+                onChange={(event) => { dispatch(setBrandFilter(event.target.value)); handleBrandSelection(event.target.value); }}
                 name="BrandFilter" sx={{ width: "12em" }}>
                 {brands.map((brand) => (
                   <MenuItem key={brand} value={brand}>
@@ -356,7 +359,7 @@ const Vehicles: FC<VehiclesProps> = () => {
                 ))}
               </TextField>
               <TextField value={modelFilter} label="Model" margin="dense" fullWidth select
-                onChange={(event) => setModelFilter(event.target.value)}
+                onChange={(event) => dispatch(setModelFilter(event.target.value))}
                 name="modelFilter" sx={{ width: "12em" }}>
                 {modelOptions.map((model) => (
                   <MenuItem key={model} value={model}>
@@ -365,7 +368,7 @@ const Vehicles: FC<VehiclesProps> = () => {
                 ))}
               </TextField>
               <TextField value={bodyTypeFilter} label="Body type" margin="dense" fullWidth select
-                onChange={(event) => setBodyTypeFilter(event.target.value)}
+                onChange={(event) => dispatch(setBodyTypeFilter(event.target.value))}
                 name="bodyTypeFilter" sx={{ width: "12em" }}>
                 {bodyTypes.map((bodyType) => (
                   <MenuItem key={bodyType.name} value={bodyType.name}>
@@ -374,7 +377,7 @@ const Vehicles: FC<VehiclesProps> = () => {
                 ))}
               </TextField>
               <TextField value={transmissionFilter} label="Transmission type" margin="dense" fullWidth select
-                onChange={(event) => setTransmissionFilter(event.target.value)}
+                onChange={(event) => dispatch(setTransmissionFilter(event.target.value))}
                 name="transmissionFilter" sx={{ width: "12em" }}>
                 {transmissionTypes.map((type) => (
                   <MenuItem key={type[0]} value={type[1]}>
@@ -384,31 +387,31 @@ const Vehicles: FC<VehiclesProps> = () => {
               </TextField>
               <div className="PriceGroup">
                 <TextField value={minPriceFilter || ""} label="Min price" margin="dense"
-                  onChange={(event) => handleNumericInput(event, setMinPriceFilter)}
+                  onChange={(event) => dispatch(setMinPriceFilter(handleNumericInput(event)))}
                   type="number" name="minPrice" sx={{ width: "8em", marginRight: "5px" }} />
                 <TextField value={maxPriceFilter || ""} label="Max price" margin="dense"
-                  onChange={(event) => handleNumericInput(event, setMaxPriceFilter)}
+                  onChange={(event) => dispatch(setMaxPriceFilter(handleNumericInput(event)))}
                   type="number" name="maxPrice" sx={{ width: "8em" }} />
               </div>
               <div className="PowerGroup">
                 <TextField value={minPowerFilter || ""} label="Min power" margin="dense"
-                  onChange={(event) => handleNumericInput(event, setMinPowerFilter)}
+                  onChange={(event) => dispatch(setMinPowerFilter(handleNumericInput(event)))}
                   type="number" name="minPower" sx={{ width: "8em", marginRight: "5px" }} />
                 <TextField value={maxPowerFilter || ""} label="Max power" margin="dense"
-                  onChange={(event) => handleNumericInput(event, setMaxPowerFilter)}
+                  onChange={(event) => dispatch(setMaxPowerFilter(handleNumericInput(event)))}
                   type="number" name="maxPower" sx={{ width: "8em" }} />
               </div>
               <div className="AgeGroup">
                 <TextField value={maxMileageFilter || ""} label="Max mileage" margin="dense"
-                  onChange={(event) => handleNumericInput(event, setMaxMileageFilter)}
+                  onChange={(event) => dispatch(setMaxMileageFilter(handleNumericInput(event)))}
                   type="number" name="maxMileage" sx={{ width: "10em", marginRight: "5px" }} />
                 <TextField value={minYearFilter || ""} label="Min year" margin="dense"
-                  onChange={(event) => handleNumericInput(event, setMinYearFilter)}
+                  onChange={(event) => dispatch(setMinYearFilter(handleNumericInput(event)))}
                   type="number" name="minYear" sx={{ width: "10em" }} />
               </div>
               <div className="SortGroup">
                 <TextField value={sortType} label="Sort" margin="dense" fullWidth select
-                  onChange={(event) => setSortTypeValue(event.target.value)}
+                  onChange={(event) => dispatch(setSortTypeValue(event.target.value))}
                   name="sortType" sx={{ width: "12em", marginRight: "15px" }}>
                   {sortTypes.map((type) => (
                     <MenuItem key={type[0]} value={type[1]}>
@@ -417,7 +420,7 @@ const Vehicles: FC<VehiclesProps> = () => {
                   ))}
                 </TextField>
                 <FormControlLabel control={
-                  <Checkbox checked={sortAscending} onChange={(event) => setSortAscending(event.target.checked)} />
+                  <Checkbox checked={sortAscending} onChange={(event) => dispatch(setSortAscending(event.target.checked))} />
                 } label="Sort asc." />
               </div>
             </div>
@@ -463,7 +466,7 @@ const Vehicles: FC<VehiclesProps> = () => {
           </Typography>
           <Select size="small" variant="standard"
             value={vehiclesPerPage} onChange={(event) => {
-              setVehiclesPerPage(event.target.value as number);
+              dispatch(setVehiclesPerPage(event.target.value as number));
               setLoading(true); fetchVehicles(selectedPage, event.target.value as number)
             }}>
             {pageSizeOptions.map((pageSize) => (
@@ -489,3 +492,7 @@ const Vehicles: FC<VehiclesProps> = () => {
 }
 
 export default Vehicles;
+function setSortTypeValue(arg0: string): any {
+  throw new Error('Function not implemented.');
+}
+
