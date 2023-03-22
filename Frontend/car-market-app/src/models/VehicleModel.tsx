@@ -38,7 +38,7 @@ export interface DetailedVehicleModel {
     bodyType: string,
     odometer: number,
     year: number,
-    engineSize: number,
+    engineSize: number | null,
     power: number,
     torque: number,
     price: number,

@@ -1,9 +1,9 @@
 import { FC, useState } from 'react';
 import { ShortVehicleModel } from '../../../../models/VehicleModel';
-import './VehicleItem.scss';
-import defaultImage from "../../../../assets/no-image.png";
 import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import defaultImage from "../../../../assets/no-image.png";
+import './VehicleItem.scss';
 
 interface VehicleItemProps {
   vehicle: ShortVehicleModel
@@ -13,10 +13,6 @@ const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
   const [image, setImage] = useState(props.vehicle.image);
   
   const navigate = useNavigate();
-
-  function setDefaultImage() {
-    setImage(defaultImage);
-  }
 
   function navigateToVehicle(){
     navigate("./view/" + props.vehicle.id);
@@ -31,7 +27,7 @@ const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
       </div>
       <div className="vehicleDetails">
         <div className="vehicleImageContainer">
-          <img src={image} alt="Empty" className="vehicleImage" onError={() => setDefaultImage()} />
+          <img src={image} alt="Empty" className="vehicleImage" onError={() => setImage(defaultImage)} />
         </div>
         <div className="vehicleDescriptionContainer">
 

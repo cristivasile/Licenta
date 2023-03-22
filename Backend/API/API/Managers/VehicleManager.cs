@@ -64,8 +64,8 @@ namespace API.Managers
             var returned = new DetailedVehicleModel(vehicle);
 
             var images = await pictureRepository.GetByVehicleId(vehicle.Id);
-            if(images.Count > 0 && images[0] != null)
-                returned.Image = images[0].Id;
+            if (images.Count > 0 && images[0] != null)
+                returned.Image = images[0].Base64Image;
             else
                 returned.Image = "";
 
@@ -83,7 +83,7 @@ namespace API.Managers
 
             var images = await pictureRepository.GetByVehicleId(vehicle.Id);
             if (images.Count > 0 && images[0] != null)
-                returned.Image = images[0].Id;
+                returned.Image = images[0].Base64Image;
             else
                 returned.Image = "";
 

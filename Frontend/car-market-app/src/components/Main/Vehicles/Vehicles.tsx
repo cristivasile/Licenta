@@ -7,7 +7,7 @@ import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setLocationsFromJson } from '../../../redux/locationsStore';
 import { getLocations } from '../../../services/locationsService';
-import { getAvailableVehicles, getVehicleTypesDictionary } from '../../../services/vehiclesService';
+import { getVehiclesList, getVehicleTypesDictionary } from '../../../services/vehiclesService';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import VehicleItem from './VehicleItem/VehicleItem';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
@@ -97,7 +97,7 @@ const Vehicles: FC<VehiclesProps> = () => {
       sortAsc: sortAscending
     };
 
-    getAvailableVehicles(filters)
+    getVehiclesList(filters)
       .then(async (result) => {
         if (result.status === 200) {
           var json = await result.json();

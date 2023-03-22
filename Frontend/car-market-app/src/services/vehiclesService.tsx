@@ -1,6 +1,7 @@
 import { apiUrl } from "../constants";
 import { VehicleCreateModel, VehicleFiltersModel } from "../models/VehicleModel";
 import { store } from "../redux/store";
+import { isAdmin } from "./authenticationService";
 import { authenticatedFetch } from "./fetchInterceptor";
 
 export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> => {
@@ -34,7 +35,13 @@ export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> =
     return authenticatedFetch(apiUrl + "/api/Vehicle", requestOptions);
 }
 
-export const getAvailableVehicles = (filters: VehicleFiltersModel): Promise<Response> => {
+export const getVehiclesList = (filters: VehicleFiltersModel): Promise<Response> => {
+    var userIsAdmin: boolean = isAdmin(store.getState().user.role as string);
+
+    //regular users can only get still available vehicles
+    var endpoint = apiUrl + "/api/Vehicle/getAvailable";
+    if (userIsAdmin)
+        endpoint = apiUrl + "/api/Vehicle/getAll"; 
 
     const requestOptions = {
         method: 'POST',
@@ -56,16 +63,23 @@ export const getAvailableVehicles = (filters: VehicleFiltersModel): Promise<Resp
             sortAsc: filters.sortAsc,
         })
     };
-    return authenticatedFetch(apiUrl + "/api/Vehicle/getAvailable", requestOptions);
+    return authenticatedFetch(endpoint, requestOptions);
 }
 
 export const getVehicleById = (id: string): Promise<Response> => {
+    var userIsAdmin: boolean = isAdmin(store.getState().user.role as string);
+    
+    //regular users have a more restrictive fetch
+    var endpoint = apiUrl + "/api/Vehicle/";
+    if (userIsAdmin)
+        endpoint = endpoint + "admin/"; 
+
     const requestOptions = {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
     };
 
-    return authenticatedFetch(apiUrl + "/api/Vehicle/" + id, requestOptions);
+    return authenticatedFetch(endpoint + id, requestOptions);
 }
 
 export const getVehicleTypesDictionary = (): Promise<Response> => {
