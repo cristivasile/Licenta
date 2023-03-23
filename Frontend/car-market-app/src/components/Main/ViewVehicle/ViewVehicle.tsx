@@ -9,6 +9,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
 import './ViewVehicle.scss';
+import ImageGalleryDialog, { ImageGalleryDialogProps } from './ImageGalleryDialog/ImageGalleryDialog';
 
 interface ViewVehicleProps { }
 
@@ -18,10 +19,11 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState("");
   const [vehicle, setVehicle] = useState({} as DetailedVehicleModel)
-  const [selectedImage, setSelectedImage] = useState(0);
+  const [image, setImage] = useState("");
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageCount, setImageCount] = useState(0);
+  const [imageGalleryOpen, setImageGalleryOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -50,14 +52,37 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  async function openImageGallery() {
+    setImageGalleryOpen(true);
+  }
+
+  function closeImageGallery() {
+    setImageGalleryOpen(false);
+  }
+
+  function getSelectedImage(): number{
+    return selectedImageIndex;
+  }
+
+  function getImages(): string[]{
+    return vehicle.images;
+  }
+
+  const imageGalleryProps = {
+    isOpen: imageGalleryOpen,
+    getImages: getImages,
+    getSelectedImage: getSelectedImage,
+    onClose: closeImageGallery,
+  } as ImageGalleryDialogProps;
+
   function setPreviousImage(){
-    setImage(vehicle.images[selectedImage - 1]);
-    setSelectedImage(selectedImage - 1);
+    setImage(vehicle.images[selectedImageIndex - 1]);
+    setSelectedImageIndex(selectedImageIndex - 1);
   }
 
   function setNextImage(){
-    setImage(vehicle.images[selectedImage + 1]);
-    setSelectedImage(selectedImage + 1);
+    setImage(vehicle.images[selectedImageIndex + 1]);
+    setSelectedImageIndex(selectedImageIndex + 1);
   }
 
   function goBackToMain() {
@@ -66,6 +91,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
   return (
     <div className="ViewVehicle">
+      <ImageGalleryDialog {...imageGalleryProps}/>
       {loading ? <Loading /> : <></>}
       <div className="buttonContainer">
         <Button variant="outlined" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large" startIcon={<ArrowBackIosIcon />} onClick={goBackToMain}>
@@ -84,13 +110,13 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
               <div className="viewVehicleRow">
                 <div className="vehicleImageGalleryContainer">
-                  <IconButton color="primary" disabled={selectedImage === 0} onClick={setPreviousImage}>
+                  <IconButton color="primary" disabled={selectedImageIndex === 0} onClick={setPreviousImage}>
                     <ArrowBackIosIcon />
                   </IconButton>
-                  <div className="vehicleImageContainer">
+                  <div className="vehicleImageContainer" onClick={openImageGallery}>
                     <img src={image} alt="Empty" className="vehicleImage" onError={() => setImage(defaultImage)} />
                   </div>
-                  <IconButton color="primary" disabled={selectedImage >= (imageCount - 1)} onClick={setNextImage}>
+                  <IconButton color="primary" disabled={selectedImageIndex >= (imageCount - 1)} onClick={setNextImage}>
                     <ArrowForwardIosIcon />
                   </IconButton>
                 </div>
