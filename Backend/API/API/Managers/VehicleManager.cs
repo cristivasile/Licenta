@@ -18,7 +18,7 @@ namespace API.Managers
         /// Max image sizes accepted by the manager, any higher will cause errors.
         /// The frontend is tasked with compressing images before upload.
         /// </summary>
-        private static readonly int maxImageSize = 1048576; //1 MB in bytes
+        private static readonly int maxImageSize = 5242880; //5 MB in bytes
         private static readonly int maxThumbnailImageSize = 512000; //500 KB in bytes
 
         private readonly IVehicleRepository vehicleRepository;
