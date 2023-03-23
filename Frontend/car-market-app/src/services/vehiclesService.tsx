@@ -6,11 +6,12 @@ import { authenticatedFetch } from "./fetchInterceptor";
 
 export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> => {
 
+    console.log(newVehicle);
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
         body: JSON.stringify({
-            image: newVehicle.image,
+            images: newVehicle.images,
             thumbnailImage: newVehicle.thumbnailImage,
             brand: newVehicle.brand,
             model: newVehicle.model,

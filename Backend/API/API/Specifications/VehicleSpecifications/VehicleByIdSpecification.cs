@@ -9,6 +9,8 @@ namespace API.Specifications.VehicleSpecifications
             AddInclude(x => x.Status);
             AddInclude(x => x.Features);
             AddInclude(x => x.Location);
+            AddInclude(x => x.Images);
+            AddInclude(x => x.Thumbnail);
 
             SplitQuery = true;
         }

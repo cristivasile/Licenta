@@ -61,15 +61,7 @@ namespace API.Managers
             if (vehicle == null)
                 return null;
 
-            var returned = new DetailedVehicleModel(vehicle);
-
-            var images = await pictureRepository.GetByVehicleId(vehicle.Id);
-            if (images.Count > 0 && images[0] != null)
-                returned.Image = images[0].Base64Image;
-            else
-                returned.Image = "";
-
-            return returned;
+            return new DetailedVehicleModel(vehicle);
         }
 
         public async Task<FullVehicleModel> GetByIdExtended(string id)
@@ -79,15 +71,7 @@ namespace API.Managers
             if (vehicle == null)
                 return null;
 
-            var returned = new FullVehicleModel(vehicle);
-
-            var images = await pictureRepository.GetByVehicleId(vehicle.Id);
-            if (images.Count > 0 && images[0] != null)
-                returned.Image = images[0].Base64Image;
-            else
-                returned.Image = "";
-
-            return returned;
+            return new FullVehicleModel(vehicle);
         }
 
         /// <summary>
@@ -168,9 +152,9 @@ namespace API.Managers
             {
                 var thumbnail = await thumbnailRepository.GetByVehicleId(vehicle.Id);
                 if (thumbnail != null)
-                    vehicle.Image = thumbnail.Base64Image;
+                    vehicle.Thumbnail = thumbnail.Base64Image;
                 else
-                    vehicle.Image = "";
+                    vehicle.Thumbnail = "";
             }
 
             return new()
@@ -209,8 +193,9 @@ namespace API.Managers
         /// </summary>
         private async Task ValidateInputVehicle(VehicleCreateModel inputVehicle)
         {
-            if (inputVehicle.Image.Length > maxImageSize)
-                throw new Exception("Image is too large!");
+            foreach(var image in inputVehicle.Images)
+                if(image.Length > maxImageSize)
+                    throw new Exception("An image is too large!");
 
             if (inputVehicle.ThumbnailImage.Length > maxThumbnailImageSize)
                 throw new Exception("Thumbnail image is too large!");
@@ -287,20 +272,26 @@ namespace API.Managers
             Thumbnail newThumbnail = new()
             {
                 Id = thumbnailId,
+                VehicleId = newVehicle.Id,
                 Base64Image = inputVehicle.ThumbnailImage,
             };
 
-            Picture newImage = new()
-            {
-                Id = Utilities.GetGUID(),
-                Base64Image = inputVehicle.Image,
-                VehicleId = newVehicle.Id,
-            };
+            List<Picture> newImages = new();
+            foreach (var image in inputVehicle.Images)
+                newImages.Add(new()
+                {
+                    Id = Utilities.GetGUID(),
+                    Base64Image = image,
+                    VehicleId = newVehicle.Id,
+                });
 
             await vehicleRepository.Create(newVehicle);
             await thumbnailRepository.Create(newThumbnail);
             await statusRepository.Create(newStatus);
-            await pictureRepository.Create(newImage);
+
+            //add the images
+            foreach(var newImage in newImages)
+                await pictureRepository.Create(newImage);
         }
 
         public async Task Update(string id, VehicleCreateModel updatedVehicle)
@@ -348,12 +339,14 @@ namespace API.Managers
                 VehicleId = currentVehicle.Id,
             };
 
-            Picture newImage = new()
-            {
-                Id = Utilities.GetGUID(),
-                Base64Image = updatedVehicle.Image,
-                VehicleId = currentVehicle.Id,
-            };
+            List<Picture> newImages = new();
+            foreach (var image in updatedVehicle.Images)
+                newImages.Add(new()
+                {
+                    Id = Utilities.GetGUID(),
+                    Base64Image = image,
+                    VehicleId = currentVehicle.Id,
+                });
 
             currentVehicle.Brand = updatedVehicle.Brand;
             currentVehicle.Model = updatedVehicle.Model;
@@ -373,7 +366,10 @@ namespace API.Managers
 
             await vehicleRepository.Update(currentVehicle);
             await thumbnailRepository.Create(newThumbnail);
-            await pictureRepository.Create(newImage);
+
+            //add the images
+            foreach (var newImage in newImages)
+                await pictureRepository.Create(newImage);
         }
 
         public async Task UpdateStatus(string id, VehicleStatusUpdateModel updatedStatus)

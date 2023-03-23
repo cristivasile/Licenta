@@ -2,9 +2,9 @@ import { DriveTrainTypeEnum } from "./DriveTrainTypeEnum";
 import { PowerTrainTypeEnum } from "./PowerTrainTypeEnum";
 import { TransmissionTypeEnum } from "./TransmissionTypeEnum";
 
-export interface ShortVehicleModel {
+export interface SimplifiedVehicleModel {
     id: string,
-    image: string,
+    thumbnail: string,
     brand: string,
     model: string,
     bodyType: string,
@@ -32,7 +32,7 @@ export interface FeatureModel{
 
 export interface DetailedVehicleModel {
     id: string,
-    image: string,
+    images: string[],
     brand: string,
     model: string,
     bodyType: string,
@@ -69,7 +69,7 @@ export interface VehicleFiltersModel {
 }
 
 export interface VehicleCreateModel {
-    image: string,
+    images: string[],
     thumbnailImage: string,
     brand: string,
     model: string,
@@ -89,14 +89,14 @@ export interface VehicleCreateModel {
     price: number
 }
 
-export function mapJsonToShortVehicleModels(json: any): ShortVehicleModel[] {
-    var vehicleList = new Array<ShortVehicleModel>();
+export function mapJsonToShortVehicleModels(json: any): SimplifiedVehicleModel[] {
+    var vehicleList = new Array<SimplifiedVehicleModel>();
 
     if (json !== null) {
         json.forEach(function (value: any) {
             vehicleList.push({
                 id: value.id,
-                image: value.image,
+                thumbnail: value.thumbnail,
                 brand: value.brand,
                 model: value.model,
                 bodyType: value.bodyType,
@@ -108,7 +108,7 @@ export function mapJsonToShortVehicleModels(json: any): ShortVehicleModel[] {
                 transmissionType: value.transmissionType,
                 price: value.price,
                 isSold: value.isSold,
-            } as ShortVehicleModel);
+            } as SimplifiedVehicleModel);
         });
     }
     return vehicleList;
@@ -138,9 +138,9 @@ export function mapJsonToDetailedVehicleModel(json: any): DetailedVehicleModel{
         return featureList;
     }
 
-    return {
+    var detailedVehicle = {
         id: json.id,
-        image: json.image,
+        images: json.images,
         brand: json.brand,
         model: json.model,
         bodyType: json.bodyType,
@@ -157,6 +157,12 @@ export function mapJsonToDetailedVehicleModel(json: any): DetailedVehicleModel{
         price: json.price,
         features: mapJsonToFeaturesModel(json.features),
         status: mapJsonToStatusModel(json.status),
-    } as DetailedVehicleModel
+    } as DetailedVehicleModel;
+
+    //if no images are present try to use the thumbnail
+    if(detailedVehicle.images.length === 0 && json.thumbnail.length !== 0)
+        detailedVehicle.images.push(json.thumbnail);
+
+    return detailedVehicle;
 }
 

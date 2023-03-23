@@ -1,10 +1,10 @@
 import {createSlice} from "@reduxjs/toolkit";
-import { mapJsonToShortVehicleModels, ShortVehicleModel } from "../models/VehicleModel";
+import { mapJsonToShortVehicleModels, SimplifiedVehicleModel } from "../models/VehicleModel";
 
 export const vehicleSlice = createSlice({
     name: "vehiclesState",
     initialState: {
-        vehicles: new Array<ShortVehicleModel>(),
+        vehicles: new Array<SimplifiedVehicleModel>(),
     },
     reducers: {
         setVehiclesFromJson: (state, action) => {

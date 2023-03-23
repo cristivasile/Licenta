@@ -1,58 +1,58 @@
 @import "../../Theme.scss";
 
-.mainContainer{
-    width: 95%;
-    height: 90%;
-    border-radius: 2vw 2vw .2vw .2vw;
-    display: flex;
-    flex-direction: column;
+.mainContainer {
+  width: 95%;
+  height: 90%;
+  border-radius: 2vw 2vw 0.2vw 0.2vw;
+  display: flex;
+  flex-direction: column;
 }
 
-.header{
-    height: 8%;
-    box-shadow: 0 0 2vw $accent1-color;
-    display: flex;
-    flex-direction: row;
-    background-color: $main-color;
+.header {
+  height: 8%;
+  box-shadow: 0 0 2vw $accent1-color;
+  display: flex;
+  flex-direction: row;
+  background-color: $main-color;
 }
 
-.buttonContainer{
-    width: 10%;
-    height: 100%;
-    margin: 0;
-    display:flex;
-    margin-left: auto;
-    align-items: center;
-    padding-right: 1em;
-    justify-content: right;
+.buttonContainer {
+  width: 10%;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  padding-right: 1em;
+  justify-content: right;
 }
 
-.messageContainer{
-    width: auto;
-    height: 100%;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    text-align: center;
-    padding-left: 1em;
-    font-size: 1.4em;
-    font-weight: 500;
-    color: white;
+.messageContainer {
+  width: auto;
+  height: 100%;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  text-align: center;
+  padding-left: 1em;
+  font-size: 1.4em;
+  font-weight: 500;
+  color: white;
 }
 
- .usernameSpan{
-    width: auto;
-    color: $background-color;
-    margin-right: .1em;
-    margin-top: .75em;
-    margin-bottom: .75em;
- }
+.usernameSpan {
+  width: auto;
+  color: $background-color;
+  margin-right: 0.1em;
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+}
 
- .content{
-    height: 92%;
-    display: flex;
-    align-items: stretch;
-    border-radius: 0 0 .3em .3em;
-    box-shadow: 0 .5vw 1vw $accent1-color;
-    background-color: rgba(255,255,255,0.8);
+.content {
+  height: 92%;
+  display: flex;
+  align-items: stretch;
+  border-radius: 0 0 0.3em 0.3em;
+  box-shadow: 0 0.5vw 1vw $accent1-color;
+  background-color: rgba(255, 255, 255, 0.8);
 }

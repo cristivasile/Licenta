@@ -1,10 +1,11 @@
-import { Button, Typography } from '@mui/material';
+import { Button, IconButton, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DetailedVehicleModel, mapJsonToDetailedVehicleModel } from '../../../models/VehicleModel';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
 import { getVehicleById } from '../../../services/vehiclesService';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
 import './ViewVehicle.scss';
@@ -19,6 +20,8 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState("");
   const [vehicle, setVehicle] = useState({} as DetailedVehicleModel)
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [imageCount, setImageCount] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -30,7 +33,11 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
         else {
           var json = await response.json();
           setVehicle(mapJsonToDetailedVehicleModel(json));
-          setImage(json.image);
+
+          if (json.images.length > 0)
+            setImage(json.images[0]);
+
+          setImageCount(json.images.length);
         }
       })
       .catch((err) => {
@@ -43,6 +50,16 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function setPreviousImage(){
+    setImage(vehicle.images[selectedImage - 1]);
+    setSelectedImage(selectedImage - 1);
+  }
+
+  function setNextImage(){
+    setImage(vehicle.images[selectedImage + 1]);
+    setSelectedImage(selectedImage + 1);
+  }
+
   function goBackToMain() {
     navigate("../../");
   }
@@ -51,7 +68,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     <div className="ViewVehicle">
       {loading ? <Loading /> : <></>}
       <div className="buttonContainer">
-        <Button variant="outlined" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large" startIcon={<ArrowBackIosNewIcon />} onClick={goBackToMain}>
+        <Button variant="outlined" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large" startIcon={<ArrowBackIosIcon />} onClick={goBackToMain}>
           Back
         </Button>
       </div>
@@ -66,8 +83,16 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
               </div>
 
               <div className="viewVehicleRow">
-                <div className="vehicleImageContainer">
-                  <img src={image} alt="Empty" className="vehicleImage" onError={() => setImage(defaultImage)} />
+                <div className="vehicleImageGalleryContainer">
+                  <IconButton color="primary" disabled={selectedImage === 0} onClick={setPreviousImage}>
+                    <ArrowBackIosIcon />
+                  </IconButton>
+                  <div className="vehicleImageContainer">
+                    <img src={image} alt="Empty" className="vehicleImage" onError={() => setImage(defaultImage)} />
+                  </div>
+                  <IconButton color="primary" disabled={selectedImage >= (imageCount - 1)} onClick={setNextImage}>
+                    <ArrowForwardIosIcon />
+                  </IconButton>
                 </div>
                 <div className="vehicleDetailsContainer">
                   <Typography fontSize={25} className="title">

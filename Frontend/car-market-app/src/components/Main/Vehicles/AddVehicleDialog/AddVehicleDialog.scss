@@ -1,32 +1,32 @@
-.splitDiv{
-    .addImageButton{
-        margin-bottom: .5em;
-    }
+.splitDiv {
+  .addImageButton {
+    margin-bottom: 0.5em;
+  }
 }
 
-#vehicleDialog{
-    background-color: transparent;
+#vehicleDialog {
+  background-color: transparent;
 }
 
-#imageInfoDiv{
-    display:flex;
-    flex-direction: row;    
-    align-items:center;
-    justify-content: center;
+#imagesInfoDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
-#previewImageDiv{
-    width: 2vw;
-    height: 2 vw;
-    display: flex;
-    align-items:center;
-    justify-content: center;
-    margin-left: 1vw;
+#previewImageDiv {
+  width: 2vw;
+  height: 2 vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1vw;
 }
 
-#previewImage{
-    object-fit: fit;
-    border: 1px solid gray;
-    max-height: 100%;
-    max-width: 100%;
+#previewImage {
+  object-fit: fit;
+  border: 1px solid gray;
+  max-height: 100%;
+  max-width: 100%;
 }

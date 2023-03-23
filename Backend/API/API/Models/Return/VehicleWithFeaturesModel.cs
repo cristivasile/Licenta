@@ -8,6 +8,7 @@ namespace API.Models.Return
         public string Description { get; set; }
         public string LocationAddress { get; set; }
         public List<FeatureModel> Features { get; set; }
+        public List<string> Images { get; set; }
 
         public VehicleWithFeaturesModel(Vehicle ob) : base(ob)
         {
@@ -16,9 +17,10 @@ namespace API.Models.Return
             if(ob.Location != null)
                 LocationAddress = ob.Location.City + ", " + ob.Location.Address;
 
-            if (ob.Images != null)   //'upgrade' image from thumbnail to full-size
+            Images = new();
+            if (ob.Images != null)
                 foreach (var image in ob.Images)
-                    Image = image.Base64Image;
+                   Images.Add(image.Base64Image);
 
             Features = new();
             foreach(var feature in ob.Features)

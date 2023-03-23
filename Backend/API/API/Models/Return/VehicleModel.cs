@@ -7,7 +7,7 @@ namespace API.Models.Return
     public class VehicleModel
     {
         public string Id { get; set; }
-        public string Image { get; set; }
+        public string Thumbnail { get; set; }
         public string Brand { get; set; }
         public string Model { get; set; }
         public string BodyType { get; set; }
@@ -39,7 +39,7 @@ namespace API.Models.Return
             TransmissionType = ob.TransmissionType.ToString();
 
             if (ob.Thumbnail != null)
-                Image = ob.Thumbnail.Base64Image;
+                Thumbnail = ob.Thumbnail.Base64Image;
 
             if (ob.Status != null)
                 IsSold = ob.Status.IsSold;

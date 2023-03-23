@@ -6,7 +6,7 @@ namespace API.Models.Input
 {
     public class VehicleCreateModel
     {
-        public string Image { get; set; }
+        public List<string> Images { get; set; }
         public string ThumbnailImage { get; set; }
         public string Brand { get; set; }
         public string Model { get; set; }

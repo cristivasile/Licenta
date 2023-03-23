@@ -4,47 +4,52 @@ $accent2-color: #40b2d4;
 $border-color: #0a92cb;
 $background-color: #b4dcf7;
 $light-color: #7dcbff;
-$highlight1-color: #FEE5BC;
-$highlight2-color: #A3EF86;
-$main-background: linear-gradient(145deg, $main-color, $accent1-color, $accent2-color);
+$highlight1-color: #fee5bc;
+$highlight2-color: #a3ef86;
+$main-background: linear-gradient(
+  145deg,
+  $main-color,
+  $accent1-color,
+  $accent2-color
+);
 
-.pageContainer{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
+.pageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
 }
 
-.linkButton{
-    background-color: transparent;
-    border: 0px;
-    text-decoration: underline;
-    font-size: 1em;
-    color: $accent1-color;
-    cursor: pointer;
-    padding: 0px;
+.linkButton {
+  background-color: transparent;
+  border: 0px;
+  text-decoration: underline;
+  font-size: 1em;
+  color: $accent1-color;
+  cursor: pointer;
+  padding: 0px;
 
-    &.light{
-        color: $light-color;
-    }
+  &.light {
+    color: $light-color;
+  }
 
-    &.large{
-        font-size:1.1em;
-    }
+  &.large {
+    font-size: 1.1em;
+  }
 }
 
-.errorMessage{
-    font-weight: bold;
-    color: red;
+.errorMessage {
+  font-weight: bold;
+  color: red;
 }
 
-.successMessage{
-    font-weight: bold;
-    color: green;
+.successMessage {
+  font-weight: bold;
+  color: green;
 }
 
-.leftMargin{
-    margin-left: 1.5em;
+.leftMargin {
+  margin-left: 1.5em;
 }

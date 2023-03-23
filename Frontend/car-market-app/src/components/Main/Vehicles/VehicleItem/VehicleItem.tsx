@@ -1,16 +1,16 @@
 import { FC, useState } from 'react';
-import { ShortVehicleModel } from '../../../../models/VehicleModel';
+import { SimplifiedVehicleModel } from '../../../../models/VehicleModel';
 import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import defaultImage from "../../../../assets/no-image.png";
 import './VehicleItem.scss';
 
 interface VehicleItemProps {
-  vehicle: ShortVehicleModel
+  vehicle: SimplifiedVehicleModel
 }
 
 const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
-  const [image, setImage] = useState(props.vehicle.image);
+  const [image, setImage] = useState(props.vehicle.thumbnail);
   
   const navigate = useNavigate();
 

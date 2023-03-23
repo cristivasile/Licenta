@@ -1,126 +1,127 @@
 @import "../../../Theme.scss";
 
-.vehicles{
+.vehicles {
+  display: flex;
+  position: relative;
+  flex: 1 1 auto;
+  flex-direction: column;
+
+  .filtersDiv {
+    width: 100%;
     display: flex;
-    position: relative;
-    flex: 1 1 auto;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+
+    .SortGroup {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .FilterButtonsDiv {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+  }
+
+  .adminToolbar {
+    width: 100%;
+    background-color: white;
+
+    .adminToolbarButtonsDiv {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  .paginationInfoContainer {
+    background-color: white;
+    border-bottom: 2px solid $main-color;
+    display: flex;
+    flex-direction: row;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
+    padding-left: 1em;
+    flex-direction: row;
+
+    .paginationSizeSelectorDiv {
+      display: flex;
+      flex-direction: row;
+      width: auto;
+      margin-left: auto;
+      margin-right: 1em;
+    }
+  }
+
+  .formTitle {
+    color: $main-color;
+  }
+
+  .vehiclesListContainer {
+    display: flex;
     flex-direction: column;
+    flex-wrap: nowrap;
+    max-height: 100%;
+    overflow-y: auto;
+    padding-bottom: 1em;
+  }
 
-    .filtersDiv{
-        width: 100%;
-        display:flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        flex-wrap: wrap;
+  .vehicleItemContainer {
+    width: 100%;
+    box-shadow: 0.2em 0.2em 0.8em gray;
+    margin-bottom: 0.9em;
+  }
 
-        .SortGroup{
-            display: flex;
-            justify-content: center;
-        }
-    }
-    
-    .FilterButtonsDiv{
-        width: 100%;
-        display:flex;
-        align-items: center;
-        justify-content: right;
-    }
+  .vehicleItemContainer:hover {
+    box-shadow: 0.2em 0.2em 2em gray;
+  }
 
-    .adminToolbar {
-        width: 100%;
-        background-color: white;
+  .selectorBox {
+    margin-left: 3%;
+    margin-right: 3%;
+  }
 
-        .adminToolbarButtonsDiv {
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-    }
+  .paginationSelectorContainer {
+    background-color: white;
+    display: flex;
+    padding-bottom: 0.5vh;
+    border-radius: 10px 10px 0 0;
+    border: 2px solid $main-color;
+    border-bottom: 0px;
+    padding-top: 0.5vh;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
 
-    .paginationInfoContainer{
-        background-color: white;
-        border-bottom: 2px solid $main-color;
-        display: flex;
-        flex-direction: row;
-        padding-top: .15em;
-        padding-bottom: .15em;
-        padding-left: 1em;
-        flex-direction: row;
+//below classes are also used by dialogs
+.splitDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 
-        .paginationSizeSelectorDiv{
-            display:flex;
-            flex-direction: row;
-            width: auto;
-            margin-left: auto;
-            margin-right: 1em;
-        }
-    }
+  .halfSplitDialogField {
+    width: 49%;
+  }
 
-    .formTitle{
-        color: $main-color;
-    }
-    
-    .vehiclesListContainer{
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        max-height: 100%;
-        overflow-y: auto;
-        padding-bottom: 1em;
-    }
-    
-    .vehicleItemContainer{
-        width: 100%;
-        box-shadow: .2em .2em .8em gray;
-        margin-bottom: .9em;
-    }
-    
-    .vehicleItemContainer:hover{
-        box-shadow: .2em .2em 2em gray;
-    }
-    
-    .splitDiv{
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    
-        .halfSplitDialogField{
-            width: 49%;
-        }
-    
-        .thirdSplitDialogField{
-            width: 32%;
-        }
-    }
-    
-    .rightDiv{
-        display: flex;
-        flex-direction: row;
-        justify-content: right;
-        align-items: center;
-    }
-    
-    .selectorBox{
-        margin-left: 3%;
-        margin-right: 3%;
-    }
+  .thirdSplitDialogField {
+    width: 32%;
+  }
+}
 
-    .paginationSelectorContainer{
-        background-color: white;
-        display: flex;
-        padding-bottom: .5vh;
-        border-radius: 10px 10px 0 0;
-        border: 2px solid $main-color;
-        border-bottom: 0px;
-        padding-top: .5vh;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 0;
-        flex-direction: row;
-        justify-content: center;
-    }
+.rightDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  align-items: center;
 }

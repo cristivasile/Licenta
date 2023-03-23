@@ -10,10 +10,10 @@ import { driveTrainsMap, DriveTrainTypeEnum } from '../../../../models/DriveTrai
 import { powerTrainsMap, PowerTrainTypeEnum } from '../../../../models/PowerTrainTypeEnum';
 import Loading from '../../../Loading/Loading';
 import defaultImage from "../../../../assets/no-image.png";
-import './AddVehicleDialog.scss';
 import { TransmissionTypeEnum, transmissionTypesMap } from '../../../../models/TransmissionTypeEnum';
 import { compressedImageSizeInMb, compressedThumbnailSizeInMb, maxCompressedImageWidth, maxCompressedThumbnailWidth } from '../../../../constants';
 import { VehicleCreateModel } from '../../../../models/VehicleModel';
+import './AddVehicleDialog.scss';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,
@@ -38,19 +38,20 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [brandValue, setBrandValue] = useState("");
   const [modelValue, setModelValue] = useState("");
   const [bodyTypeValue, setBodyTypeValue] = useState("");
+  const [locationValue, setLocationValue] = useState("");
+  const [descriptionValue, setDescriptionValue] = useState("");
   const [priceValue, setPriceValue] = useState(NaN);
   const [yearValue, setYearValue] = useState(NaN);
   const [engineSizeValue, setEngineSizeValue] = useState(NaN);
   const [powerValue, setPowerValue] = useState(NaN);
   const [torqueValue, setTorqueValue] = useState(NaN);
   const [odometerValue, setOdometerValue] = useState(NaN);
-  const [locationValue, setLocationValue] = useState("");
-  const [descriptionValue, setDescriptionValue] = useState("");
-  const [imageValue, setImageValue] = useState(new File([""], ""));
   const [featuresValue, setFeaturesValue] = useState(new Array<string>());
   const [driveTrainValue, setDriveTrainValue] = useState(DriveTrainTypeEnum.FWD);
   const [powerTrainValue, setPowerTrainValue] = useState(PowerTrainTypeEnum.Diesel);
   const [transmissionValue, setTransmissionValue] = useState(TransmissionTypeEnum.Manual);
+  const [thumbnailValue, setThumbnailValue] = useState(new File([""], ""));
+  const [imagesValue, setImagesValue] = useState(new Array<File>());
 
   const [brandError, setBrandError] = useState(false);
   const [brandErrorText, setBrandErrorText] = useState("");
@@ -118,8 +119,9 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     setOdometerValue(NaN);
     setLocationValue("");
     setDescriptionValue("");
-    setImageValue(new File([""], ""));
     setFeaturesValue(new Array<string>());
+    setThumbnailValue(new File([""], ""));
+    setImagesValue(new Array<File>());
   }
 
   function validate() {
@@ -194,22 +196,27 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
     setLoading(true);
 
-    if (imageValue.size !== 0) {
-      //compress the image in order to save bandwidth and reduce loading times
-      var compressedImage = await compressImage(imageValue, compressedImageSizeInMb, maxCompressedImageWidth);  
-      var base64Image = imageValue.name !== "" ? await fileToBase64(compressedImage) : "";
-
+    //compress thumbnail
+    if (thumbnailValue.size !== 0) {
       //compress the image further to use as thumbnail
-      var compressedThumbnailImage = await compressImage(imageValue, compressedThumbnailSizeInMb, maxCompressedThumbnailWidth);  
-      var base64ThumbnailImage = imageValue.name !== "" ? await fileToBase64(compressedThumbnailImage) : "";
+      var compressedThumbnailImage = await compressImage(thumbnailValue, compressedThumbnailSizeInMb, maxCompressedThumbnailWidth);
+      var base64ThumbnailImage = thumbnailValue.name !== "" ? await fileToBase64(compressedThumbnailImage) : "";
     }
     else {
-      base64Image = "";
       base64ThumbnailImage = "";
     }
 
+    //compress images in order to save bandwidth and reduce loading times
+    var base64Images = new Array<string>();
+
+    for(var image of imagesValue){
+      var compressedImage = await compressImage(image, compressedImageSizeInMb, maxCompressedImageWidth);
+      var base64Image = image.name !== "" ? await fileToBase64(compressedImage) : "";
+      base64Images.push(base64Image);
+    }
+
     var newVehicle: VehicleCreateModel = {
-      image: base64Image,
+      images: base64Images,
       thumbnailImage: base64ThumbnailImage,
       brand: brandValue,
       model: modelValue,
@@ -249,7 +256,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   }
 
   function getImage(imageValue: File | Blob): string {
-    if (imageValue.size !== 0) 
+    if (imageValue.size !== 0)
       return URL.createObjectURL(imageValue);
     else
       return defaultImage;
@@ -277,17 +284,25 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       <DialogTitle className="formTitle">Add a new vehicle</DialogTitle>
       <DialogContent>
         <div className="splitDiv">
-          <Button disabled={loading} variant="contained" component="label" className="addImageButton">
-            Add image
-            <input type="file" hidden accept={"image/png, image/jpeg"}
-              onChange={(event) => event.target.files !== null ? setImageValue(event.target.files![0]) : {}} />
-          </Button>
-          <div id="imageInfoDiv">
+          <div>
+            <Button disabled={loading} variant="contained" component="label" className="addImageButton" sx={{marginRight: ".4em"}}>
+              Add images
+              <input type="file" hidden accept={"image/png, image/jpeg"} multiple={true}
+                onChange={(event) => event.target.files !== null ? setImagesValue(Array.from(event.target.files)) : {}} />
+            </Button>
+            <Button disabled={loading} variant="contained" component="label" className="addImageButton">
+              Add thumbnail
+              <input type="file" hidden accept={"image/png, image/jpeg"}
+                onChange={(event) => event.target.files !== null ? setThumbnailValue(event.target.files![0]) : {}} />
+            </Button>
+          </div>
+
+          <div id="imagesInfoDiv">
             <div>
-              {imageValue.name !== "" ? imageValue.name : "No image selected"}
+              {imagesValue.length !== 0 ? imagesValue.length + " image(s) uploaded" : "No image uploaded"}
             </div>
             <div id="previewImageDiv">
-              <img src={getImage(imageValue)} alt="" id="previewImage" />
+              <img src={getImage(thumbnailValue)} alt="" id="previewImage" />
             </div>
           </div>
         </div>
@@ -295,9 +310,10 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
         <div className="splitDiv">
           <Autocomplete value={brandValue} fullWidth freeSolo className="thirdSplitDialogField"
             options={Array.from(vehicleTypesMap.keys())} sx={{ marginTop: '8px' }}
-            onChange={(_, value) => 
-              {setBrandValue(value || '');
-              handleBrandSelection(value || "")}}
+            onChange={(_, value) => {
+              setBrandValue(value || '');
+              handleBrandSelection(value || "")
+            }}
             renderInput={(params) =>
               <TextField {...params} autoFocus
                 onChange={(event) => {
