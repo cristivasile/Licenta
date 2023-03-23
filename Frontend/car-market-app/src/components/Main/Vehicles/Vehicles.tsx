@@ -27,8 +27,10 @@ import ManageLocationsDialog from './ManageLocationsDialog/ManageLocationsDialog
 import ManageFeaturesDialog from './ManageFeaturesDialog/ManageFeaturesDialog';
 import ManageBodyTypesDialog from './ManageBodyTypesDialog/ManageBodyTypesDialog';
 import { VehicleFiltersModel } from '../../../models/VehicleModel';
-import { setBodyTypeFilter, setBrandFilter, setMaxMileageFilter, setMaxPowerFilter, setMaxPriceFilter, setMinPowerFilter, setMinPriceFilter, 
-  setMinYearFilter, setModelFilter, setSelectedPage, setSortAscending, setTransmissionFilter, setVehiclesPerPage } from '../../../redux/vehiclesMainFiltersStore';
+import {
+  setBodyTypeFilter, setBrandFilter, setMaxMileageFilter, setMaxPowerFilter, setMaxPriceFilter, setMinPowerFilter, setMinPriceFilter,
+  setMinYearFilter, setModelFilter, setSelectedPage, setSortAscending, setTransmissionFilter, setVehiclesPerPage
+} from '../../../redux/vehiclesMainFiltersStore';
 
 interface VehiclesProps { }
 
@@ -484,9 +486,15 @@ const Vehicles: FC<VehiclesProps> = () => {
           </div>
         ))}
       </div>
-      <div className="paginationSelectorContainer">
-        <Pagination disabled={loading} count={pageCount} page={selectedPage} onChange={handlePageChange} color="primary" />
-      </div>
+      {
+        !loading ?
+          <div className="paginationSelectorContainer">
+            <Pagination disabled={loading} count={pageCount} page={selectedPage} onChange={handlePageChange} color="primary" />
+          </div>
+          :
+          <></>
+      }
+
     </div>
   );
 }
