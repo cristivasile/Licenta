@@ -29,7 +29,7 @@ import ManageBodyTypesDialog from './ManageBodyTypesDialog/ManageBodyTypesDialog
 import { VehicleFiltersModel } from '../../../models/VehicleModel';
 import {
   setBodyTypeFilter, setBrandFilter, setMaxMileageFilter, setMaxPowerFilter, setMaxPriceFilter, setMinPowerFilter, setMinPriceFilter,
-  setMinYearFilter, setModelFilter, setSelectedPage, setSortAscending, setTransmissionFilter, setVehiclesPerPage
+  setMinYearFilter, setModelFilter, setSelectedPage, setSortAscending, setSortTypeFilter, setTransmissionFilter, setVehiclesPerPage
 } from '../../../redux/vehiclesMainFiltersStore';
 
 interface VehiclesProps { }
@@ -306,7 +306,7 @@ const Vehicles: FC<VehiclesProps> = () => {
     dispatch(setMaxPowerFilter(NaN));
     dispatch(setMinYearFilter(NaN));
     dispatch(setTransmissionFilter(""));
-    dispatch(setSortTypeValue(""));
+    dispatch(setSortTypeFilter(""));
     dispatch(setSortAscending(true));
   }
 
@@ -413,7 +413,7 @@ const Vehicles: FC<VehiclesProps> = () => {
               </div>
               <div className="SortGroup">
                 <TextField value={sortType} label="Sort" margin="dense" fullWidth select
-                  onChange={(event) => dispatch(setSortTypeValue(event.target.value))}
+                  onChange={(event) => dispatch(setSortTypeFilter(event.target.value))}
                   name="sortType" sx={{ width: "12em", marginRight: "15px" }}>
                   {sortTypes.map((type) => (
                     <MenuItem key={type[0]} value={type[1]}>
@@ -487,7 +487,7 @@ const Vehicles: FC<VehiclesProps> = () => {
         ))}
       </div>
       {
-        !loading ?
+        !loading && vehicleCount !== 0?
           <div className="paginationSelectorContainer">
             <Pagination disabled={loading} count={pageCount} page={selectedPage} onChange={handlePageChange} color="primary" />
           </div>
@@ -500,7 +500,4 @@ const Vehicles: FC<VehiclesProps> = () => {
 }
 
 export default Vehicles;
-function setSortTypeValue(arg0: string): any {
-  throw new Error('Function not implemented.');
-}
 
