@@ -55,7 +55,7 @@
         height: 20em;
         padding: 2px;
         display: flex;
-        
+
         .vehicleImage {
           object-fit: contain;
           max-height: 100%;
@@ -77,15 +77,8 @@
         color: $main-color;
       }
 
-      .horizontalDivider {
-        width: 100%;
-        margin-top: 3px;
-        margin-bottom: 3px;
-        height: 3px;
-        background-color: $main-color;
-      }
-
       .detailsDiv {
+        padding: 1em;
         flex: 1 1 auto;
         width: 100%;
         height: 0;
@@ -107,6 +100,26 @@
           }
         }
       }
+
+      .featuresListContainer {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow-y: auto;
+        justify-content: left;
+
+        .feature {
+          text-align: left;
+        }
+      }
+    }
+
+    .horizontalDivider {
+      width: 100%;
+      margin-top: 3px;
+      margin-bottom: 3px;
+      height: 0.2em;
+      background-color: $main-color;
     }
   }
 }

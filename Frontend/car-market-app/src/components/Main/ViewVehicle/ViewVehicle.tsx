@@ -61,11 +61,11 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     setImageGalleryOpen(false);
   }
 
-  function getSelectedImage(): number{
+  function getSelectedImage(): number {
     return selectedImageIndex;
   }
 
-  function getImages(): string[]{
+  function getImages(): string[] {
     return vehicle.images;
   }
 
@@ -76,12 +76,12 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     onClose: closeImageGallery,
   } as ImageGalleryDialogProps;
 
-  function setPreviousImage(){
+  function setPreviousImage() {
     setImage(vehicle.images[selectedImageIndex - 1]);
     setSelectedImageIndex(selectedImageIndex - 1);
   }
 
-  function setNextImage(){
+  function setNextImage() {
     setImage(vehicle.images[selectedImageIndex + 1]);
     setSelectedImageIndex(selectedImageIndex + 1);
   }
@@ -92,7 +92,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
   return (
     <div className="ViewVehicle">
-      <ImageGalleryDialog {...imageGalleryProps}/>
+      <ImageGalleryDialog {...imageGalleryProps} />
       {loading ? <Loading /> : <></>}
       <div className="buttonContainer">
         <Button variant="outlined" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large" startIcon={<ArrowBackIosIcon />} onClick={goBackToMain}>
@@ -185,6 +185,37 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                     </div>
                   </div>
                 </div>
+
+                <div className="vehicleDetailsContainer">
+                  <Typography fontSize={25} className="title">
+                    Features
+                  </Typography>
+
+                  <div className="horizontalDivider" />
+
+                  <div className="featuresListContainer">
+                    <ul>
+                      {
+                        vehicle.features.sort((x1, x2) => x1.name > x2.name ? 1 : -1).map((feature) => (
+                          <li className="feature">
+                            <Typography fontSize={16}>
+                              {feature.name}
+                            </Typography>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+                </div>
+
+                {
+                  vehicle.description !== null && vehicle.description !== "" ?
+                  <div className="vehicleDescriptionContainer">
+                  </div>
+                  :
+                  <></>
+                }
+
               </div>
             </div>
             :
@@ -194,7 +225,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
       }
 
 
-    </div>
+    </div >
   );
 }
 
