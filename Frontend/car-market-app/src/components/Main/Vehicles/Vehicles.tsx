@@ -353,7 +353,7 @@ const Vehicles: FC<VehiclesProps> = () => {
             <div className="filtersDiv">
               <TextField value={brandFilter} label="Brand" margin="dense" fullWidth select
                 onChange={(event) => { dispatch(setBrandFilter(event.target.value)); handleBrandSelection(event.target.value); }}
-                name="BrandFilter" sx={{ width: "12em" }}>
+                name="BrandFilter" sx={{ width: "12em", marginRight: ".5em" }}>
                 {brands.map((brand) => (
                   <MenuItem key={brand} value={brand}>
                     {brand}
@@ -362,7 +362,7 @@ const Vehicles: FC<VehiclesProps> = () => {
               </TextField>
               <TextField value={modelFilter} label="Model" margin="dense" fullWidth select
                 onChange={(event) => dispatch(setModelFilter(event.target.value))}
-                name="modelFilter" sx={{ width: "12em" }}>
+                name="modelFilter" sx={{ width: "12em", marginRight: ".5em" }}>
                 {modelOptions.map((model) => (
                   <MenuItem key={model} value={model}>
                     {model}
@@ -371,7 +371,7 @@ const Vehicles: FC<VehiclesProps> = () => {
               </TextField>
               <TextField value={bodyTypeFilter} label="Body type" margin="dense" fullWidth select
                 onChange={(event) => dispatch(setBodyTypeFilter(event.target.value))}
-                name="bodyTypeFilter" sx={{ width: "12em" }}>
+                name="bodyTypeFilter" sx={{ width: "12em", marginRight: ".5em" }}>
                 {bodyTypes.map((bodyType) => (
                   <MenuItem key={bodyType.name} value={bodyType.name}>
                     {bodyType.name}
@@ -380,7 +380,7 @@ const Vehicles: FC<VehiclesProps> = () => {
               </TextField>
               <TextField value={transmissionFilter} label="Transmission type" margin="dense" fullWidth select
                 onChange={(event) => dispatch(setTransmissionFilter(event.target.value))}
-                name="transmissionFilter" sx={{ width: "12em" }}>
+                name="transmissionFilter" sx={{ width: "12em", marginRight: ".5em" }}>
                 {transmissionTypes.map((type) => (
                   <MenuItem key={type[0]} value={type[1]}>
                     {type[0]}
@@ -390,31 +390,31 @@ const Vehicles: FC<VehiclesProps> = () => {
               <div className="PriceGroup">
                 <TextField value={minPriceFilter || ""} label="Min price" margin="dense"
                   onChange={(event) => dispatch(setMinPriceFilter(handleNumericInput(event)))}
-                  type="number" name="minPrice" sx={{ width: "8em", marginRight: "5px" }} />
+                  type="number" name="minPrice" sx={{ width: "10em", marginRight: ".5em" }} />
                 <TextField value={maxPriceFilter || ""} label="Max price" margin="dense"
                   onChange={(event) => dispatch(setMaxPriceFilter(handleNumericInput(event)))}
-                  type="number" name="maxPrice" sx={{ width: "8em" }} />
+                  type="number" name="maxPrice" sx={{ width: "10em", marginRight: ".5em" }} />
               </div>
               <div className="PowerGroup">
                 <TextField value={minPowerFilter || ""} label="Min power" margin="dense"
                   onChange={(event) => dispatch(setMinPowerFilter(handleNumericInput(event)))}
-                  type="number" name="minPower" sx={{ width: "8em", marginRight: "5px" }} />
+                  type="number" name="minPower" sx={{ width: "10em", marginRight: ".5em" }} />
                 <TextField value={maxPowerFilter || ""} label="Max power" margin="dense"
                   onChange={(event) => dispatch(setMaxPowerFilter(handleNumericInput(event)))}
-                  type="number" name="maxPower" sx={{ width: "8em" }} />
+                  type="number" name="maxPower" sx={{ width: "10em", marginRight: ".5em" }} />
               </div>
               <div className="AgeGroup">
                 <TextField value={maxMileageFilter || ""} label="Max mileage" margin="dense"
                   onChange={(event) => dispatch(setMaxMileageFilter(handleNumericInput(event)))}
-                  type="number" name="maxMileage" sx={{ width: "10em", marginRight: "5px" }} />
+                  type="number" name="maxMileage" sx={{ width: "10em", marginRight: ".5em" }} />
                 <TextField value={minYearFilter || ""} label="Min year" margin="dense"
                   onChange={(event) => dispatch(setMinYearFilter(handleNumericInput(event)))}
-                  type="number" name="minYear" sx={{ width: "10em" }} />
+                  type="number" name="minYear" sx={{ width: "10em", marginRight: ".5em" }} />
               </div>
               <div className="SortGroup">
                 <TextField value={sortType} label="Sort" margin="dense" fullWidth select
                   onChange={(event) => dispatch(setSortTypeFilter(event.target.value))}
-                  name="sortType" sx={{ width: "12em", marginRight: "15px" }}>
+                  name="sortType" sx={{ width: "12em", marginRight: "1em", marginBottom:".5em" }}>
                   {sortTypes.map((type) => (
                     <MenuItem key={type[0]} value={type[1]}>
                       {type[0]}
