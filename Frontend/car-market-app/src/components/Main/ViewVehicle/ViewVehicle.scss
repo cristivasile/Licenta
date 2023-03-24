@@ -1,33 +1,42 @@
 @import "../../../Theme.scss";
 
 .ViewVehicle {
-  width: 100%;
-  height: 100%;
-  background-color: white;
-  padding: 0.2em;
+  display: flex;
+  background-color: $background-color;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding-top: 0.2%;
+  padding-left: 1%;
+  padding-right: 1%;
+  padding-bottom: 0.5%;
+  border: 0.3em solid $main-color;
+  overflow: hidden;
+
   .buttonContainer {
     width: 100%;
-    height: 5%;
+    height: 3em;
     justify-content: left;
   }
 
   .viewVehicleContent {
+    margin-top: 0.5em;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    max-height: 95%;
     overflow-y: auto;
+    overflow-x: hidden;
 
     .headerContainer {
-      width: 100%;
       height: auto;
       display: flex;
-      flex-direction: row;
-      align-items: center;
+      flex-direction: column;
+      align-items: left;
 
       .title {
         color: $main-color;
+        text-align: left;
         margin-top: 0.2em;
-        margin-left: 1em;
+        margin-left: 0.2em;
       }
     }
 
@@ -36,24 +45,28 @@
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      justify-content: space-evenly;
+      justify-content: space-between;
     }
 
     .vehicleImageGalleryContainer {
+      background-color: white;
       cursor: pointer;
       display: flex;
       flex-direction: row;
       flex-wrap: nowrap;
       justify-content: center;
+      box-shadow: 0 1em 1em rgba(0, 0, 0, 0.1);
       align-items: center;
       width: 30em;
+      max-width: 100%;
       height: 20em;
+      margin: auto;
+      margin-bottom: 1em;
 
       .vehicleImageContainer {
         background-color: $main-color;
         width: 25em;
         height: 20em;
-        padding: 2px;
         display: flex;
 
         .vehicleImage {
@@ -65,27 +78,25 @@
     }
 
     .vehicleDetailsContainer {
-      padding-top: 0.5em;
       width: 26em;
       height: 20em;
-      padding-left: 1em;
+      max-width: 100%;
       display: flex;
+      margin: auto;
+      margin-bottom: 1em;
       flex-direction: column;
 
-      .title {
-        text-align: left;
-        color: $main-color;
-      }
-
       .detailsDiv {
+        background-color: white;
         padding: 1em;
+        margin-top: 0.1em;
         flex: 1 1 auto;
-        width: 100%;
         height: 0;
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
         overflow: hidden;
+        box-shadow: 0 1em 1em rgba(0, 0, 0, 0.1);
 
         .detailsRow {
           width: 100%;
@@ -102,9 +113,11 @@
       }
 
       .featuresListContainer {
+        box-shadow: 0 1em 1em rgba(0, 0, 0, 0.1);
+        background-color: white;
         display: flex;
         flex-direction: column;
-        flex: 1;
+        flex: 1 1 auto;
         overflow-y: auto;
         justify-content: left;
 
@@ -114,12 +127,33 @@
       }
     }
 
+    .title {
+      text-align: left;
+      color: $main-color;
+    }
+
     .horizontalDivider {
       width: 100%;
       margin-top: 3px;
-      margin-bottom: 3px;
       height: 0.2em;
       background-color: $main-color;
+    }
+
+    .vehicleDescriptionContainer {
+      width: 98%;
+      display: flex;
+      margin: auto;
+      margin-bottom: 1em;
+      flex-direction: column;
+
+      .description {
+        box-shadow: 0 1em 1em rgba(0, 0, 0, 0.1);
+        background-color: white;
+        max-height: 10em;
+        overflow-y: auto;
+        padding: 0.5em;
+        text-align: left;
+      }
     }
   }
 }

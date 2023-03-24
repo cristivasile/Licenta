@@ -95,7 +95,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
       <ImageGalleryDialog {...imageGalleryProps} />
       {loading ? <Loading /> : <></>}
       <div className="buttonContainer">
-        <Button variant="outlined" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large" startIcon={<ArrowBackIosIcon />} onClick={goBackToMain}>
+        <Button variant="contained" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large" startIcon={<ArrowBackIosIcon />} onClick={goBackToMain}>
           Back
         </Button>
       </div>
@@ -107,6 +107,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                 <Typography fontSize={36} className="title">
                   {vehicle.brand + " " + vehicle.model}
                 </Typography>
+                <div className="horizontalDivider"/>
               </div>
 
               <div className="viewVehicleRow">
@@ -129,39 +130,39 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
                   <div className="detailsDiv">
                     <div className="detailsRow">
-                      <Typography fontSize={16}>
+                      <Typography fontSize={17}>
                         <span className="title">Year: </span> {vehicle.year}
                       </Typography>
                     </div>
                     <div className="detailsRow">
-                      <Typography fontSize={16}>
+                      <Typography fontSize={17}>
                         <span className="title">Odometer: </span> {vehicle.odometer.toLocaleString() + " km"}
                       </Typography>
                     </div>
                     <div className="detailsRow">
-                      <Typography fontSize={16}>
+                      <Typography fontSize={17}>
                         <span className="title">Transmission: </span> {vehicle.transmissionType}
                       </Typography>
                     </div>
                     <div className="detailsRow">
-                      <Typography fontSize={16}>
+                      <Typography fontSize={17}>
                         <span className="title">Body type: </span> {vehicle.bodyType}
                       </Typography>
                     </div>
                     <div className="detailsRow">
-                      <Typography fontSize={16}>
+                      <Typography fontSize={17}>
                         <span className="title">Power: </span> {vehicle.power + " hp"}
                       </Typography>
                     </div>
                     <div className="detailsRow">
-                      <Typography fontSize={16}>
+                      <Typography fontSize={17}>
                         <span className="title">Torque: </span> {vehicle.torque + " Nm"}
                       </Typography>
                     </div>
                     {
                       vehicle.engineSize !== null ?
                         <div className="detailsRow">
-                          <Typography fontSize={16}>
+                          <Typography fontSize={17}>
                             <span className="title">Engine size: </span> {vehicle.engineSize + " cc"}
                           </Typography>
                         </div>
@@ -169,17 +170,17 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                         <></>
                     }
                     <div className="detailsRow">
-                      <Typography fontSize={16}>
+                      <Typography fontSize={17}>
                         <span className="title">Power train: </span> {vehicle.powerTrainType}
                       </Typography>
                     </div>
                     <div className="detailsRow">
-                      <Typography fontSize={16}>
+                      <Typography fontSize={17}>
                         <span className="title">Drive train: </span> {vehicle.driveTrainType}
                       </Typography>
                     </div>
                     <div className="detailsRow">
-                      <Typography fontSize={16}>
+                      <Typography fontSize={17}>
                         <span className="title">Location: </span> {vehicle.locationAddress}
                       </Typography>
                     </div>
@@ -198,7 +199,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                       {
                         vehicle.features.sort((x1, x2) => x1.name > x2.name ? 1 : -1).map((feature) => (
                           <li className="feature">
-                            <Typography fontSize={16}>
+                            <Typography fontSize={17}>
                               {feature.name}
                             </Typography>
                           </li>
@@ -210,10 +211,26 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
                 {
                   vehicle.description !== null && vehicle.description !== "" ?
-                  <div className="vehicleDescriptionContainer">
-                  </div>
-                  :
-                  <></>
+                    <div className="vehicleDescriptionContainer">
+                      <Typography fontSize={25} className="title">
+                        Description
+                      </Typography>
+
+                      <div className="horizontalDivider" />
+
+                      <div className="description">
+                        {
+                          vehicle.description.split('\n').map((description) => (
+                            /* split by \n because Typography doesnt support end line chars */
+                            <Typography fontSize={17}>
+                              {description}
+                            </Typography>
+                          ))
+                        }
+                      </div>
+                    </div>
+                    :
+                    <></>
                 }
 
               </div>
