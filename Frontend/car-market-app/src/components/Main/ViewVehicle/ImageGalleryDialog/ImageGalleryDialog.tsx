@@ -41,13 +41,13 @@ const ImageGalleryDialog: FC<ImageGalleryDialogProps> = (props: ImageGalleryDial
   }
 
   return (
-    <Dialog open={props.isOpen} onClose={() => props.onClose()} PaperProps={{ sx: { width: "90%", height: "90%", maxWidth: "90%" } }}>
+    <Dialog open={props.isOpen} onClose={() => props.onClose()} PaperProps={{ sx: { width: "90%", height: "90%", maxWidth: "90%", backgroundColor:"transparent" } }}>
       <div className="galleryContent">
         <img src={image} alt="Empty" className="vehicleGalleryImage" />
-        <IconButton color="primary" size="large" disabled={selectedImageIndex === 0} onClick={setPreviousImage} className="leftArrow">
+        <IconButton color="primary" size="large" disabled={selectedImageIndex === 0} onClick={setPreviousImage} className="arrow leftArrow">
           <KeyboardArrowLeftIcon />
         </IconButton>
-        <IconButton color="primary" size="large" disabled={selectedImageIndex >= (imageCount - 1)} onClick={setNextImage} className="rightArrow">
+        <IconButton color="primary" size="large" disabled={selectedImageIndex >= (imageCount - 1)} onClick={setNextImage} className="arrow rightArrow">
           <KeyboardArrowRightIcon />
         </IconButton>
       </div>

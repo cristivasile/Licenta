@@ -4,7 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { DetailedVehicleModel, mapJsonToDetailedVehicleModel } from '../../../models/VehicleModel';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
 import { getVehicleById } from '../../../services/vehiclesService';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
@@ -111,13 +112,13 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
               <div className="viewVehicleRow">
                 <div className="vehicleImageGalleryContainer">
                   <IconButton color="primary" disabled={selectedImageIndex === 0} onClick={setPreviousImage}>
-                    <ArrowBackIosIcon />
+                    <KeyboardArrowLeftIcon />
                   </IconButton>
                   <div className="vehicleImageContainer" onClick={openImageGallery}>
                     <img src={image} alt="Empty" className="vehicleImage" onError={() => setImage(defaultImage)} />
                   </div>
                   <IconButton color="primary" disabled={selectedImageIndex >= (imageCount - 1)} onClick={setNextImage}>
-                    <ArrowForwardIosIcon />
+                    <KeyboardArrowRightIcon />
                   </IconButton>
                 </div>
                 <div className="vehicleDetailsContainer">
