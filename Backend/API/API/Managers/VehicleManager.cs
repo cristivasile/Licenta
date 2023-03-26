@@ -15,11 +15,13 @@ namespace API.Managers
     public class VehicleManager : IVehicleManager
     {
         /// <summary>
-        /// Max image sizes accepted by the manager, any higher will cause errors.
+        /// Max image sizes accepted by the manager, if the frontend sends larger images the controller will return BadRequest.
         /// The frontend is tasked with compressing images before upload.
         /// </summary>
         private static readonly int maxImageSize = 5242880; //5 MB in bytes
         private static readonly int maxThumbnailImageSize = 512000; //500 KB in bytes
+
+        private static readonly int maxDescriptionLength = 2500; 
 
         private readonly IVehicleRepository vehicleRepository;
         private readonly IFeatureRepository featureRepository;
@@ -205,6 +207,9 @@ namespace API.Managers
 
             if (inputVehicle.Model == "")
                 throw new Exception("Model cannot be empty!");
+
+            if (inputVehicle.Description.Length > maxDescriptionLength)
+                throw new Exception($"Cannot have a description longer than {maxDescriptionLength} characters!");
 
             //check if location exists
             if (await locationRepository.GetById(inputVehicle.LocationId) == null)
