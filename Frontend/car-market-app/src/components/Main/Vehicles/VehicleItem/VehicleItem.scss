@@ -12,13 +12,14 @@
   overflow: hidden;
 
   .soldVehicleMarkerContainer{
-    width: 100%;
+    width: 120%;
     position: absolute;
     top: 50%;
     border-radius: .5em;
-    transform: rotate(-10deg) translate(0, -45%);
-    background-color: red;
-    padding: 1em 2em 1em 2em;
+    transform: rotate(-11deg) translate(0, -45%);
+    box-shadow: 0 1em 1em rgba(0, 0, 0, .3);
+    padding: 1em;
+    background-color: $accent1-color;
 
     .soldVehicleMarker{
       color: white;
