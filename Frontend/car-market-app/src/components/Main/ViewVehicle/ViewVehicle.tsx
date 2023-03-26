@@ -102,139 +102,142 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
       {
         vehicle.status ?
           vehicle.status.isSold === false ?
-            <div className="viewVehicleContent">
-              <div className="headerContainer">
+            <>
+              <div className="vehicleHeaderContainer">
                 <Typography fontSize={36} className="title">
                   {vehicle.brand + " " + vehicle.model}
                 </Typography>
-                <div className="horizontalDivider"/>
+                <div className="horizontalDivider" />
               </div>
 
-              <div className="viewVehicleRow">
-                <div className="vehicleImageGalleryContainer">
-                  <IconButton color="primary" disabled={selectedImageIndex === 0} onClick={setPreviousImage}>
-                    <KeyboardArrowLeftIcon />
-                  </IconButton>
-                  <div className="vehicleImageContainer" onClick={openImageGallery}>
-                    <img src={image} alt="Empty" className="vehicleImage" onError={() => setImage(defaultImage)} />
+              <div className="viewVehicleContent">
+
+                <div className="viewVehicleRow">
+                  <div className="vehicleImageGalleryContainer">
+                    <IconButton color="primary" disabled={selectedImageIndex === 0} onClick={setPreviousImage}>
+                      <KeyboardArrowLeftIcon />
+                    </IconButton>
+                    <div className="vehicleImageContainer" onClick={openImageGallery}>
+                      <img src={image} alt="Empty" className="vehicleImage" onError={() => setImage(defaultImage)} />
+                    </div>
+                    <IconButton color="primary" disabled={selectedImageIndex >= (imageCount - 1)} onClick={setNextImage}>
+                      <KeyboardArrowRightIcon />
+                    </IconButton>
                   </div>
-                  <IconButton color="primary" disabled={selectedImageIndex >= (imageCount - 1)} onClick={setNextImage}>
-                    <KeyboardArrowRightIcon />
-                  </IconButton>
-                </div>
-                <div className="vehicleDetailsContainer">
-                  <Typography fontSize={25} className="title">
-                    Details
-                  </Typography>
-                  <div className="horizontalDivider" />
+                  <div className="vehicleDetailsContainer">
+                    <Typography fontSize={25} className="title">
+                      Details
+                    </Typography>
+                    <div className="horizontalDivider" />
 
-                  <div className="detailsDiv">
-                    <div className="detailsRow">
-                      <Typography fontSize={17}>
-                        <span className="title">Year: </span> {vehicle.year}
-                      </Typography>
-                    </div>
-                    <div className="detailsRow">
-                      <Typography fontSize={17}>
-                        <span className="title">Odometer: </span> {vehicle.odometer.toLocaleString() + " km"}
-                      </Typography>
-                    </div>
-                    <div className="detailsRow">
-                      <Typography fontSize={17}>
-                        <span className="title">Transmission: </span> {vehicle.transmissionType}
-                      </Typography>
-                    </div>
-                    <div className="detailsRow">
-                      <Typography fontSize={17}>
-                        <span className="title">Body type: </span> {vehicle.bodyType}
-                      </Typography>
-                    </div>
-                    <div className="detailsRow">
-                      <Typography fontSize={17}>
-                        <span className="title">Power: </span> {vehicle.power + " hp"}
-                      </Typography>
-                    </div>
-                    <div className="detailsRow">
-                      <Typography fontSize={17}>
-                        <span className="title">Torque: </span> {vehicle.torque + " Nm"}
-                      </Typography>
-                    </div>
-                    {
-                      vehicle.engineSize !== null ?
-                        <div className="detailsRow">
-                          <Typography fontSize={17}>
-                            <span className="title">Engine size: </span> {vehicle.engineSize + " cc"}
-                          </Typography>
-                        </div>
-                        :
-                        <></>
-                    }
-                    <div className="detailsRow">
-                      <Typography fontSize={17}>
-                        <span className="title">Power train: </span> {vehicle.powerTrainType}
-                      </Typography>
-                    </div>
-                    <div className="detailsRow">
-                      <Typography fontSize={17}>
-                        <span className="title">Drive train: </span> {vehicle.driveTrainType}
-                      </Typography>
-                    </div>
-                    <div className="detailsRow">
-                      <Typography fontSize={17}>
-                        <span className="title">Location: </span> {vehicle.locationAddress}
-                      </Typography>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="vehicleDetailsContainer">
-                  <Typography fontSize={25} className="title">
-                    Features
-                  </Typography>
-
-                  <div className="horizontalDivider" />
-
-                  <div className="featuresListContainer">
-                    <ul>
+                    <div className="detailsDiv">
+                      <div className="detailsRow">
+                        <Typography fontSize={17}>
+                          <span className="title">Year: </span> {vehicle.year}
+                        </Typography>
+                      </div>
+                      <div className="detailsRow">
+                        <Typography fontSize={17}>
+                          <span className="title">Odometer: </span> {vehicle.odometer.toLocaleString() + " km"}
+                        </Typography>
+                      </div>
+                      <div className="detailsRow">
+                        <Typography fontSize={17}>
+                          <span className="title">Transmission: </span> {vehicle.transmissionType}
+                        </Typography>
+                      </div>
+                      <div className="detailsRow">
+                        <Typography fontSize={17}>
+                          <span className="title">Body type: </span> {vehicle.bodyType}
+                        </Typography>
+                      </div>
+                      <div className="detailsRow">
+                        <Typography fontSize={17}>
+                          <span className="title">Power: </span> {vehicle.power + " hp"}
+                        </Typography>
+                      </div>
+                      <div className="detailsRow">
+                        <Typography fontSize={17}>
+                          <span className="title">Torque: </span> {vehicle.torque + " Nm"}
+                        </Typography>
+                      </div>
                       {
-                        vehicle.features.sort((x1, x2) => x1.name > x2.name ? 1 : -1).map((feature) => (
-                          <li className="feature">
+                        vehicle.engineSize !== null ?
+                          <div className="detailsRow">
                             <Typography fontSize={17}>
-                              {feature.name}
+                              <span className="title">Engine size: </span> {vehicle.engineSize + " cc"}
                             </Typography>
-                          </li>
-                        ))
+                          </div>
+                          :
+                          <></>
                       }
-                    </ul>
-                  </div>
-                </div>
-
-                {
-                  vehicle.description !== null && vehicle.description !== "" ?
-                    <div className="vehicleDescriptionContainer">
-                      <Typography fontSize={25} className="title">
-                        Description
-                      </Typography>
-
-                      <div className="horizontalDivider" />
-
-                      <div className="description">
-                        {
-                          vehicle.description.split('\n').map((description) => (
-                            /* split by \n because Typography doesnt support end line chars */
-                            <Typography fontSize={17}>
-                              {description}
-                            </Typography>
-                          ))
-                        }
+                      <div className="detailsRow">
+                        <Typography fontSize={17}>
+                          <span className="title">Power train: </span> {vehicle.powerTrainType}
+                        </Typography>
+                      </div>
+                      <div className="detailsRow">
+                        <Typography fontSize={17}>
+                          <span className="title">Drive train: </span> {vehicle.driveTrainType}
+                        </Typography>
+                      </div>
+                      <div className="detailsRow">
+                        <Typography fontSize={17}>
+                          <span className="title">Location: </span> {vehicle.locationAddress}
+                        </Typography>
                       </div>
                     </div>
-                    :
-                    <></>
-                }
+                  </div>
 
+                  <div className="vehicleDetailsContainer">
+                    <Typography fontSize={25} className="title">
+                      Features
+                    </Typography>
+
+                    <div className="horizontalDivider" />
+
+                    <div className="featuresListContainer">
+                      <ul>
+                        {
+                          vehicle.features.sort((x1, x2) => x1.name > x2.name ? 1 : -1).map((feature) => (
+                            <li className="feature">
+                              <Typography fontSize={17}>
+                                {feature.name}
+                              </Typography>
+                            </li>
+                          ))
+                        }
+                      </ul>
+                    </div>
+                  </div>
+
+                  {
+                    vehicle.description !== null && vehicle.description !== "" ?
+                      <div className="vehicleDescriptionContainer">
+                        <Typography fontSize={25} className="title">
+                          Description
+                        </Typography>
+
+                        <div className="horizontalDivider" />
+
+                        <div className="description">
+                          {
+                            vehicle.description.split('\n').map((description) => (
+                              /* split by \n because Typography doesnt support end line chars */
+                              <Typography fontSize={17}>
+                                {description}
+                              </Typography>
+                            ))
+                          }
+                        </div>
+                      </div>
+                      :
+                      <></>
+                  }
+
+                </div>
               </div>
-            </div>
+            </>
             :
             <>{/* TODO - put 'vehicle was sold' here */}</>
           :
