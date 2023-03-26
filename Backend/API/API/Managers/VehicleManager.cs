@@ -4,6 +4,7 @@ using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Models.Input;
 using API.Models.Return;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,10 +32,11 @@ namespace API.Managers
         private readonly ILocationRepository locationRepository;
         private readonly IThumbnailRepostory thumbnailRepository;
         private readonly IPictureRepository pictureRepository;
+        private readonly UserManager<User> userManager;
 
         public VehicleManager(IVehicleRepository vehicleRepository, IFeatureRepository featureRepository, ILocationRepository locationRepository,
             IBodyTypeRepository bodyTypeRepository, IVehicleTypeRepository vehicleTypeRepository, IStatusRepository statusRepository, 
-            IPictureRepository pictureRepository, IThumbnailRepostory thumbnailRepository)
+            IPictureRepository pictureRepository, IThumbnailRepostory thumbnailRepository, UserManager<User> userManager)
         {
             this.vehicleRepository = vehicleRepository;
             this.featureRepository = featureRepository;
@@ -44,6 +46,7 @@ namespace API.Managers
             this.locationRepository = locationRepository;
             this.pictureRepository = pictureRepository;
             this.thumbnailRepository = thumbnailRepository;
+            this.userManager = userManager;
         }
 
         public Task<int> GetNumberOfVehicles()
@@ -383,13 +386,21 @@ namespace API.Managers
 
             ///404 not found
             if (currentVehicle == null)
-                throw new Exception("The vehicle was not found!");
+                throw new KeyNotFoundException("The vehicle was not found!");
 
             var status = currentVehicle.Status;
-            if (updatedStatus.sold)
+            if (updatedStatus.IsSold)
             {
+                if (updatedStatus.Username == null)
+                    throw new Exception("A sold vehicle must be purchased by an user!");
+
+                var user = await userManager.FindByNameAsync(updatedStatus.Username);
+                if (user == null)
+                    throw new Exception("User does not exist!");
+
                 status.DateSold = DateTime.Now;
                 status.IsSold = true;
+                status.PurchaserUserId = user.Id;
             }
             else
             {

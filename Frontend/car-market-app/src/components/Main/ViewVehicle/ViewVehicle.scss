@@ -13,6 +13,11 @@
   overflow: hidden;
 
   .buttonContainer {
+    margin: 0;
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    padding-right: 1em;
     width: 100%;
     height: 3em;
     justify-content: left;
@@ -46,6 +51,11 @@
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
+
+    .vehicleSoldContainer{
+      padding: 1em 1em 0em 1em;
+      display: flex;
+    }
 
     .viewVehicleRow {
       padding: 1em;
@@ -155,5 +165,21 @@
         text-align: left;
       }
     }
+  }
+
+  .contentButtonsContainer{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+  }
+
+  .vehicleSoldMessage{
+    display: flex;
+    width: 100%;
+    height: 80%;
+    justify-content: center;
+    align-items: center;
   }
 }

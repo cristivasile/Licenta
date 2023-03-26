@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DetailedVehicleModel, mapJsonToDetailedVehicleModel } from '../../../models/VehicleModel';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
-import { getVehicleById } from '../../../services/vehiclesService';
+import { getVehicleById, sellVehicle } from '../../../services/vehiclesService';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -11,6 +11,10 @@ import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
 import './ViewVehicle.scss';
 import ImageGalleryDialog, { ImageGalleryDialogProps } from './ImageGalleryDialog/ImageGalleryDialog';
+import { useAppSelector } from '../../../hooks';
+import { isAdmin } from '../../../services/authenticationService';
+import SellVehicleDialog, { SellVehicleDialogProps } from './SellVehicleDialog/SellVehicleDialog';
+import { getDateTimeDate } from '../../../services/utils';
 
 interface ViewVehicleProps { }
 
@@ -25,9 +29,11 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageCount, setImageCount] = useState(0);
   const [imageGalleryOpen, setImageGalleryOpen] = useState(false);
+  const [sellDialogOpen, setSellDialogOpen] = useState(false);
+  const userIsAdmin = isAdmin(useAppSelector((state) => state.user.role) as string);
 
-  useEffect(() => {
-    setLoading(true);
+  function loadVehicle() {
+    console.log("Here");
     getVehicleById(id as string)
       .then(async response => {
         if (response.status !== 200) {
@@ -50,6 +56,11 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
       .then(() => {
         setLoading(false);
       });
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    loadVehicle();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -76,6 +87,25 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     onClose: closeImageGallery,
   } as ImageGalleryDialogProps;
 
+  function openSellDialog() {
+    setSellDialogOpen(true);
+  }
+
+  function closeSellDialog() {
+    setSellDialogOpen(false);
+  }
+
+  function getVehicleId(): string {
+    return vehicle.id;
+  }
+
+  const sellVehicleDialogProps = {
+    loadVehicleCallback: loadVehicle,
+    vehicleIdCallback: getVehicleId,
+    isOpen: sellDialogOpen,
+    onClose: closeSellDialog,
+  } as SellVehicleDialogProps;
+
   function setPreviousImage() {
     setImage(vehicle.images[selectedImageIndex - 1]);
     setSelectedImageIndex(selectedImageIndex - 1);
@@ -86,22 +116,45 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     setSelectedImageIndex(selectedImageIndex + 1);
   }
 
+  function undoSale() {
+    //disable buttons
+    setLoading(true);
+    sellVehicle(vehicle.id, null, false)
+      .then(async response => {
+        if (response.status !== 200) {
+          notifyBadResultCode(response.status);
+        }
+        else {
+          loadVehicle();
+        }
+      })
+      .catch((err) => {
+        notifyFetchFail(err);
+        return;
+      })
+      .then(() => {
+        setLoading(false);
+      });
+  }
+
   function goBackToMain() {
     navigate("../../");
   }
 
   return (
     <div className="ViewVehicle">
+      {userIsAdmin ? <SellVehicleDialog {...sellVehicleDialogProps} /> : <></>}
       <ImageGalleryDialog {...imageGalleryProps} />
       {loading ? <Loading /> : <></>}
       <div className="buttonContainer">
-        <Button variant="contained" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large" startIcon={<ArrowBackIosIcon />} onClick={goBackToMain}>
-          Back
+        <Button variant="contained" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large"
+          startIcon={<ArrowBackIosIcon />} onClick={goBackToMain}>
+          Main page
         </Button>
       </div>
       {
         vehicle.status ?
-          vehicle.status.isSold === false ?
+          vehicle.status.isSold === false || userIsAdmin ? //admins can view sold vehicles
             <>
               <div className="vehicleHeaderContainer">
                 <Typography fontSize={36} className="title">
@@ -111,7 +164,14 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
               </div>
 
               <div className="viewVehicleContent">
-
+                {vehicle.status.isSold === true ? //inform admin that the vehicle is sold
+                  <div className="vehicleSoldContainer">
+                    <Typography fontSize={18}>
+                      <>This vehicle was sold to {vehicle.status.purchasedBy} on {getDateTimeDate(vehicle.status.dateSold as Date)}</>
+                    </Typography>
+                  </div>
+                  : <></>
+                }
                 <div className="viewVehicleRow">
                   <div className="vehicleImageGalleryContainer">
                     <IconButton color="primary" disabled={selectedImageIndex === 0} onClick={setPreviousImage}>
@@ -211,7 +271,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                     </div>
                   </div>
 
-                  {
+                  { /* Only display description container for vehicles with descriptions */
                     vehicle.description !== null && vehicle.description !== "" ?
                       <div className="vehicleDescriptionContainer">
                         <Typography fontSize={25} className="title">
@@ -223,7 +283,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                         <div className="description">
                           {
                             vehicle.description.split('\n').map((description) => (
-                              /* split by \n because Typography doesnt support end line chars */
+                              /* split by \n because Typography doesnt understand /n chars */
                               <Typography fontSize={17}>
                                 {description}
                               </Typography>
@@ -234,12 +294,33 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                       :
                       <></>
                   }
+                </div>
+
+                <div className="contentButtonsContainer">
+                  {
+                    userIsAdmin ?
+                      vehicle.status.isSold ?
+                        <Button disabled={loading} variant="contained" onClick={undoSale} sx={{ marginRight: "1%", marginBottom: "1%" }}>
+                          Undo sale
+                        </Button>
+                        :
+                        <Button disabled={loading} variant="contained" onClick={openSellDialog} sx={{ marginRight: "1%", marginBottom: "1%" }}>
+                          Set sold
+                        </Button>
+                      :
+                      <></>
+                  }
 
                 </div>
               </div>
             </>
             :
-            <>{/* TODO - put 'vehicle was sold' here */}</>
+            <div className="vehicleSoldMessage">
+              <Typography fontSize={30}>
+                The vehicle you are looking for was sold!
+              </Typography>
+
+            </div>
           :
           <>{/* vehicle is not yet defined, display nothing */}</>
       }

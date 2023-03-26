@@ -36,7 +36,7 @@ const Main: FC<MainProps> = (props: MainProps) => {
         }
     }
 
-    function goToAuth(){
+    function goToAuth() {
         navigate("/auth");
     }
 
@@ -60,10 +60,9 @@ const Main: FC<MainProps> = (props: MainProps) => {
                             </Typography>
                             :
                             <Typography fontSize={20}>
-                                Please <a onClick={goToAuth} className="linkSpan">log in</a> to access all features
+                                Please <button onClick={goToAuth} className="customLinkButton linkButton">log in</button> to access all features
                             </Typography>
                         }
-
                     </div>
                     <div className="buttonContainer">
                         {isLogged ?
@@ -73,7 +72,6 @@ const Main: FC<MainProps> = (props: MainProps) => {
                             :
                             <></>
                         }
-
                     </div>
                 </div>
                 <div className="content">

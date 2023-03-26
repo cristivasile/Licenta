@@ -2,6 +2,8 @@
 {
     public class VehicleStatusUpdateModel
     {
-        public bool sold { get; set; }
+#nullable enable
+        public string? Username { get; set; }
+        public bool IsSold { get; set; }
     }
 }

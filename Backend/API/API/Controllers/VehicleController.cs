@@ -106,7 +106,7 @@ namespace API.Controllers
         }
 
         [HttpPut("setSold/{id}")]
-        [Authorize(Policy = "User")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> UpdateVehicleStatus([FromRoute] string id, [FromBody] VehicleStatusUpdateModel newStatus)
         {
             try
@@ -114,9 +114,13 @@ namespace API.Controllers
                 await vehicleManager.UpdateStatus(id, newStatus);
                 return Ok();
             }
-            catch
+            catch (KeyNotFoundException)
             {
                 return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

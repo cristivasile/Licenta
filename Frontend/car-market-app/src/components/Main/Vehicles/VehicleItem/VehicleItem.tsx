@@ -1,7 +1,6 @@
-import { FC, MouseEventHandler, useState } from 'react';
+import { FC, useState } from 'react';
 import { SimplifiedVehicleModel } from '../../../../models/VehicleModel';
 import { Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import defaultImage from "../../../../assets/no-image.png";
 import './VehicleItem.scss';
 
@@ -12,11 +11,17 @@ interface VehicleItemProps {
 
 const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
   const [image, setImage] = useState(props.vehicle.thumbnail);
-  
-  const navigate = useNavigate();
 
   return (
     <div className="vehicleItem" onClick={() => props.navigateToVehicle(props.vehicle.id)}>
+      {props.vehicle.isSold ?
+        <div className="soldVehicleMarkerContainer">
+          <Typography className="soldVehicleMarker" fontSize={30}>
+            Sold!
+          </Typography>
+        </div>
+        : <></>
+      }
       <div className="vehicleHeader">
         <div className="vehicleName">
           {props.vehicle.brand + " " + props.vehicle.model}

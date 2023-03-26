@@ -6,7 +6,6 @@ import { authenticatedFetch } from "./fetchInterceptor";
 
 export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> => {
 
-    console.log(newVehicle);
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
@@ -32,7 +31,6 @@ export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> =
         })
     };
 
-    console.log(requestOptions.body);
     return authenticatedFetch(apiUrl + "/api/Vehicle", requestOptions);
 }
 
@@ -94,4 +92,18 @@ export const getVehicleTypesDictionary = (): Promise<Response> => {
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
     };
     return fetch(apiUrl + "/api/Vehicle/getBrandModelDictionary", requestOptions);
+}
+
+export const sellVehicle = (id: string, username: string | null, isSold: boolean): Promise<Response> => {
+
+    const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
+        body: JSON.stringify({
+            username: username,
+            isSold: isSold,
+        })
+    };
+
+    return authenticatedFetch(apiUrl + "/api/Vehicle/setSold/" + id, requestOptions);
 }

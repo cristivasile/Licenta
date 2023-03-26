@@ -7,7 +7,7 @@ import imageCompression from "browser-image-compression";
  * @param maxDimension - max width or height of the compressed image
  */
 export const compressImage = async (file: File, maxSize: number, maxDimension: number): Promise<File> => {
-  
+
   const compressionOptions = {
     maxSizeMB: maxSize,
     maxWidthOrHeight: maxDimension
@@ -23,7 +23,7 @@ export const fileToBase64 = (file: File | Blob): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
-     resolve(reader.result as string);
+      resolve(reader.result as string);
     };
 
     reader.readAsDataURL(file);
@@ -31,12 +31,27 @@ export const fileToBase64 = (file: File | Blob): Promise<string> =>
   });
 
 
-  /** 
-   * Capitalizes the first letter of a given string and makes the rest lowercase
-   */
-export const capitalizeFirstLetter = (input: string): string =>{
-  if(input.length === 0)
+/** 
+ * Capitalizes the first letter of a given string and makes the rest lowercase
+ */
+export const capitalizeFirstLetter = (input: string): string => {
+  if (input.length === 0)
     return "";
-  
+
   return input[0].toUpperCase() + input.substring(1).toLowerCase();
+}
+
+/**
+ * Formats a datetime to return dd/MM/YYYY
+ * @param date 
+ */
+export const getDateTimeDate = (date: Date): string => {
+
+  const convertedDate = new Date(date);
+
+  const day = convertedDate.getDate();
+  const monthIndex = convertedDate.getMonth();
+  const year = convertedDate.getFullYear();
+
+  return day + '/' + (monthIndex < 10 ? '0' : '') + (monthIndex + 1) + '/' + year;
 }

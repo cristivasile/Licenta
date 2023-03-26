@@ -8,7 +8,8 @@ namespace API.Models.Return
 
         public FullStatusModel(Status ob) : base(ob)
         {
-            PurchasedBy = ob.PurchaserUserId;
+            if(ob.PurchasedBy != null)
+                PurchasedBy = ob.PurchasedBy.UserName;
         }
     }
 }
