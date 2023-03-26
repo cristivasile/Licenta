@@ -348,7 +348,7 @@ const Vehicles: FC<VehiclesProps> = () => {
           </Typography>
         </AccordionSummary>
 
-        <AccordionDetails>
+        <AccordionDetails sx={{ maxHeight: "20em", overflowY: "auto"}}>
           <div style={{ width: "100%" }}>
             <div className="filtersDiv">
               <TextField value={brandFilter} label="Brand" margin="dense" fullWidth select
