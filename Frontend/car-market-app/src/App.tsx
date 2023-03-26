@@ -9,7 +9,7 @@ import Auth from "./components/Auth/Auth";
 import Main from "./components/Main/Main";
 import { ToastContainer } from "react-toastify";
 
-function PrivateOutlet() {
+export function PrivateOutlet() {
   const isLogged = useAppSelector((state: RootState) => state.user.isLogged);
   return isLogged ? <Outlet /> : <Navigate to="/auth" />;
 }
@@ -34,9 +34,7 @@ function App() {
           <Routes>  
             <Route path="/" element={<Navigate to="main"/>}/>  {/*redirect empty route to main page*/}
             <Route path="/auth/*" element={<Auth />}/>
-            <Route path="/main/*" element={<PrivateOutlet />}> {/*private main page route*/}
-              <Route path="*" element={<Main/>}/>
-            </Route>
+            <Route path="/main/*" element={<Main />}/> {/*private main page route*/}
             <Route path="*" element={<Error404 />}/>  {/*Any other route goes to 404*/}
           </Routes>
         </Router>

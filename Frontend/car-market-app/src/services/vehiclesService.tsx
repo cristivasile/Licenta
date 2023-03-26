@@ -39,11 +39,6 @@ export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> =
 export const getVehiclesList = (filters: VehicleFiltersModel): Promise<Response> => {
     var userIsAdmin: boolean = isAdmin(store.getState().user.role as string);
 
-    //regular users can only get still available vehicles
-    var endpoint = apiUrl + "/api/Vehicle/getAvailable";
-    if (userIsAdmin)
-        endpoint = apiUrl + "/api/Vehicle/getAll"; 
-
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
@@ -64,7 +59,16 @@ export const getVehiclesList = (filters: VehicleFiltersModel): Promise<Response>
             sortAsc: filters.sortAsc,
         })
     };
-    return authenticatedFetch(endpoint, requestOptions);
+
+    //regular users can only get still available vehicles
+    if (!userIsAdmin){
+        var endpoint = apiUrl + "/api/Vehicle/getAvailable";
+        return fetch(endpoint, requestOptions);
+    }
+    else{
+        endpoint = apiUrl + "/api/Vehicle/getAll"; 
+        return authenticatedFetch(endpoint, requestOptions);
+    }
 }
 
 export const getVehicleById = (id: string): Promise<Response> => {
@@ -89,5 +93,5 @@ export const getVehicleTypesDictionary = (): Promise<Response> => {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
     };
-    return authenticatedFetch(apiUrl + "/api/Vehicle/getBrandModelDictionary", requestOptions);
+    return fetch(apiUrl + "/api/Vehicle/getBrandModelDictionary", requestOptions);
 }

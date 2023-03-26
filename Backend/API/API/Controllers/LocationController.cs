@@ -18,7 +18,7 @@ namespace API.Controllers
         }
 
         [HttpGet("getAll")]
-        [Authorize(Policy = "User")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> ReadLocations()
         {
             var locations = await locationManager.GetAll();

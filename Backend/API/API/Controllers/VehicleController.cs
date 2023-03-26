@@ -33,7 +33,6 @@ namespace API.Controllers
         /// For no filters send an empty {} body
         /// </summary>
         [HttpPost("getAvailable")]
-        [Authorize(Policy = "User")]
         public async Task<IActionResult> ReadAvailableVehicles([FromBody] VehicleFiltersModel filters)
         {
             var vehicles = await vehicleManager.GetAvailable(filters);
@@ -65,7 +64,6 @@ namespace API.Controllers
         }
 
         [HttpGet("getBrandModelDictionary")]
-        [Authorize(Policy = "User")]
         public async Task<IActionResult> ReadBrandModelDictionary()
         {
             var dict = await vehicleManager.GetBrandModelDictionary();

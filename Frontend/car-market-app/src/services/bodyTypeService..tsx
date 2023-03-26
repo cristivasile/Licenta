@@ -16,7 +16,7 @@ export const getBodyTypes = (): Promise<Response> => {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token }
   };
-  return authenticatedFetch(apiUrl + "/api/Body-Type/getAll", requestOptions);
+  return fetch(apiUrl + "/api/Body-Type/getAll", requestOptions);
 }
 
 export const removeBodyType = (name: string): Promise<Response> => {

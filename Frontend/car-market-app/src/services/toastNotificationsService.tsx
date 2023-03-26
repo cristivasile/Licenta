@@ -22,9 +22,9 @@ export function generateToastError(reason: String, timeout: any = defaultErrorTi
 /**
  * Notifies the user that a fetch operation has failed i.e. an Exception was raised.
  * @param err The error message in the raised exception
- * @param timeout The timeout, by default it's disabled. Should be false or a number
+ * @param timeout The timeout, should be false or a number
  */
-export function notifyFetchFail(err: Error, timeout: any = false) {
+export function notifyFetchFail(err: Error, timeout: any = defaultErrorTimeout) {
     if (err.message === "Failed to fetch") {
         generateToastError("The server did not respond!", timeout);
     }
@@ -37,8 +37,8 @@ export function notifyFetchFail(err: Error, timeout: any = false) {
 /**
  * Notifies the user that a fetch operation has returned an error code.
  * @param resultCode The result code received
- * @param timeout The timeout, by default it's disabled. Should be false or a number
+ * @param timeout The timeout, should be false or a number
  */
-export function notifyBadResultCode(resultCode: number, timeout: any = false){
+export function notifyBadResultCode(resultCode: number, timeout: any = defaultErrorTimeout){
     generateToastError("The server returned " + resultCode + "!", timeout);
 }

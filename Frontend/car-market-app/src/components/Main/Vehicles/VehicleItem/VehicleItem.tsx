@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, MouseEventHandler, useState } from 'react';
 import { SimplifiedVehicleModel } from '../../../../models/VehicleModel';
 import { Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import defaultImage from "../../../../assets/no-image.png";
 import './VehicleItem.scss';
 
 interface VehicleItemProps {
+  navigateToVehicle: Function,
   vehicle: SimplifiedVehicleModel
 }
 
@@ -14,12 +15,8 @@ const VehicleItem: FC<VehicleItemProps> = (props: VehicleItemProps) => {
   
   const navigate = useNavigate();
 
-  function navigateToVehicle(){
-    navigate("./view/" + props.vehicle.id);
-  }
-
   return (
-    <div className="vehicleItem" onClick={navigateToVehicle}>
+    <div className="vehicleItem" onClick={() => props.navigateToVehicle(props.vehicle.id)}>
       <div className="vehicleHeader">
         <div className="vehicleName">
           {props.vehicle.brand + " " + props.vehicle.model}

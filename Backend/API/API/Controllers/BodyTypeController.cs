@@ -35,7 +35,6 @@ namespace API.Controllers
         }
 
         [HttpGet("getAll")]
-        [Authorize(Policy = "User")]
         public async Task<IActionResult> ReadBodyTypes()
         {
             var vehicleTypes = await bodyTypeManager.GetAll();

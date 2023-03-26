@@ -10,7 +10,7 @@ import { getLocations } from '../../../services/locationsService';
 import { getVehiclesList, getVehicleTypesDictionary } from '../../../services/vehiclesService';
 import { setVehiclesFromJson } from '../../../redux/vehiclesStore';
 import VehicleItem from './VehicleItem/VehicleItem';
-import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
+import { generateToastError, notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
 import { setFeaturesFromJson } from '../../../redux/featuresStore';
 import { getFeatures } from '../../../services/featuresService';
 import { getBodyTypes } from '../../../services/bodyTypeService.';
@@ -31,15 +31,18 @@ import {
   setBodyTypeFilter, setBrandFilter, setMaxMileageFilter, setMaxPowerFilter, setMaxPriceFilter, setMinPowerFilter, setMinPriceFilter,
   setMinYearFilter, setModelFilter, setSelectedPage, setSortAscending, setSortTypeFilter, setTransmissionFilter, setVehiclesPerPage
 } from '../../../redux/vehiclesMainFiltersStore';
+import { useNavigate } from 'react-router-dom';
 
 interface VehiclesProps { }
 
 const Vehicles: FC<VehiclesProps> = () => {
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
+  const isLogged = useAppSelector((state) => state.user.isLogged);
   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
   const [featureDialogOpen, setFeatureDialogOpen] = useState(false);
   const [bodyTypeDialogOpen, setBodyTypeDialogOpen] = useState(false);
@@ -332,6 +335,13 @@ const Vehicles: FC<VehiclesProps> = () => {
     return number;
   }
 
+  function navigateToVehicle(id: string){
+    if(isLogged)
+      navigate("./view/" + id);
+    else
+      generateToastError("You must be logged in to view vehicle details!");
+  }
+
   return (
     <div className="vehicles">
       <ManageLocationsDialog {...locationDialogProps} />
@@ -482,7 +492,7 @@ const Vehicles: FC<VehiclesProps> = () => {
       <div className="vehiclesListContainer">
         {vehicles.map((vehicle) => (
           <div className="vehicleItemContainer" key={vehicle.id}>
-            <VehicleItem vehicle={vehicle} />
+            <VehicleItem vehicle={vehicle} navigateToVehicle={navigateToVehicle}/>
           </div>
         ))}
       </div>

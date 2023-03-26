@@ -18,7 +18,7 @@
 
 .buttonContainer {
   width: 10%;
-  height: 100%;
+  height: auto;
   margin: 0;
   display: flex;
   margin-left: auto;
@@ -38,6 +38,13 @@
   font-size: 1.4em;
   font-weight: 500;
   color: white;
+
+  .linkSpan{
+    color: $light-color;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 1em;
+  }
 }
 
 .usernameSpan {

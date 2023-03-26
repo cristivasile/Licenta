@@ -95,6 +95,10 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
       });
   };
 
+  function goToMain(){
+    navigate("/main");
+  }
+
   function goToRegister() {
     props.setUserFunction(usernameValue);
     navigate("../register");
@@ -126,6 +130,7 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
             <Button disabled={loading} variant="contained" type="submit">Log in</Button>
           </div>
         </form>
+        <div> <button onClick={goToMain} className="linkButton">Go back to main</button></div>
         <div> Need an account? <button onClick={goToRegister} className="linkButton">Register</button></div>
       </div>
     </div>

@@ -106,10 +106,15 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
       });
   };
 
+  function goToMain(){
+    navigate("/main");
+  }
+
   function goToLogin() {
     props.setUserFunction(usernameValue);
     navigate("../login");
   }
+  
   return (
     <div className="pageContainer">
       <div className="titleContainer" >
@@ -148,6 +153,7 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
             <Button disabled={loading} variant="contained" type="submit">Register</Button>
           </div>
         </form>
+        <div> <button onClick={goToMain} className="linkButton">Go back to main</button></div>
         <div> Already have an account? <button onClick={goToLogin} className="linkButton">Login</button></div>
       </div>
     </div>
