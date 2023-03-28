@@ -25,12 +25,16 @@ const Main: FC<MainProps> = (props: MainProps) => {
 
     //check JWT token expiration
     if (isLogged) {
+        console.log(isLogged);
         var decodedToken: any = jwt_decode(token);
         var now = new Date();
 
         //token has expired, log out
         if (decodedToken.exp * 1000 < now.getTime()) {
             dispatch(forcedLogout());
+            localStorage.removeItem(tokenLocalStoragePath);
+            localStorage.removeItem(roleLocalStoragePath);
+            //do not remove user so the username can be displayed inside the login
             generateToastError("Your session has expired! Please log in again!");
             console.log("Token expired!");
         }

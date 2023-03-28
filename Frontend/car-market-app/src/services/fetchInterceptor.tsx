@@ -11,7 +11,7 @@ export const authenticatedFetch = async (input: RequestInfo | URL, init?: Reques
     const result = await fetch(input, init);
     if (result.status === 401 || result.status === 403) {
         store.dispatch(forcedLogout()); //log the user out
-
+        console.log("here" + init?.body);
         //notify reason
         generateToastError(errorReasons.get(result.status) || "");
         return Promise.reject("Token has expired!");
@@ -20,4 +20,3 @@ export const authenticatedFetch = async (input: RequestInfo | URL, init?: Reques
         return result;
     }
 }
-
