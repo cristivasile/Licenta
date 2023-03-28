@@ -2,7 +2,7 @@ import { Accordion, AccordionDetails, Button, Checkbox, FormControlLabel, MenuIt
 import { FC, useEffect, useState } from 'react';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MenuIcon from '@mui/icons-material/Menu';
-import AddVehicleDialog, { AddVehicleDialogProps } from './AddVehicleDialog/AddVehicleDialog';
+import AddVehicleDialog, { AddVehicleDialogProps } from '../VehicleDialog/VehicleDialog';
 import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setLocationsFromJson } from '../../../redux/locationsStore';

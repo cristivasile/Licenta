@@ -1,19 +1,19 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField, Autocomplete, FormControl, InputLabel, Select, OutlinedInput, ListItemText, Checkbox } from '@mui/material';
 import { FC, useState } from 'react';
-import { generateErrorMessage, generateSuccessMessage } from '../../../../common';
-import { useAppSelector } from '../../../../hooks';
-import { notifyFetchFail } from '../../../../services/toastNotificationsService';
-import { postVehicle } from '../../../../services/vehiclesService';
-import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../../services/utils';
-import { mapFromVehicleTypeList } from '../../../../models/VehicleTypeModel';
-import { driveTrainsMap, DriveTrainTypeEnum } from '../../../../models/DriveTrainTypeEnum';
-import { powerTrainsMap, PowerTrainTypeEnum } from '../../../../models/PowerTrainTypeEnum';
-import Loading from '../../../Loading/Loading';
-import defaultImage from "../../../../assets/no-image.png";
-import { TransmissionTypeEnum, transmissionTypesMap } from '../../../../models/TransmissionTypeEnum';
-import { compressedImageSizeInMb, compressedThumbnailSizeInMb, maxCompressedImageWidth, maxCompressedThumbnailWidth } from '../../../../constants';
-import { VehicleCreateModel } from '../../../../models/VehicleModel';
-import './AddVehicleDialog.scss';
+import { generateErrorMessage, generateSuccessMessage } from '../../../common';
+import { useAppSelector } from '../../../hooks';
+import { notifyFetchFail } from '../../../services/toastNotificationsService';
+import { postVehicle } from '../../../services/vehiclesService';
+import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../services/utils';
+import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
+import { driveTrainsMap, DriveTrainTypeEnum } from '../../../models/DriveTrainTypeEnum';
+import { powerTrainsMap, PowerTrainTypeEnum } from '../../../models/PowerTrainTypeEnum';
+import Loading from '../../Loading/Loading';
+import defaultImage from "../../../assets/no-image.png";
+import { TransmissionTypeEnum, transmissionTypesMap } from '../../../models/TransmissionTypeEnum';
+import { compressedImageSizeInMb, compressedThumbnailSizeInMb, maxCompressedImageWidth, maxCompressedThumbnailWidth } from '../../../constants';
+import { VehicleCreateModel } from '../../../models/VehicleModel';
+import './VehicleDialog.scss';
 
 export interface AddVehicleDialogProps {
   isOpen: boolean,
