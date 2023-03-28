@@ -37,7 +37,7 @@ const SellVehicleDialog: FC<SellVehicleDialogProps> = (props: SellVehicleDialogP
                 }
                 else {
                     setSuccessMessage("Vehicle successfully marked as sold!");
-                    console.log(props.loadVehicleCallback());
+                    setUsernameValue("");
                     props.loadVehicleCallback();
                 }
             })

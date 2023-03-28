@@ -4,7 +4,7 @@ import { store } from "../redux/store";
 import { isAdmin } from "./authenticationService";
 import { authenticatedFetch } from "./fetchInterceptor";
 
-export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> => {
+export const createVehicle = (newVehicle: VehicleCreateModel): Promise<Response> => {
 
     const requestOptions = {
         method: 'POST',
@@ -32,6 +32,35 @@ export const postVehicle = (newVehicle: VehicleCreateModel): Promise<Response> =
     };
 
     return authenticatedFetch(apiUrl + "/api/Vehicle", requestOptions);
+}
+
+export const updateVehicle = (id: string, updatedVehicle: VehicleCreateModel): Promise<Response> => {
+    const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
+        body: JSON.stringify({
+            images: updatedVehicle.images,
+            thumbnailImage: updatedVehicle.thumbnailImage,
+            brand: updatedVehicle.brand,
+            model: updatedVehicle.model,
+            bodyType: updatedVehicle.bodyType,
+            description: updatedVehicle.description,
+            odometer: updatedVehicle.odometer,
+            locationId: updatedVehicle.locationId,
+            year: updatedVehicle.year,
+            driveTrainType: updatedVehicle.driveTrain,
+            powerTrainType: updatedVehicle.powerTrain,
+            transmissionType: updatedVehicle.transmission,
+            engineSize: updatedVehicle.engineSize,
+            power: updatedVehicle.power,
+            torque: updatedVehicle.torque,
+            locationAddress: updatedVehicle.address,
+            features: updatedVehicle.features,
+            price: updatedVehicle.price,
+        })
+    };
+
+    return authenticatedFetch(apiUrl + "/api/Vehicle/" + id, requestOptions);
 }
 
 export const getVehiclesList = (filters: VehicleFiltersModel): Promise<Response> => {

@@ -34,16 +34,3 @@ export function TabPanel(props: any) {
   export const generateSuccessMessage = (successMessage: string) => (
     <div className="successMessage leftMargin">{successMessage}</div>
   );
-
-  /**
-   * Formats a datetime to return dd:MM:YYYY
-   * @param date 
-   */
-  export const getDateTimeDate = (date: Date): string => {
-
-    const day = date.getDate();
-    const monthIndex = date.getMonth();
-    const year = date.getFullYear();
-
-    return day + ':' + (monthIndex + 1) + ':' + year;
-  }

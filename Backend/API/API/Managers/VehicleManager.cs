@@ -19,7 +19,7 @@ namespace API.Managers
         /// Max image sizes accepted by the manager, if the frontend sends larger images the controller will return BadRequest.
         /// The frontend is tasked with compressing images before upload.
         /// </summary>
-        private static readonly int maxImageSize = 5242880; //5 MB in bytes
+        private static readonly int maxImageSize = 2621440; //2.5 MB in bytes
         private static readonly int maxThumbnailImageSize = 512000; //500 KB in bytes
 
         private static readonly int maxDescriptionLength = 2500; 
@@ -214,6 +214,26 @@ namespace API.Managers
             if (inputVehicle.Description.Length > maxDescriptionLength)
                 throw new Exception($"Cannot have a description longer than {maxDescriptionLength} characters!");
 
+            if (inputVehicle.Power < 0)
+                throw new Exception("Power cannot be less than 0!");
+
+            if (inputVehicle.Torque < 0)
+                throw new Exception("Torque cannot be less than 0!");
+
+            if (inputVehicle.Odometer < 0)
+                throw new Exception("Mileage cannot be less than 0!");
+
+            if (inputVehicle.EngineSize != null && inputVehicle.EngineSize <= 0)
+                throw new Exception("Engine size cannot be less than or equal to 0!");
+
+            if (inputVehicle.Price <= 0)
+                throw new Exception("Price cannot be less than or equal to 0!");
+
+            if (inputVehicle.Year < 1886)
+                throw new Exception("Year cannot be lass than 1886!");
+            else if (inputVehicle.Year > DateTime.Now.Year)
+                throw new Exception($"Year cannot be larger than {DateTime.Now.Year}!");
+            
             //check if location exists
             if (await locationRepository.GetById(inputVehicle.LocationId) == null)
                 throw new Exception("Invalid location!");
@@ -330,31 +350,49 @@ namespace API.Managers
             if (await vehicleTypeRepository.GetById(updatedVehicle.Brand, updatedVehicle.Model) == null)
                 await vehicleTypeRepository.Create(new() { Brand = updatedVehicle.Brand, Model = updatedVehicle.Model });
 
-            //remove old thumbnail
+            //remove old thumbnail if modified
             var thumbnail = await thumbnailRepository.GetByVehicleId(currentVehicle.Id);
-            if (thumbnail != null)
+            if (thumbnail != null && thumbnail.Base64Image != updatedVehicle.ThumbnailImage)
+            {
                 await thumbnailRepository.Delete(thumbnail);
 
-            //remove old pictures
-            var images = await pictureRepository.GetByVehicleId(currentVehicle.Id);
-            foreach (var image in images)
-                await pictureRepository.Delete(image);
-
-            Thumbnail newThumbnail = new()
-            {
-                Id = Utilities.GetGUID(),
-                Base64Image = updatedVehicle.ThumbnailImage,
-                VehicleId = currentVehicle.Id,
-            };
-
-            List<Picture> newImages = new();
-            foreach (var image in updatedVehicle.Images)
-                newImages.Add(new()
+                Thumbnail newThumbnail = new()
                 {
                     Id = Utilities.GetGUID(),
-                    Base64Image = image,
+                    Base64Image = updatedVehicle.ThumbnailImage,
                     VehicleId = currentVehicle.Id,
-                });
+                };
+                await thumbnailRepository.Create(newThumbnail);
+            }
+
+            //remove old pictures if modified
+            var images = await pictureRepository.GetByVehicleId(currentVehicle.Id);
+            var base64Images = images.Select(x => x.Base64Image).ToHashSet();
+            foreach (var updatedImage in updatedVehicle.Images)
+            {
+                if(images.Count != updatedVehicle.Images.Count //length differs
+                    || !base64Images.Contains(updatedImage))    //an image is missing
+                {
+                    foreach (var image in images)
+                        await pictureRepository.Delete(image);
+
+                    List<Picture> newImages = new();
+                    foreach (var image in updatedVehicle.Images)
+                        newImages.Add(new()
+                        {
+                            Id = Utilities.GetGUID(),
+                            Base64Image = image,
+                            VehicleId = currentVehicle.Id,
+                        });
+
+                    //add the images
+                    foreach (var newImage in newImages)
+                        await pictureRepository.Create(newImage);
+
+                    break;
+                }
+            }
+
 
             currentVehicle.Brand = updatedVehicle.Brand;
             currentVehicle.Model = updatedVehicle.Model;
@@ -373,11 +411,6 @@ namespace API.Managers
             currentVehicle.TransmissionType = updatedVehicle.TransmissionType;
 
             await vehicleRepository.Update(currentVehicle);
-            await thumbnailRepository.Create(newThumbnail);
-
-            //add the images
-            foreach (var newImage in newImages)
-                await pictureRepository.Create(newImage);
         }
 
         public async Task UpdateStatus(string id, VehicleStatusUpdateModel updatedStatus)

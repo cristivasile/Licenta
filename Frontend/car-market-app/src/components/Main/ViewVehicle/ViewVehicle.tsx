@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DetailedVehicleModel, mapJsonToDetailedVehicleModel } from '../../../models/VehicleModel';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
-import { getVehicleById, sellVehicle } from '../../../services/vehiclesService';
+import { getVehicleById, getVehicleTypesDictionary, sellVehicle } from '../../../services/vehiclesService';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -11,16 +11,26 @@ import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
 import './ViewVehicle.scss';
 import ImageGalleryDialog, { ImageGalleryDialogProps } from './ImageGalleryDialog/ImageGalleryDialog';
-import { useAppSelector } from '../../../hooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { isAdmin } from '../../../services/authenticationService';
 import SellVehicleDialog, { SellVehicleDialogProps } from './SellVehicleDialog/SellVehicleDialog';
 import { getDateTimeDate } from '../../../services/utils';
+import VehicleDialog, { VehicleDialogProps } from '../VehicleDialog/VehicleDialog';
+import { getLocations } from '../../../services/locationsService';
+import { getBodyTypes } from '../../../services/bodyTypeService.';
+import { getFeatures } from '../../../services/featuresService';
+import { setLocationsFromJson } from '../../../redux/locationsStore';
+import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
+import { setFeaturesFromJson } from '../../../redux/featuresStore';
+import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
+import { produceWithPatches } from 'immer';
 
 interface ViewVehicleProps { }
 
 const ViewVehicle: FC<ViewVehicleProps> = () => {
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
@@ -29,11 +39,12 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageCount, setImageCount] = useState(0);
   const [imageGalleryOpen, setImageGalleryOpen] = useState(false);
+  const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
   const [sellDialogOpen, setSellDialogOpen] = useState(false);
   const userIsAdmin = isAdmin(useAppSelector((state) => state.user.role) as string);
 
   function loadVehicle() {
-    console.log("Here");
+    setLoading(true);
     getVehicleById(id as string)
       .then(async response => {
         if (response.status !== 200) {
@@ -59,7 +70,6 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   }
 
   useEffect(() => {
-    setLoading(true);
     loadVehicle();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -137,6 +147,59 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
       });
   }
 
+  async function openVehicleDialog() {
+    setLoading(true);
+
+    try {
+      //run fetches in parallel
+      const [locationResponse, bodyTypeResponse, featuresResponse, vehicleTypesResponse] = await Promise.all([
+        getLocations(), getBodyTypes(), getFeatures(), getVehicleTypesDictionary()
+      ]);
+
+      if (locationResponse.status !== 200)
+        notifyBadResultCode(locationResponse.status);
+      else if (bodyTypeResponse.status !== 200)
+        notifyBadResultCode(bodyTypeResponse.status);
+      else if (featuresResponse.status !== 200)
+        notifyBadResultCode(featuresResponse.status);
+      else if (vehicleTypesResponse.status !== 200)
+        notifyBadResultCode(vehicleTypesResponse.status);
+      else {
+        var json = await locationResponse.json();
+        dispatch(setLocationsFromJson(json));
+        json = await bodyTypeResponse.json();
+        dispatch(setBodyTypesFromJson(json));
+        json = await featuresResponse.json();
+        dispatch(setFeaturesFromJson(json));
+        json = await vehicleTypesResponse.json();
+        dispatch(setVehicleTypesFromJson(json));
+
+        setVehicleDialogOpen(true);
+      }
+    }
+    catch (err: any) {
+      notifyFetchFail(err);
+    }
+
+    setLoading(false);
+  }
+
+  function closeVehicleDialog() {
+    setVehicleDialogOpen(false);
+  }
+
+  function getVehicle(): DetailedVehicleModel{
+    return vehicle;
+  }
+
+  const vehicleDialogProps = {
+    isOpen: vehicleDialogOpen,
+    onClose: closeVehicleDialog,
+    forUpdate: true,
+    getVehicleCallback: getVehicle,
+    reloadVehicleCallback: loadVehicle,
+  } as VehicleDialogProps;
+
   function goBackToMain() {
     navigate("../../");
   }
@@ -144,6 +207,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   return (
     <div className="ViewVehicle">
       {userIsAdmin ? <SellVehicleDialog {...sellVehicleDialogProps} /> : <></>}
+      {userIsAdmin ? <VehicleDialog {...vehicleDialogProps} /> : <></>}
       <ImageGalleryDialog {...imageGalleryProps} />
       {loading ? <Loading /> : <></>}
       <div className="buttonContainer">
@@ -243,7 +307,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                       </div>
                       <div className="detailsRow">
                         <Typography fontSize={17}>
-                          <span className="title">Location: </span> {vehicle.locationAddress}
+                          <span className="title">Location: </span> {vehicle.location.city + ", " + vehicle.location.address}
                         </Typography>
                       </div>
                     </div>
@@ -260,7 +324,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                       <ul>
                         {
                           vehicle.features.sort((x1, x2) => x1.name > x2.name ? 1 : -1).map((feature) => (
-                            <li className="feature">
+                            <li className="feature" key={feature.id}>
                               <Typography fontSize={17}>
                                 {feature.name}
                               </Typography>
@@ -299,14 +363,22 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                 <div className="contentButtonsContainer">
                   {
                     userIsAdmin ?
-                      vehicle.status.isSold ?
-                        <Button disabled={loading} variant="contained" onClick={undoSale} sx={{ marginRight: "1%", marginBottom: "1%" }}>
-                          Undo sale
+                      <>
+                        <Button disabled={loading} variant="contained" onClick={openVehicleDialog} sx={{marginRight: "1em", marginBottom: "1%"}}>
+                          Modify vehicle
                         </Button>
-                        :
-                        <Button disabled={loading} variant="contained" onClick={openSellDialog} sx={{ marginRight: "1%", marginBottom: "1%" }}>
-                          Set sold
-                        </Button>
+                        {
+                          vehicle.status.isSold ?
+                            <Button disabled={loading} variant="contained" onClick={undoSale} sx={{ marginRight: "1%", marginBottom: "1%" }}>
+                              Undo sale
+                            </Button>
+                            :
+                            <Button disabled={loading} variant="contained" onClick={openSellDialog} sx={{ marginRight: "1%", marginBottom: "1%" }}>
+                              Set sold
+                            </Button>
+                        }
+                      </>
+
                       :
                       <></>
                   }

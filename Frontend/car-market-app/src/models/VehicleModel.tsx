@@ -1,4 +1,5 @@
 import { DriveTrainTypeEnum } from "./DriveTrainTypeEnum";
+import { jsonToLocationModel, LocationModel } from "./LocationModel";
 import { PowerTrainTypeEnum } from "./PowerTrainTypeEnum";
 import { TransmissionTypeEnum } from "./TransmissionTypeEnum";
 
@@ -32,6 +33,7 @@ export interface FeatureModel{
 
 export interface DetailedVehicleModel {
     id: string,
+    thumbnail: string,
     images: string[],
     brand: string,
     model: string,
@@ -46,7 +48,7 @@ export interface DetailedVehicleModel {
     driveTrainType: string,
     transmissionType: string,
     description: string,
-    locationAddress: string,
+    location: LocationModel,
     features: FeatureModel[],
     status: StatusModel,
 }
@@ -87,6 +89,11 @@ export interface VehicleCreateModel {
     torque: number,
     features: string[],
     price: number
+}
+
+export interface VehicleSaleModel{
+    username: string | null,
+    isSold: boolean,
 }
 
 export function mapJsonToShortVehicleModels(json: any): SimplifiedVehicleModel[] {
@@ -140,6 +147,7 @@ export function mapJsonToDetailedVehicleModel(json: any): DetailedVehicleModel{
 
     var detailedVehicle = {
         id: json.id,
+        thumbnail: json.thumbnail,
         images: json.images,
         brand: json.brand,
         model: json.model,
@@ -152,7 +160,7 @@ export function mapJsonToDetailedVehicleModel(json: any): DetailedVehicleModel{
         powerTrainType: json.powerTrainType,
         driveTrainType: json.driveTrainType,
         description: json.description,
-        locationAddress: json.locationAddress,
+        location: jsonToLocationModel(json.location),
         transmissionType: json.transmissionType,
         price: json.price,
         features: mapJsonToFeaturesModel(json.features),

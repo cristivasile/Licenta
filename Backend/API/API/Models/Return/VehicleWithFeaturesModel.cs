@@ -6,7 +6,7 @@ namespace API.Models.Return
     public abstract class VehicleWithFeaturesModel : VehicleModel
     {
         public string Description { get; set; }
-        public string LocationAddress { get; set; }
+        public LocationModel Location { get; set; }
         public List<FeatureModel> Features { get; set; }
         public List<string> Images { get; set; }
 
@@ -14,8 +14,8 @@ namespace API.Models.Return
         {
             Description = ob.Description;
 
-            if(ob.Location != null)
-                LocationAddress = ob.Location.City + ", " + ob.Location.Address;
+            if (ob.Location != null)
+                Location = new(ob.Location);
 
             Images = new();
             if (ob.Images != null)

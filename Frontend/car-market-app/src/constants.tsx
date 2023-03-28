@@ -5,7 +5,7 @@ export const apiUrl = "http://localhost:5000";
 
 
 //maximum image sizes to be sent to the backend
-export const compressedImageSizeInMb: number = 5.0; 
+export const compressedImageSizeInMb: number = 1.5; 
 export const maxCompressedImageWidth: number = 1920;
 export const compressedThumbnailSizeInMb: number = 0.5; 
 export const maxCompressedThumbnailWidth: number = 256;

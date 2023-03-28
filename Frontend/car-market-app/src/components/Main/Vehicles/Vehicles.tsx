@@ -2,7 +2,7 @@ import { Accordion, AccordionDetails, Button, Checkbox, FormControlLabel, MenuIt
 import { FC, useEffect, useState } from 'react';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MenuIcon from '@mui/icons-material/Menu';
-import AddVehicleDialog, { AddVehicleDialogProps } from '../VehicleDialog/VehicleDialog';
+import VehicleDialog, { VehicleDialogProps } from '../VehicleDialog/VehicleDialog';
 import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setLocationsFromJson } from '../../../redux/locationsStore';
@@ -291,7 +291,10 @@ const Vehicles: FC<VehiclesProps> = () => {
   const vehicleDialogProps = {
     isOpen: vehicleDialogOpen,
     onClose: closeVehicleDialog,
-  } as AddVehicleDialogProps;
+    forUpdate: false,
+    getVehicleCallback: null,
+    reloadVehicleCallback: null,
+  } as VehicleDialogProps;
 
   function applyFilters() {
     setLoading(true);
@@ -347,7 +350,7 @@ const Vehicles: FC<VehiclesProps> = () => {
       <ManageLocationsDialog {...locationDialogProps} />
       <ManageFeaturesDialog {...featureDialogProps} />
       <ManageBodyTypesDialog {...bodyTypeDialogProps} />
-      <AddVehicleDialog {...vehicleDialogProps} />
+      <VehicleDialog {...vehicleDialogProps} />
       {loading ? <Loading /> : <></>}
 
       <Accordion>

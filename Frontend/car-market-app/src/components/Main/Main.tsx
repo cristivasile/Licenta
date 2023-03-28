@@ -25,7 +25,6 @@ const Main: FC<MainProps> = (props: MainProps) => {
 
     //check JWT token expiration
     if (isLogged) {
-        console.log(isLogged);
         var decodedToken: any = jwt_decode(token);
         var now = new Date();
 

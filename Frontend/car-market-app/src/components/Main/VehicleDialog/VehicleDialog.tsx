@@ -1,9 +1,9 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, MenuItem, TextField, Autocomplete, FormControl, InputLabel, Select, OutlinedInput, ListItemText, Checkbox } from '@mui/material';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { generateErrorMessage, generateSuccessMessage } from '../../../common';
 import { useAppSelector } from '../../../hooks';
 import { notifyFetchFail } from '../../../services/toastNotificationsService';
-import { postVehicle } from '../../../services/vehiclesService';
+import { createVehicle, updateVehicle } from '../../../services/vehiclesService';
 import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../services/utils';
 import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
 import { driveTrainsMap, DriveTrainTypeEnum } from '../../../models/DriveTrainTypeEnum';
@@ -12,15 +12,18 @@ import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
 import { TransmissionTypeEnum, transmissionTypesMap } from '../../../models/TransmissionTypeEnum';
 import { compressedImageSizeInMb, compressedThumbnailSizeInMb, maxCompressedImageWidth, maxCompressedThumbnailWidth } from '../../../constants';
-import { VehicleCreateModel } from '../../../models/VehicleModel';
+import { DetailedVehicleModel, VehicleCreateModel } from '../../../models/VehicleModel';
 import './VehicleDialog.scss';
 
-export interface AddVehicleDialogProps {
+export interface VehicleDialogProps {
   isOpen: boolean,
   onClose: Function,
+  forUpdate: boolean,
+  getVehicleCallback: Function | null,  //used to get vehicle details for update
+  reloadVehicleCallback: Function | null, //used to refresh vehicle page after update
 }
 
-const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProps) => {
+const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
 
   const today = new Date();
   const locations = useAppSelector((state) => state.location.locations);
@@ -35,6 +38,7 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [vehicle, setVehicle] = useState({} as DetailedVehicleModel); //used in update 
   const [brandValue, setBrandValue] = useState("");
   const [modelValue, setModelValue] = useState("");
   const [bodyTypeValue, setBodyTypeValue] = useState("");
@@ -81,6 +85,37 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
     var options = vehicleTypesMap.get(brand) || new Array<string>();
     setVehicleModelOptions(options);
   }
+
+  useEffect(() => {
+    if (props.forUpdate && props.getVehicleCallback !== null) {
+      var vehicle = props.getVehicleCallback() as DetailedVehicleModel;
+      if (vehicle !== undefined) {
+        setBrandValue(vehicle.brand);
+        setModelValue(vehicle.model);
+        setBodyTypeValue(vehicle.bodyType);
+        setYearValue(vehicle.year);
+        setPriceValue(vehicle.price);
+        if (vehicle.engineSize != null)
+          setEngineSizeValue(vehicle.engineSize);
+        setPowerValue(vehicle.power);
+        setTorqueValue(vehicle.torque);
+        setOdometerValue(vehicle.odometer);
+        setDescriptionValue(vehicle.description);
+        setVehicle(vehicle);
+
+        if (vehicle.location !== undefined)
+          setLocationValue(vehicle.location.id);
+
+        if (vehicle.features !== undefined) {
+          var features = new Array<string>();
+          vehicle.features.forEach((feature) => {
+            features.push(feature.id);
+          });
+          setFeaturesValue(features);
+        }
+      }
+    }
+  }, [props]);
 
   function clearMessages() {
     setErrorMessage("");
@@ -169,26 +204,55 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       setOdometerErrorText("This field is mandatory!");
       hasError = true;
     }
+    else if (odometerValue <= 0){
+      setOdometerError(true);
+      setOdometerErrorText("This field must be at least 1!");
+      hasError = true;
+    }
+
     if (Number.isNaN(powerValue)) {
       setPowerError(true);
       setPowerErrorText("This field is mandatory!");
       hasError = true;
     }
+    else if (powerValue <= 0){
+      setPowerError(true);
+      setPowerErrorText("This field must be at least 1!");
+      hasError = true;
+    }
+
     if (Number.isNaN(torqueValue)) {
       setTorqueError(true);
       setTorqueErrorText("This field is mandatory!");
       hasError = true;
     }
+    else if (torqueValue <= 0){
+      setTorqueError(true);
+      setTorqueErrorText("This field must be at least 1!");
+      hasError = true;
+    }
+
     if (Number.isNaN(priceValue)) {
       setPriceError(true);
       setPriceErrorText("This field is mandatory!");
+      hasError = true;
+    }
+    else if (priceValue <= 0){
+      setPriceError(true);
+      setPriceErrorText("This field must be at least 1!");
+      hasError = true;
+    }
+
+    if (!Number.isNaN(engineSizeValue) && engineSizeValue <= 0){
+      setEngineSizeError(true);
+      setEngineSizeErorrText("This field must be at least 0!");
       hasError = true;
     }
 
     return !hasError;
   }
 
-  async function addVehicle() {
+  async function sendVehicle() {
     clearMessages();
 
     if (!validate()) //don't send a request if validation fails
@@ -202,20 +266,28 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       var compressedThumbnailImage = await compressImage(thumbnailValue, compressedThumbnailSizeInMb, maxCompressedThumbnailWidth);
       var base64ThumbnailImage = thumbnailValue.name !== "" ? await fileToBase64(compressedThumbnailImage) : "";
     }
-    else {
-      base64ThumbnailImage = "";
+    else {  //if no thumbnail was added
+      if (props.forUpdate)
+        base64ThumbnailImage = vehicle.thumbnail;
+      else
+        base64ThumbnailImage = "";
     }
 
     //compress images in order to save bandwidth and reduce loading times
     var base64Images = new Array<string>();
 
-    for(var image of imagesValue){
-      var compressedImage = await compressImage(image, compressedImageSizeInMb, maxCompressedImageWidth);
-      var base64Image = image.name !== "" ? await fileToBase64(compressedImage) : "";
-      base64Images.push(base64Image);
+    if (imagesValue.length !== 0) {
+      for (var image of imagesValue) {
+        var compressedImage = await compressImage(image, compressedImageSizeInMb, maxCompressedImageWidth);
+        var base64Image = image.name !== "" ? await fileToBase64(compressedImage) : "";
+        base64Images.push(base64Image);
+      }
+    }
+    else if (props.forUpdate) { //if no images were added
+      base64Images = vehicle.images; //vehicle images are already compressed
     }
 
-    var newVehicle: VehicleCreateModel = {
+    var vehicleModel: VehicleCreateModel = {
       images: base64Images,
       thumbnailImage: base64ThumbnailImage,
       brand: brandValue,
@@ -236,23 +308,45 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       transmission: transmissionValue,
     };
 
-    postVehicle(newVehicle)
-      .then(async response => {
-        if (response.status !== 200) {
-          var text = await response.text();
-          setErrorMessage(text !== "" ? text : response.statusText);
-        }
-        else {
-          setSuccessMessage("Vehicle successfully added!");
-          clearInputs();
-        }
-      })
-      .catch((err) => {
-        notifyFetchFail(err);
-      })
-      .then(() => {
-        setLoading(false);
-      });
+    if (props.forUpdate) {
+      updateVehicle(vehicle.id, vehicleModel)
+        .then(async response => {
+          if (response.status !== 200) {
+            var text = await response.text();
+            setErrorMessage(text !== "" ? text : response.statusText);
+          }
+          else {
+            setSuccessMessage("Vehicle successfully updated!");
+            if(props.reloadVehicleCallback !== null)
+              props.reloadVehicleCallback();
+          }
+        })
+        .catch((err) => {
+          notifyFetchFail(err);
+        })
+        .then(() => {
+          setLoading(false);
+        });
+    }
+    else {
+      createVehicle(vehicleModel)
+        .then(async response => {
+          if (response.status !== 200) {
+            var text = await response.text();
+            setErrorMessage(text !== "" ? text : response.statusText);
+          }
+          else {
+            setSuccessMessage("Vehicle successfully added!");
+            clearInputs();
+          }
+        })
+        .catch((err) => {
+          notifyFetchFail(err);
+        })
+        .then(() => {
+          setLoading(false);
+        });
+    }
   }
 
   function getImage(imageValue: File | Blob): string {
@@ -279,19 +373,32 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
   }
 
   return (
-    <Dialog open={props.isOpen} onClose={() => { clearMessages(); props.onClose(); }} PaperProps={{ sx: { width: "50em" } }}>
+    <Dialog open={props.isOpen} onClose={() => { clearMessages(); props.onClose(); }} PaperProps={{ sx: { width: "50em", maxWidth:"50em" } }}>
       {loading ? <Loading /> : <></>}
-      <DialogTitle className="formTitle">Add a new vehicle</DialogTitle>
+      <DialogTitle className="formTitle">
+        {props.forUpdate ?
+          "Update vehicle"
+          :
+          "Add a new vehicle"
+        }</DialogTitle>
       <DialogContent>
         <div className="splitDiv">
           <div>
-            <Button disabled={loading} variant="contained" component="label" className="addImageButton" sx={{marginRight: ".4em"}}>
-              Add images
+            <Button disabled={loading} variant="contained" component="label" className="addImageButton" sx={{ marginRight: ".4em" }}>
+              {props.forUpdate ?
+                "Replace images"
+                :
+                "Add images"
+              }
               <input type="file" hidden accept={"image/png, image/jpeg"} multiple={true}
                 onChange={(event) => event.target.files !== null ? setImagesValue(Array.from(event.target.files)) : {}} />
             </Button>
             <Button disabled={loading} variant="contained" component="label" className="addImageButton">
-              Add thumbnail
+              {props.forUpdate ?
+                "Update thumbnail"
+                :
+                "Add thumbnail"
+              }
               <input type="file" hidden accept={"image/png, image/jpeg"}
                 onChange={(event) => event.target.files !== null ? setThumbnailValue(event.target.files![0]) : {}} />
             </Button>
@@ -299,7 +406,8 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
 
           <div id="imagesInfoDiv">
             <div>
-              {imagesValue.length !== 0 ? imagesValue.length + " image(s) uploaded" : "No image uploaded"}
+              {imagesValue.length !== 0 ? imagesValue.length + " image(s) uploaded" :
+                props.forUpdate ? "Images not replaced" : "No image uploaded"}
             </div>
             <div id="previewImageDiv">
               <img src={getImage(thumbnailValue)} alt="" id="previewImage" />
@@ -448,10 +556,11 @@ const AddVehicleDialog: FC<AddVehicleDialogProps> = (props: AddVehicleDialogProp
       {generateSuccessMessage(successMessage)}
       <DialogActions>
         <Button disabled={loading} onClick={() => { clearMessages(); props.onClose(); }} variant="contained">Cancel</Button>
-        <Button disabled={loading} onClick={addVehicle} variant="contained">Add</Button>
+        <Button disabled={loading} onClick={sendVehicle} variant="contained">
+          {props.forUpdate? "Update" : "Add"}</Button>
       </DialogActions>
     </Dialog>
   );
 }
 
-export default AddVehicleDialog;
+export default VehicleDialog;
