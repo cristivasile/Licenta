@@ -114,6 +114,16 @@ export const getVehicleById = (id: string): Promise<Response> => {
     return authenticatedFetch(endpoint + id, requestOptions);
 }
 
+export const getImagesByVehicleId = (id: string): Promise<Response> => {
+
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
+    };
+
+    return authenticatedFetch(apiUrl + "/api/Picture/getVehicleImages/" + id, requestOptions);
+}
+
 export const getVehicleTypesDictionary = (): Promise<Response> => {
 
     const requestOptions = {

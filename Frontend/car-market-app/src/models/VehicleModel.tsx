@@ -148,7 +148,7 @@ export function mapJsonToDetailedVehicleModel(json: any): DetailedVehicleModel{
     var detailedVehicle = {
         id: json.id,
         thumbnail: json.thumbnail,
-        images: json.images,
+        images: new Array<string>(), //images are returned through a separate query
         brand: json.brand,
         model: json.model,
         bodyType: json.bodyType,
@@ -167,9 +167,9 @@ export function mapJsonToDetailedVehicleModel(json: any): DetailedVehicleModel{
         status: mapJsonToStatusModel(json.status),
     } as DetailedVehicleModel;
 
-    //if no images are present try to use the thumbnail
-    if(detailedVehicle.images.length === 0 && json.thumbnail.length !== 0)
+    if(detailedVehicle.images.length === 0 && json.thumbnail.length !== 0){
         detailedVehicle.images.push(json.thumbnail);
+        }
 
     return detailedVehicle;
 }

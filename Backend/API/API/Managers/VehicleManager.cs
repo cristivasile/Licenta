@@ -139,7 +139,7 @@ namespace API.Managers
             return result;
         }
 
-        private IEnumerable<VehicleModel> ApplyPagination(IEnumerable<VehicleModel> vehicles, VehiclePaginationModel pagination)
+        private static IEnumerable<VehicleModel> ApplyPagination(IEnumerable<VehicleModel> vehicles, VehiclePaginationModel pagination)
         {
             if (pagination.StartAt != null && pagination.NumberToGet != null)
                 return vehicles.Skip(pagination.StartAt.Value).Take(pagination.NumberToGet.Value);

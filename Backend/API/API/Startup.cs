@@ -92,8 +92,10 @@ namespace API
             services.AddScoped<IVehicleTypeManager, VehicleTypeManager>();
             services.AddScoped<IVehicleTypeRepository, VehicleTypeRepository>();
 
-            services.AddScoped<IStatusRepository, StatusRepository>();
+            services.AddScoped<IPictureManager, PictureManager>();
             services.AddScoped<IPictureRepository, PictureRepository>();
+
+            services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<IThumbnailRepostory, ThumbnailRepository>();
 
             services.AddDbContext<AppDbContext>(options => options

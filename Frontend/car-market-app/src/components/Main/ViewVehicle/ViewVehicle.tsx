@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DetailedVehicleModel, mapJsonToDetailedVehicleModel } from '../../../models/VehicleModel';
 import { notifyBadResultCode, notifyFetchFail } from '../../../services/toastNotificationsService';
-import { getVehicleById, getVehicleTypesDictionary, sellVehicle } from '../../../services/vehiclesService';
+import { getImagesByVehicleId, getVehicleById, getVehicleTypesDictionary, sellVehicle } from '../../../services/vehiclesService';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -23,7 +23,6 @@ import { setLocationsFromJson } from '../../../redux/locationsStore';
 import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
 import { setFeaturesFromJson } from '../../../redux/featuresStore';
 import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
-import { produceWithPatches } from 'immer';
 
 interface ViewVehicleProps { }
 
@@ -34,6 +33,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
+  const [imagesLoading, setImagesLoading] = useState(false);
   const [vehicle, setVehicle] = useState({} as DetailedVehicleModel)
   const [image, setImage] = useState("");
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -43,7 +43,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   const [sellDialogOpen, setSellDialogOpen] = useState(false);
   const userIsAdmin = isAdmin(useAppSelector((state) => state.user.role) as string);
 
-  function loadVehicle() {
+  function loadVehicle(loadImages: boolean) {
     setLoading(true);
     getVehicleById(id as string)
       .then(async response => {
@@ -53,11 +53,11 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
         else {
           var json = await response.json();
           setVehicle(mapJsonToDetailedVehicleModel(json));
+          setImagesLoading(loadImages);
 
-          if (json.images.length > 0)
-            setImage(json.images[0]);
-
-          setImageCount(json.images.length);
+          if (json.thumbnail !== undefined && json.thumbnail.length !== 0){  //set thumbnail as preview until the images arrive
+            setImage(json.thumbnail);
+          }
         }
       })
       .catch((err) => {
@@ -70,12 +70,48 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   }
 
   useEffect(() => {
-    loadVehicle();
+    loadVehicle(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
+
+  //after re-render, if vehicle changed and images are marked as loading run images fetch
+  useEffect(() => {
+
+    if(imagesLoading){
+      getImagesByVehicleId(id as string)
+        .then(async response => {
+          if (response.status !== 200) {
+            notifyBadResultCode(response.status);
+          }
+          else {
+            console.log(response);
+            var json = await response.json();
+            console.log(json);
+            setImagesLoading(false);
+
+            if (json !== undefined && json.length !== 0){
+              var updatedVehicle = vehicle;
+              updatedVehicle.images = json;
+              setImageCount(json.length);
+              setVehicle(updatedVehicle);
+              setImage(json[0]);
+            }
+          }
+        })
+        .catch((err) => {
+          notifyFetchFail(err);
+          return;
+        })
+        .then(() => {
+          setImagesLoading(false);
+        });
+    }
+
+  }, [vehicle, id, imagesLoading]);
 
   async function openImageGallery() {
-    setImageGalleryOpen(true);
+    if(vehicle.images !== undefined && vehicle.images.length > 0 && imagesLoading !== true)
+      setImageGalleryOpen(true);
   }
 
   function closeImageGallery() {
@@ -135,7 +171,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
           notifyBadResultCode(response.status);
         }
         else {
-          loadVehicle();
+          loadVehicle(false);
         }
       })
       .catch((err) => {
@@ -242,6 +278,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                       <KeyboardArrowLeftIcon />
                     </IconButton>
                     <div className="vehicleImageContainer" onClick={openImageGallery}>
+                      {imagesLoading ? <Loading /> : <></>}
                       <img src={image} alt="Empty" className="vehicleImage" onError={() => setImage(defaultImage)} />
                     </div>
                     <IconButton color="primary" disabled={selectedImageIndex >= (imageCount - 1)} onClick={setNextImage}>

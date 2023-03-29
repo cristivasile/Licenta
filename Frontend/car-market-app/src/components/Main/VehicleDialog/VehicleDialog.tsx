@@ -318,7 +318,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
           else {
             setSuccessMessage("Vehicle successfully updated!");
             if(props.reloadVehicleCallback !== null)
-              props.reloadVehicleCallback();
+              props.reloadVehicleCallback(true);
           }
         })
         .catch((err) => {
