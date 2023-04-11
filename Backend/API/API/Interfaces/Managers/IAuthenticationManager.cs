@@ -8,7 +8,8 @@ namespace API.Interfaces.Managers
 {
     public interface IAuthenticationManager
     {
-        Task<IdentityResult> SignUp(RegisterModel newUser, List<string> roles);
+        Task<List<string>> GetUsernames();
         Task<TokenModel> Login(LoginModel login);
+        Task SignUp(RegisterModel newUser, List<string> roles);
     }
 }

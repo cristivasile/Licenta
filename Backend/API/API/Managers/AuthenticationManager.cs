@@ -4,6 +4,7 @@ using API.Interfaces.Managers;
 using API.Models;
 using API.Models.Input;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,11 @@ namespace API.Managers
             signInManager = sManager;
             tokenManager = tManager;
             storage = context;
+        }
+
+        public async Task<List<string>> GetUsernames()
+        {
+            return await userManager.Users.Select(u => u.UserName).OrderBy(u => u).ToListAsync();
         }
 
         public async Task<TokenModel> Login(LoginModel login)

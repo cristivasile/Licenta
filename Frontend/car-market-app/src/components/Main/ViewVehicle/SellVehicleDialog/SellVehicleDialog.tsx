@@ -1,9 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import { FC, useState } from 'react';
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { FC, useEffect, useState } from 'react';
 import Loading from '../../../Loading/Loading';
 import { generateErrorMessage, generateSuccessMessage } from '../../../../common';
 import { sellVehicle } from '../../../../services/vehiclesService';
-import { notifyFetchFail } from '../../../../services/toastNotificationsService';
+import { notifyBadResultCode, notifyFetchFail } from '../../../../services/toastNotificationsService';
+import { getUsernames } from '../../../../services/authenticationService';
 
 export interface SellVehicleDialogProps {
     loadVehicleCallback: Function,  //triggers another vehicle fetch
@@ -15,22 +16,43 @@ export interface SellVehicleDialogProps {
 const SellVehicleDialog: FC<SellVehicleDialogProps> = (props: SellVehicleDialogProps) => {
 
     const [loading, setLoading] = useState(false);
-    const [userName, setUsernameValue] = useState("");
+    const [username, setUsernameValue] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [usernameSuggestions, setUsernameSuggestions] = useState(Array<string>());
+
+    useEffect(() => {
+        setLoading(true);
+        getUsernames()
+            .then(async response => {
+                if (response.status !== 200) {
+                    notifyBadResultCode(response.status);
+                }
+                else {
+                    setUsernameSuggestions(await response.json())
+                }
+            })
+            .catch((err) => {
+                notifyFetchFail(err);
+                return;
+            })
+            .then(() => {
+                setLoading(false);
+            });
+    }, [])
 
     function sellVehicleClick() {
         setErrorMessage("");
         setSuccessMessage("");
 
-        if (userName === "") {
+        if (username === "") {
             setErrorMessage("Username cannot be empty!");
             return;
         }
 
         //disable buttons
         setLoading(true);
-        sellVehicle(props.vehicleIdCallback(), userName, true)
+        sellVehicle(props.vehicleIdCallback(), username, true)
             .then(async response => {
                 if (response.status !== 200) {
                     setErrorMessage(await response.text());
@@ -55,9 +77,16 @@ const SellVehicleDialog: FC<SellVehicleDialogProps> = (props: SellVehicleDialogP
 
             <DialogTitle className="formTitle">Mark this vehicle as sold</DialogTitle>
             <DialogContent>
-                <TextField value={userName} label="Purchaser username" margin="dense" fullWidth autoFocus
-                    onChange={(event) => setUsernameValue(event.target.value)}
-                    type="text" name="name" />
+                <Autocomplete value={username} fullWidth freeSolo
+                    options={usernameSuggestions} sx={{ marginTop: '8px' }}
+                    onChange={(_, value) => 
+                    setUsernameValue(value || '')}
+                    renderInput={(params) =>
+                    <TextField {...params} autoFocus
+                        onChange={(event) => 
+                        setUsernameValue(event.target.value || '')
+                        }
+                        label="Purchaser username" />} />
             </DialogContent>
 
             {generateErrorMessage(errorMessage)}

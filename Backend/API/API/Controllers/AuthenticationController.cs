@@ -2,6 +2,7 @@
 using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,51 +24,60 @@ namespace API.Controllers
         [HttpPost("signUp")]
         public async Task<IActionResult> CreateUser([FromBody] RegisterModel newUser)
         {
-            var result = await authenticationManager.SignUp(newUser, new List<string>{"User"});
-            if(result.Succeeded)
+            try
+            {
+                await authenticationManager.SignUp(newUser, new List<string> { "User" });
                 return Ok();
-
-            var errorResult = "";
-
-            foreach (string error in result.Errors.Select(x => x.Description))
-                errorResult = errorResult + error + "\n";
-
-            return BadRequest(errorResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("signUpAdmin")]
         [Authorize(Policy = "Sysadmin")]
         public async Task<IActionResult> CreateAdmin([FromBody] RegisterModel newUser)
         {
-            var result = await authenticationManager.SignUp(newUser, new List<string> { "User", "Admin" });
-            if (result.Succeeded)
+            try
+            {
+                await authenticationManager.SignUp(newUser, new List<string> { "User", "Admin" });
                 return Ok();
-
-            var errorResult = "";
-
-            foreach (string error in result.Errors.Select(x => x.Description))
-                errorResult = errorResult + error + "\n";
-
-            return BadRequest(errorResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel login)
         {
-            var result = await authenticationManager.Login(login);
+            try
+            {
+                var result = await authenticationManager.Login(login);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
+        [HttpGet("getUsernames")]
+        [Authorize(Policy = "Admin")]
 
-
-            if (result.AccessToken == "-1")
-                return BadRequest("User does not exist!");
-
-            if (result.AccessToken == "-2")
-                return BadRequest("User is locked out!");
-
-            if (result.AccessToken == "-3")
-                return BadRequest("Incorrect password!");
-            
-            return Ok(result);
+        public async Task<IActionResult> GetUsernames()
+        {
+            try
+            {
+                var result = await authenticationManager.GetUsernames();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

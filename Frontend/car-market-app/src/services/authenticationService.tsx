@@ -1,4 +1,6 @@
 import { apiUrl } from "../constants";
+import { store } from "../redux/store";
+import { authenticatedFetch } from "./fetchInterceptor";
 
 const adminRoleSet = new Set<string>(["admin", "sysadmin"]);
 /**
@@ -28,4 +30,12 @@ export const signUp = (username: string, password: string, email: string): Promi
       };
 
   return fetch(apiUrl + "/api/auth/signUp", requestOptions);
+}
+
+export const getUsernames = () : Promise<Response> => {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token }
+  };
+  return authenticatedFetch(apiUrl + "/api/auth/getUsernames", requestOptions);
 }
