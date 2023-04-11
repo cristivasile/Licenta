@@ -4,6 +4,7 @@ using API.Interfaces.Managers;
 using API.Models;
 using API.Models.Input;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,12 +26,6 @@ namespace API.Managers
             storage = context;
         }
 
-        /// <returns>
-        /// token for success
-        /// -1 for inexistent email
-        /// -2 too many logins, user is locked out
-        /// -3 incorrect password
-        /// </returns>
         public async Task<TokenModel> Login(LoginModel login)
         {
             var result = new TokenModel();
@@ -38,24 +33,15 @@ namespace API.Managers
             var user = await userManager.FindByNameAsync(login.Username);
 
             if (user == null)
-            {
-                result.AccessToken = "-1";
-                return result;
-            }
+                throw new Exception("User does not exist!");
 
             var tryLogin = await signInManager.CheckPasswordSignInAsync(user, login.Password, true);
 
             if (tryLogin.IsLockedOut)
-            {
-                result.AccessToken = "-2";
-                return result;
-            }
+                throw new Exception("User is locked out!");
 
             if (!tryLogin.Succeeded)
-            {
-                result.AccessToken = "-3";
-                return result;
-            }
+                throw new Exception("Incorrect password!");
 
             var token = await tokenManager.GenerateToken(user);
 
@@ -73,12 +59,7 @@ namespace API.Managers
             return result;
         }
 
-
-        /// <returns>
-        /// 0 for success
-        /// -1 for failure
-        /// </returns>
-        public async Task<IdentityResult> SignUp(RegisterModel newUser, List<string> roles)
+        public async Task SignUp(RegisterModel newUser, List<string> roles)
         {
             var result = new IdentityResult();
 
@@ -115,60 +96,33 @@ namespace API.Managers
                 }
 
             if(user.Email.Length > 50)
-                emailValid = false; 
+                emailValid = false;
 
             if (!emailValid)
-            {
-                result = GenerateError("0002", "Invalid email!");
-                return result;
-            }
+                throw new Exception("Invalid email!");
 
             //check if email already exists
             var emailExists = storage.Users.Any(x => x.Email.ToLower() == newUser.Email.ToLower());
 
             if (emailExists)
-            {
-                result = GenerateError("0001", "Email already exists!");
-                return result;
-            }
+                throw new Exception("Email already exists!");
 
             if (user.UserName.Length < 6)
-            {
-                result = GenerateError("0003", "Username must have at least 6 characters!");
-                return result;
-            }
+                throw new Exception("Username must have at least 6 characters!");
+
             if (user.UserName.Length > 14)
-            {
-                result = GenerateError("0004", "Username must have less than 15 characters!");
-                return result;
-            }
+                throw new Exception("Username must have less than 15 characters!");
 
             if (newUser.Password.Length == 0)
-            {
-                result = GenerateError("0005", "Password field can not be empty!");
-                return result;
-            }
+                throw new Exception("Password field can not be empty!");
 
             result = await userManager.CreateAsync(user, newUser.Password);
 
             if (!result.Succeeded)
-                return result;
+                throw new Exception(string.Join("\n", result.Errors.Select(x => x.Description)));
 
             foreach (string role in roles)
                 await userManager.AddToRoleAsync(user, role);
-
-            return result;
         }
-
-        //creates a custom error result
-        private static IdentityResult GenerateError(string code, string error)
-        {
-            return IdentityResult.Failed(new IdentityError[] {
-                                                new IdentityError {
-                                                    Code = code,
-                                                    Description = error
-                                                }});
-        }
-
     }
 }
