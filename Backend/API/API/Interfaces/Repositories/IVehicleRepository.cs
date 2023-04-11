@@ -12,6 +12,7 @@ namespace API.Interfaces.Repositories
         Task<List<Vehicle>> GetAll();
         Task<List<Vehicle>> GetAvailable();
         Task<List<Vehicle>> GetAvailable(VehicleFiltersModel filters);
+        Task<List<Vehicle>> GetByLocationId(string locationId);
         Task<Vehicle> GetById(string id);
         Task Create(Vehicle newVehicle);
         Task Update(Vehicle updatedVehicle);

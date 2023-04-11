@@ -14,10 +14,11 @@ namespace API.Managers
     public class LocationManager : ILocationManager
     {
         private readonly ILocationRepository locationRepository;
-
-        public LocationManager(ILocationRepository repository)
+        private readonly IVehicleRepository vehicleRepository;
+        public LocationManager(ILocationRepository locationRepository, IVehicleRepository vehicleRepository)
         {
-            locationRepository = repository;
+            this.locationRepository = locationRepository;
+            this.vehicleRepository = vehicleRepository;
         }
 
         public async Task<string> Create(LocationCreateModel newLocation)
@@ -45,7 +46,12 @@ namespace API.Managers
             var location = await locationRepository.GetById(id);
 
             if (location == null)
-                throw new Exception("Location doesn't exist!");
+                throw new KeyNotFoundException("Location doesn't exist!");
+
+            var vehiclesList = await vehicleRepository.GetByLocationId(location.Id);
+
+            if (vehiclesList.Count > 0)
+                throw new Exception($"Location has {vehiclesList.Count} vehicle(s)!");
 
             await locationRepository.Delete(location);
         }
