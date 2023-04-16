@@ -4,8 +4,8 @@ import "./ImageGalleryDialog.scss";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 export interface ImageGalleryDialogProps {
-  getImages: Function,
-  getSelectedImage: Function,
+  vehicleImages: string[],
+  inheritedSelectedImageIndex: number,
   isOpen: boolean,
   onClose: Function,
 }
@@ -18,16 +18,12 @@ const ImageGalleryDialog: FC<ImageGalleryDialogProps> = (props: ImageGalleryDial
   const [imageCount, setImageCount] = useState(0);
 
   useEffect(() => {
-    var vehicleImages = props.getImages();
-    var selectedImage = props.getSelectedImage();
-
-    if (vehicleImages !== undefined && selectedImage !== undefined) {
-      setImages(vehicleImages);
-      setImage(vehicleImages[selectedImage]);
-      setSelectedImageIndex(selectedImage);
-      setImageCount(vehicleImages.length);
+    if (props.vehicleImages !== undefined && props.inheritedSelectedImageIndex !== undefined) {
+      setImages(props.vehicleImages);
+      setImage(props.vehicleImages[props.inheritedSelectedImageIndex]);
+      setSelectedImageIndex(props.inheritedSelectedImageIndex);
+      setImageCount(props.vehicleImages.length);
     }
-
   }, [images, props]);
 
   function setPreviousImage() {

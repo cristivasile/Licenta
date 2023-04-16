@@ -10,12 +10,12 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
 import './ViewVehicle.scss';
-import ImageGalleryDialog, { ImageGalleryDialogProps } from './ImageGalleryDialog/ImageGalleryDialog';
+import ImageGalleryDialog from './ImageGalleryDialog/ImageGalleryDialog';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { isAdmin } from '../../../services/authenticationService';
-import SellVehicleDialog, { SellVehicleDialogProps } from './SellVehicleDialog/SellVehicleDialog';
+import SellVehicleDialog from './SellVehicleDialog/SellVehicleDialog';
 import { getDateTimeDate } from '../../../services/utils';
-import VehicleDialog, { VehicleDialogProps } from '../VehicleDialog/VehicleDialog';
+import VehicleDialog from '../VehicleDialog/VehicleDialog';
 import { getLocations } from '../../../services/locationsService';
 import { getBodyTypes } from '../../../services/bodyTypeService.';
 import { getFeatures } from '../../../services/featuresService';
@@ -23,6 +23,7 @@ import { setLocationsFromJson } from '../../../redux/locationsStore';
 import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
 import { setFeaturesFromJson } from '../../../redux/featuresStore';
 import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
+import ImagesEditDialog from './ImagesEditDialog/ImagesEditDialog';
 
 interface ViewVehicleProps { }
 
@@ -39,6 +40,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageCount, setImageCount] = useState(0);
   const [imageGalleryOpen, setImageGalleryOpen] = useState(false);
+  const [imagesEditDialogOpen, setImagesEditDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
   const [sellDialogOpen, setSellDialogOpen] = useState(false);
   const userIsAdmin = isAdmin(useAppSelector((state) => state.user.role) as string);
@@ -118,20 +120,14 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     setImageGalleryOpen(false);
   }
 
-  function getSelectedImage(): number {
-    return selectedImageIndex;
+  async function openImagesEditDialog() {
+    if(vehicle.images !== undefined && vehicle.images.length > 0 && imagesLoading !== true)
+      setImagesEditDialogOpen(true);
   }
 
-  function getImages(): string[] {
-    return vehicle.images;
+  function closeImagesEditDialog() {
+    setImagesEditDialogOpen(false);
   }
-
-  const imageGalleryProps = {
-    isOpen: imageGalleryOpen,
-    getImages: getImages,
-    getSelectedImage: getSelectedImage,
-    onClose: closeImageGallery,
-  } as ImageGalleryDialogProps;
 
   function openSellDialog() {
     setSellDialogOpen(true);
@@ -140,17 +136,6 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   function closeSellDialog() {
     setSellDialogOpen(false);
   }
-
-  function getVehicleId(): string {
-    return vehicle.id;
-  }
-
-  const sellVehicleDialogProps = {
-    loadVehicleCallback: loadVehicle,
-    vehicleIdCallback: getVehicleId,
-    isOpen: sellDialogOpen,
-    onClose: closeSellDialog,
-  } as SellVehicleDialogProps;
 
   function setPreviousImage() {
     setImage(vehicle.images[selectedImageIndex - 1]);
@@ -224,27 +209,20 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     setVehicleDialogOpen(false);
   }
 
-  function getVehicle(): DetailedVehicleModel{
-    return vehicle;
-  }
-
-  const vehicleDialogProps = {
-    isOpen: vehicleDialogOpen,
-    onClose: closeVehicleDialog,
-    forUpdate: true,
-    getVehicleCallback: getVehicle,
-    reloadVehicleCallback: loadVehicle,
-  } as VehicleDialogProps;
-
   function goBackToMain() {
     navigate("../../");
   }
 
   return (
     <div className="ViewVehicle">
-      {userIsAdmin ? <SellVehicleDialog {...sellVehicleDialogProps} /> : <></>}
-      {userIsAdmin ? <VehicleDialog {...vehicleDialogProps} /> : <></>}
-      <ImageGalleryDialog {...imageGalleryProps} />
+      {userIsAdmin ? <SellVehicleDialog loadVehicleCallback={loadVehicle} vehicleId={vehicle.id} 
+        isOpen={sellDialogOpen} onClose={closeSellDialog} /> : <></>}
+      {userIsAdmin ? <ImagesEditDialog initialImages={vehicle.images} isOpen={imagesEditDialogOpen} 
+        onClose={closeImagesEditDialog} /> : <></>}
+      {userIsAdmin ? <VehicleDialog isOpen={vehicleDialogOpen} onClose={closeVehicleDialog}
+        forUpdate={true} vehicle={vehicle} reloadVehicleCallback={loadVehicle} /> : <></>}
+      <ImageGalleryDialog isOpen={imageGalleryOpen} onClose={closeImageGallery}
+        vehicleImages={vehicle.images} inheritedSelectedImageIndex={selectedImageIndex}/>
       {loading ? <Loading /> : <></>}
       <div className="buttonContainer">
         <Button variant="contained" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large"
@@ -257,9 +235,14 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
           vehicle.status.isSold === false || userIsAdmin ? //admins can view sold vehicles
             <>
               <div className="vehicleHeaderContainer">
-                <Typography fontSize={36} className="title">
-                  {vehicle.brand + " " + vehicle.model}
-                </Typography>
+                <div className="headerDetailsContainer">
+                  <Typography fontSize={36} className="title">
+                    {vehicle.brand + " " + vehicle.model}
+                  </Typography>
+                  <Typography fontSize={36} className="price">
+                    {vehicle.price + "€"}
+                  </Typography>
+                </div>
                 <div className="horizontalDivider" />
               </div>
 

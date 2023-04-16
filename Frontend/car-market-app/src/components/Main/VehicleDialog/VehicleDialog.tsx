@@ -19,7 +19,7 @@ export interface VehicleDialogProps {
   isOpen: boolean,
   onClose: Function,
   forUpdate: boolean,
-  getVehicleCallback: Function | null,  //used to get vehicle details for update
+  vehicle: DetailedVehicleModel | null, //used in update
   reloadVehicleCallback: Function | null, //used to refresh vehicle page after update
 }
 
@@ -38,7 +38,6 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [vehicle, setVehicle] = useState({} as DetailedVehicleModel); //used in update 
   const [brandValue, setBrandValue] = useState("");
   const [modelValue, setModelValue] = useState("");
   const [bodyTypeValue, setBodyTypeValue] = useState("");
@@ -87,28 +86,26 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
   }
 
   useEffect(() => {
-    if (props.forUpdate && props.getVehicleCallback !== null) {
-      var vehicle = props.getVehicleCallback() as DetailedVehicleModel;
-      if (vehicle !== undefined) {
-        setBrandValue(vehicle.brand);
-        setModelValue(vehicle.model);
-        setBodyTypeValue(vehicle.bodyType);
-        setYearValue(vehicle.year);
-        setPriceValue(vehicle.price);
-        if (vehicle.engineSize != null)
-          setEngineSizeValue(vehicle.engineSize);
-        setPowerValue(vehicle.power);
-        setTorqueValue(vehicle.torque);
-        setOdometerValue(vehicle.odometer);
-        setDescriptionValue(vehicle.description);
-        setVehicle(vehicle);
+    if (props.forUpdate && props.vehicle !== null) {
+      if (props.vehicle !== undefined) {
+        setBrandValue(props.vehicle.brand);
+        setModelValue(props.vehicle.model);
+        setBodyTypeValue(props.vehicle.bodyType);
+        setYearValue(props.vehicle.year);
+        setPriceValue(props.vehicle.price);
+        if (props.vehicle.engineSize != null)
+          setEngineSizeValue(props.vehicle.engineSize);
+        setPowerValue(props.vehicle.power);
+        setTorqueValue(props.vehicle.torque);
+        setOdometerValue(props.vehicle.odometer);
+        setDescriptionValue(props.vehicle.description);
 
-        if (vehicle.location !== undefined)
-          setLocationValue(vehicle.location.id);
+        if (props.vehicle.location !== undefined)
+          setLocationValue(props.vehicle.location.id);
 
-        if (vehicle.features !== undefined) {
+        if (props.vehicle.features !== undefined) {
           var features = new Array<string>();
-          vehicle.features.forEach((feature) => {
+          props.vehicle.features.forEach((feature) => {
             features.push(feature.id);
           });
           setFeaturesValue(features);
@@ -204,7 +201,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
       setOdometerErrorText("This field is mandatory!");
       hasError = true;
     }
-    else if (odometerValue <= 0){
+    else if (odometerValue <= 0) {
       setOdometerError(true);
       setOdometerErrorText("This field must be at least 1!");
       hasError = true;
@@ -215,7 +212,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
       setPowerErrorText("This field is mandatory!");
       hasError = true;
     }
-    else if (powerValue <= 0){
+    else if (powerValue <= 0) {
       setPowerError(true);
       setPowerErrorText("This field must be at least 1!");
       hasError = true;
@@ -226,7 +223,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
       setTorqueErrorText("This field is mandatory!");
       hasError = true;
     }
-    else if (torqueValue <= 0){
+    else if (torqueValue <= 0) {
       setTorqueError(true);
       setTorqueErrorText("This field must be at least 1!");
       hasError = true;
@@ -237,13 +234,13 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
       setPriceErrorText("This field is mandatory!");
       hasError = true;
     }
-    else if (priceValue <= 0){
+    else if (priceValue <= 0) {
       setPriceError(true);
       setPriceErrorText("This field must be at least 1!");
       hasError = true;
     }
 
-    if (!Number.isNaN(engineSizeValue) && engineSizeValue <= 0){
+    if (!Number.isNaN(engineSizeValue) && engineSizeValue <= 0) {
       setEngineSizeError(true);
       setEngineSizeErorrText("This field must be at least 0!");
       hasError = true;
@@ -267,8 +264,8 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
       var base64ThumbnailImage = thumbnailValue.name !== "" ? await fileToBase64(compressedThumbnailImage) : "";
     }
     else {  //if no thumbnail was added
-      if (props.forUpdate)
-        base64ThumbnailImage = vehicle.thumbnail;
+      if (props.forUpdate && props.vehicle !== null)
+        base64ThumbnailImage = props.vehicle.thumbnail;
       else
         base64ThumbnailImage = "";
     }
@@ -284,7 +281,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
       }
     }
     else if (props.forUpdate) { //if no images were added
-      base64Images = vehicle.images; //vehicle images are already compressed
+      base64Images = props.vehicle!.images; //vehicle images are already compressed
     }
 
     var vehicleModel: VehicleCreateModel = {
@@ -309,7 +306,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
     };
 
     if (props.forUpdate) {
-      updateVehicle(vehicle.id, vehicleModel)
+      updateVehicle(props.vehicle!.id, vehicleModel)
         .then(async response => {
           if (response.status !== 200) {
             var text = await response.text();
@@ -317,7 +314,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
           }
           else {
             setSuccessMessage("Vehicle successfully updated!");
-            if(props.reloadVehicleCallback !== null)
+            if (props.reloadVehicleCallback !== null)
               props.reloadVehicleCallback(true);
           }
         })
@@ -373,7 +370,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
   }
 
   return (
-    <Dialog open={props.isOpen} onClose={() => { clearMessages(); props.onClose(); }} PaperProps={{ sx: { width: "50em", maxWidth:"50em" } }}>
+    <Dialog open={props.isOpen} onClose={() => { clearMessages(); props.onClose(); }} PaperProps={{ sx: { width: "50em", maxWidth: "50em" } }}>
       {loading ? <Loading /> : <></>}
       <DialogTitle className="formTitle">
         {props.forUpdate ?
@@ -383,36 +380,38 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
         }</DialogTitle>
       <DialogContent>
         <div className="splitDiv">
-          <div>
-            <Button disabled={loading} variant="contained" component="label" className="addImageButton" sx={{ marginRight: ".4em" }}>
-              {props.forUpdate ?
-                "Replace images"
-                :
-                "Add images"
-              }
-              <input type="file" hidden accept={"image/png, image/jpeg"} multiple={true}
-                onChange={(event) => event.target.files !== null ? setImagesValue(Array.from(event.target.files)) : {}} />
-            </Button>
-            <Button disabled={loading} variant="contained" component="label" className="addImageButton">
-              {props.forUpdate ?
-                "Update thumbnail"
-                :
-                "Add thumbnail"
-              }
-              <input type="file" hidden accept={"image/png, image/jpeg"}
-                onChange={(event) => event.target.files !== null ? setThumbnailValue(event.target.files![0]) : {}} />
-            </Button>
-          </div>
+          {
+            !props.forUpdate ?
+              <>
+                <div>
+                  <Button disabled={loading} variant="contained" component="label" className="addImageButton" sx={{ marginRight: ".4em" }}>
+                    Add images
+                    <input type="file" hidden accept={"image/png, image/jpeg"} multiple={true}
+                      onChange={(event) => event.target.files !== null ? setImagesValue(Array.from(event.target.files)) : {}} />
+                  </Button>
+                  <Button disabled={loading} variant="contained" component="label" className="addImageButton">
+                    Add thumbnail
+                    <input type="file" hidden accept={"image/png, image/jpeg"}
+                      onChange={(event) => event.target.files !== null ? setThumbnailValue(event.target.files![0]) : {}} />
+                  </Button>
+                </div>
 
-          <div id="imagesInfoDiv">
-            <div>
-              {imagesValue.length !== 0 ? imagesValue.length + " image(s) uploaded" :
-                props.forUpdate ? "Images not replaced" : "No image uploaded"}
-            </div>
-            <div id="previewImageDiv">
-              <img src={getImage(thumbnailValue)} alt="" id="previewImage" />
-            </div>
-          </div>
+                <div id="imagesInfoDiv">
+                  <div>
+                    {
+                    imagesValue.length !== 0 ? 
+                    imagesValue.length + " image(s) uploaded" 
+                    : "No image uploaded"
+                    }
+                  </div>
+                  <div id="previewImageDiv">
+                    <img src={getImage(thumbnailValue)} alt="" id="previewImage" />
+                  </div>
+                </div>
+              </>
+              :
+              <></>
+          }
         </div>
 
         <div className="splitDiv">
@@ -557,7 +556,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
       <DialogActions>
         <Button disabled={loading} onClick={() => { clearMessages(); props.onClose(); }} variant="contained">Cancel</Button>
         <Button disabled={loading} onClick={sendVehicle} variant="contained">
-          {props.forUpdate? "Update" : "Add"}</Button>
+          {props.forUpdate ? "Update" : "Add"}</Button>
       </DialogActions>
     </Dialog>
   );

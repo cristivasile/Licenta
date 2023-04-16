@@ -8,7 +8,7 @@ import { getUsernames } from '../../../../services/authenticationService';
 
 export interface SellVehicleDialogProps {
     loadVehicleCallback: Function,  //triggers another vehicle fetch
-    vehicleIdCallback: Function,
+    vehicleId: string,
     isOpen: boolean,
     onClose: Function,
 }
@@ -52,7 +52,7 @@ const SellVehicleDialog: FC<SellVehicleDialogProps> = (props: SellVehicleDialogP
 
         //disable buttons
         setLoading(true);
-        sellVehicle(props.vehicleIdCallback(), username, true)
+        sellVehicle(props.vehicleId, username, true)
             .then(async response => {
                 if (response.status !== 200) {
                     setErrorMessage(await response.text());

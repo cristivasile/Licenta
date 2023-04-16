@@ -29,11 +29,14 @@
     flex-direction: column;
     align-items: left;
 
-    .title {
+    .headerDetailsContainer{
       color: $main-color;
       text-align: left;
       margin-top: 0.2em;
       margin-left: 0.2em;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
     }
   }
 

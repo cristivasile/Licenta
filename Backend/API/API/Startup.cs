@@ -169,7 +169,7 @@ namespace API
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
+            _ = app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });

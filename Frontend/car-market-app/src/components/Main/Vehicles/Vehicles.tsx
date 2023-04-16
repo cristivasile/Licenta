@@ -2,7 +2,7 @@ import { Accordion, AccordionDetails, Button, Checkbox, FormControlLabel, MenuIt
 import { FC, useEffect, useState } from 'react';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MenuIcon from '@mui/icons-material/Menu';
-import VehicleDialog, { VehicleDialogProps } from '../VehicleDialog/VehicleDialog';
+import VehicleDialog from '../VehicleDialog/VehicleDialog';
 import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { setLocationsFromJson } from '../../../redux/locationsStore';
@@ -178,11 +178,6 @@ const Vehicles: FC<VehiclesProps> = () => {
     setLocationDialogOpen(false);
   }
 
-  const locationDialogProps = {
-    isOpen: locationDialogOpen,
-    onClose: closeLocationDialog
-  }
-
   function openFeatureDialog() {
     setLoading(true);
 
@@ -210,11 +205,6 @@ const Vehicles: FC<VehiclesProps> = () => {
     setFeatureDialogOpen(false);
   }
 
-  const featureDialogProps = {
-    isOpen: featureDialogOpen,
-    onClose: closeFeatureDialog
-  }
-
   function openBodyTypeDialog() {
     setLoading(true);
 
@@ -240,11 +230,6 @@ const Vehicles: FC<VehiclesProps> = () => {
 
   function closeBodyTypeDialog() {
     setBodyTypeDialogOpen(false);
-  }
-
-  const bodyTypeDialogProps = {
-    isOpen: bodyTypeDialogOpen,
-    onClose: closeBodyTypeDialog
   }
 
   async function openVehicleDialog() {
@@ -287,14 +272,6 @@ const Vehicles: FC<VehiclesProps> = () => {
   function closeVehicleDialog() {
     setVehicleDialogOpen(false);
   }
-
-  const vehicleDialogProps = {
-    isOpen: vehicleDialogOpen,
-    onClose: closeVehicleDialog,
-    forUpdate: false,
-    getVehicleCallback: null,
-    reloadVehicleCallback: null,
-  } as VehicleDialogProps;
 
   function applyFilters() {
     setLoading(true);
@@ -347,10 +324,11 @@ const Vehicles: FC<VehiclesProps> = () => {
 
   return (
     <div className="vehicles">
-      <ManageLocationsDialog {...locationDialogProps} />
-      <ManageFeaturesDialog {...featureDialogProps} />
-      <ManageBodyTypesDialog {...bodyTypeDialogProps} />
-      <VehicleDialog {...vehicleDialogProps} />
+      <ManageLocationsDialog isOpen={locationDialogOpen} onClose={closeLocationDialog} />
+      <ManageFeaturesDialog isOpen={featureDialogOpen} onClose={closeFeatureDialog} />
+      <ManageBodyTypesDialog isOpen={bodyTypeDialogOpen} onClose={closeBodyTypeDialog} />
+      <VehicleDialog isOpen={vehicleDialogOpen} onClose={closeVehicleDialog}
+        forUpdate={false} vehicle={null} reloadVehicleCallback={null}/>
       {loading ? <Loading /> : <></>}
 
       <Accordion>
