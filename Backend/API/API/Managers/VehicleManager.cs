@@ -2,6 +2,7 @@
 using API.Helpers;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
+using API.Migrations;
 using API.Models.Input;
 using API.Models.Return;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace API.Managers
 {
@@ -395,7 +397,6 @@ namespace API.Managers
                 }
             }
 
-
             currentVehicle.Brand = updatedVehicle.Brand;
             currentVehicle.Model = updatedVehicle.Model;
             currentVehicle.BodyTypeName = updatedVehicle.BodyType;
@@ -444,7 +445,39 @@ namespace API.Managers
             }
 
             await statusRepository.Update(status);
-        }   
+        }
+
+        public async Task UpdateImages(string id, List<string> updatedImages)
+        {
+            var currentVehicle = await vehicleRepository.GetById(id);
+
+            ///404 not found
+            if (currentVehicle == null)
+                throw new KeyNotFoundException("The vehicle was not found!");
+
+            //check images
+            foreach (var image in updatedImages)
+                if (image.Length > maxImageSize)
+                    throw new Exception("An image is too large!");
+
+            //remove new pictures
+            var images = await pictureRepository.GetByVehicleId(currentVehicle.Id);
+            foreach (var image in images)
+                await pictureRepository.Delete(image);
+
+            //add new pictures
+            List<Picture> newImages = new();
+            foreach (var image in updatedImages)
+                newImages.Add(new()
+                {
+                    Id = Utilities.GetGUID(),
+                    Base64Image = image,
+                    VehicleId = currentVehicle.Id,
+                });
+
+            foreach (var newImage in newImages)
+                await pictureRepository.Create(newImage);
+        }
 
         public async Task Delete(string id)
         {

@@ -86,9 +86,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
             notifyBadResultCode(response.status);
           }
           else {
-            console.log(response);
             var json = await response.json();
-            console.log(json);
             setImagesLoading(false);
 
             if (json !== undefined && json.length !== 0){
@@ -215,12 +213,15 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
   return (
     <div className="ViewVehicle">
-      {userIsAdmin ? <SellVehicleDialog loadVehicleCallback={loadVehicle} vehicleId={vehicle.id} 
-        isOpen={sellDialogOpen} onClose={closeSellDialog} /> : <></>}
+      {userIsAdmin ? <SellVehicleDialog reloadVehicleCallback={loadVehicle} vehicleId={vehicle.id} 
+        isOpen={sellDialogOpen} onClose={closeSellDialog} /> 
+        : <></>}
       {userIsAdmin ? <ImagesEditDialog initialImages={vehicle.images} isOpen={imagesEditDialogOpen} 
-        onClose={closeImagesEditDialog} /> : <></>}
+        onClose={closeImagesEditDialog} reloadVehicleCallback={loadVehicle} vehicleId={vehicle.id}/> 
+        : <></>}
       {userIsAdmin ? <VehicleDialog isOpen={vehicleDialogOpen} onClose={closeVehicleDialog}
-        forUpdate={true} vehicle={vehicle} reloadVehicleCallback={loadVehicle} /> : <></>}
+        forUpdate={true} vehicle={vehicle} reloadVehicleCallback={loadVehicle} /> 
+        : <></>}
       <ImageGalleryDialog isOpen={imageGalleryOpen} onClose={closeImageGallery}
         vehicleImages={vehicle.images} inheritedSelectedImageIndex={selectedImageIndex}/>
       {loading ? <Loading /> : <></>}
@@ -236,10 +237,10 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
             <>
               <div className="vehicleHeaderContainer">
                 <div className="headerDetailsContainer">
-                  <Typography fontSize={36} className="title">
+                  <Typography fontSize={36}>
                     {vehicle.brand + " " + vehicle.model}
                   </Typography>
-                  <Typography fontSize={36} className="price">
+                  <Typography fontSize={36}>
                     {vehicle.price + "€"}
                   </Typography>
                 </div>
@@ -384,7 +385,12 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                   {
                     userIsAdmin ?
                       <>
-                        <Button disabled={loading} variant="contained" onClick={openVehicleDialog} sx={{marginRight: "1em", marginBottom: "1%"}}>
+                        <Button disabled={loading} variant="contained" onClick={openImagesEditDialog} 
+                        sx={{marginRight: "1em", marginBottom: "1%"}}>
+                          Modify images
+                        </Button>
+                        <Button disabled={loading} variant="contained" onClick={openVehicleDialog} 
+                        sx={{marginRight: "1em", marginBottom: "1%"}}>
                           Modify vehicle
                         </Button>
                         {

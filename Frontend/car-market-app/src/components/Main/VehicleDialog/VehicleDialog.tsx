@@ -93,12 +93,13 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
         setBodyTypeValue(props.vehicle.bodyType);
         setYearValue(props.vehicle.year);
         setPriceValue(props.vehicle.price);
-        if (props.vehicle.engineSize != null)
-          setEngineSizeValue(props.vehicle.engineSize);
         setPowerValue(props.vehicle.power);
         setTorqueValue(props.vehicle.torque);
         setOdometerValue(props.vehicle.odometer);
         setDescriptionValue(props.vehicle.description);
+
+        if (props.vehicle.engineSize != null)
+          setEngineSizeValue(props.vehicle.engineSize);
 
         if (props.vehicle.location !== undefined)
           setLocationValue(props.vehicle.location.id);
@@ -380,38 +381,36 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
         }</DialogTitle>
       <DialogContent>
         <div className="splitDiv">
-          {
-            !props.forUpdate ?
-              <>
-                <div>
-                  <Button disabled={loading} variant="contained" component="label" className="addImageButton" sx={{ marginRight: ".4em" }}>
-                    Add images
-                    <input type="file" hidden accept={"image/png, image/jpeg"} multiple={true}
-                      onChange={(event) => event.target.files !== null ? setImagesValue(Array.from(event.target.files)) : {}} />
-                  </Button>
-                  <Button disabled={loading} variant="contained" component="label" className="addImageButton">
-                    Add thumbnail
-                    <input type="file" hidden accept={"image/png, image/jpeg"}
-                      onChange={(event) => event.target.files !== null ? setThumbnailValue(event.target.files![0]) : {}} />
-                  </Button>
-                </div>
+        <div>
+            <Button disabled={loading} variant="contained" component="label" className="addImageButton" sx={{ marginRight: ".4em" }}>
+              {props.forUpdate ?
+                "Replace images"
+                :
+                "Add images"
+              }
+              <input type="file" hidden accept={"image/png, image/jpeg"} multiple={true}
+                onChange={(event) => event.target.files !== null ? setImagesValue(Array.from(event.target.files)) : {}} />
+            </Button>
+            <Button disabled={loading} variant="contained" component="label" className="addImageButton">
+              {props.forUpdate ?
+                "Update thumbnail"
+                :
+                "Add thumbnail"
+              }
+              <input type="file" hidden accept={"image/png, image/jpeg"}
+                onChange={(event) => event.target.files !== null ? setThumbnailValue(event.target.files![0]) : {}} />
+            </Button>
+          </div>
 
-                <div id="imagesInfoDiv">
-                  <div>
-                    {
-                    imagesValue.length !== 0 ? 
-                    imagesValue.length + " image(s) uploaded" 
-                    : "No image uploaded"
-                    }
-                  </div>
-                  <div id="previewImageDiv">
-                    <img src={getImage(thumbnailValue)} alt="" id="previewImage" />
-                  </div>
-                </div>
-              </>
-              :
-              <></>
-          }
+          <div id="imagesInfoDiv">
+            <div>
+              {imagesValue.length !== 0 ? imagesValue.length + " image(s) uploaded" :
+                props.forUpdate ? "Images not replaced" : "No image uploaded"}
+            </div>
+            <div id="previewImageDiv">
+              <img src={getImage(thumbnailValue)} alt="" id="previewImage" />
+            </div>
+          </div>
         </div>
 
         <div className="splitDiv">

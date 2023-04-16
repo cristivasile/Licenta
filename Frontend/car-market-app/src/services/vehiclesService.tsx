@@ -63,6 +63,18 @@ export const updateVehicle = (id: string, updatedVehicle: VehicleCreateModel): P
     return authenticatedFetch(apiUrl + "/api/Vehicle/" + id, requestOptions);
 }
 
+export const updateVehicleImages = (id: string, updatedImages: string[]): Promise<Response> => {
+    const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
+        body: JSON.stringify(
+            updatedImages
+        )
+    };
+
+    return authenticatedFetch(apiUrl + "/api/Vehicle/updateImages/" + id, requestOptions);
+}
+
 export const getVehiclesList = (filters: VehicleFiltersModel): Promise<Response> => {
     var userIsAdmin: boolean = isAdmin(store.getState().user.role as string);
 

@@ -7,7 +7,7 @@ import { notifyBadResultCode, notifyFetchFail } from '../../../../services/toast
 import { getUsernames } from '../../../../services/authenticationService';
 
 export interface SellVehicleDialogProps {
-    loadVehicleCallback: Function,  //triggers another vehicle fetch
+    reloadVehicleCallback: Function,  //triggers another vehicle fetch
     vehicleId: string,
     isOpen: boolean,
     onClose: Function,
@@ -60,7 +60,7 @@ const SellVehicleDialog: FC<SellVehicleDialogProps> = (props: SellVehicleDialogP
                 else {
                     setSuccessMessage("Vehicle successfully marked as sold!");
                     setUsernameValue("");
-                    props.loadVehicleCallback(false);
+                    props.reloadVehicleCallback(false);
                 }
             })
             .catch((err) => {
