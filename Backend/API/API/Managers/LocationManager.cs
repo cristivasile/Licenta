@@ -16,12 +16,23 @@ namespace API.Managers
         private readonly ILocationRepository locationRepository;
         private readonly IVehicleRepository vehicleRepository;
         private readonly IScheduleRepository scheduleRepository;
+        private readonly IAppointmentTypeRepository appointmentTypeRepository;
+
+        private readonly static Dictionary<string, uint> defaultAppointmentTypes = new()
+        {
+            {"Test drive", 60},
+            {"Viewing", 15},
+            {"Financing discussion", 30}
+        };
+
+
         public LocationManager(ILocationRepository locationRepository, IScheduleRepository scheduleRepository, 
-            IVehicleRepository vehicleRepository)
+            IVehicleRepository vehicleRepository, IAppointmentTypeRepository appointmentTypeRepository)
         {
             this.locationRepository = locationRepository;
             this.scheduleRepository = scheduleRepository;
             this.vehicleRepository = vehicleRepository;
+            this.appointmentTypeRepository = appointmentTypeRepository; 
         }
 
         public async Task<string> Create(LocationCreateModel newLocation)
@@ -67,6 +78,18 @@ namespace API.Managers
             foreach(var createdSchedule in newSchedules)
                 await scheduleRepository.Create(createdSchedule);
             
+            //create default appointments
+            foreach(var pair in defaultAppointmentTypes) { 
+                var newAppointmentType = new AppointmentType() { 
+                    Id = Utilities.GetGUID(),
+                    LocationId = locationId,
+                    Duration = pair.Value,
+                    Name = pair.Key,
+                };
+
+                await appointmentTypeRepository.Create(newAppointmentType);
+            }
+
             return locationId;
         }
 
@@ -81,6 +104,9 @@ namespace API.Managers
 
             if (vehiclesList.Count > 0)
                 throw new Exception($"Location has {vehiclesList.Count} vehicle(s)!");
+
+            //TODO - delete appointment types
+            //TODO - delete appointments
 
             await locationRepository.Delete(location);
         }
