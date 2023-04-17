@@ -3,6 +3,7 @@ using API.Entities;
 using API.Interfaces.Repositories;
 using API.Specifications.LocationSpecifications;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Repositories
@@ -12,6 +13,15 @@ namespace API.Repositories
         public LocationRepository(AppDbContext context) : base(context)
         {
             entitySet = context.Locations;
+        }
+
+        public override async Task<List<Location>> GetAll()
+        {
+            if (entitySet == null)
+                throw new System.Exception("The entity set was not initialised!");
+
+            var objects = await entitySet.Include(x => x.Schedules).ToListAsync();
+            return objects;
         }
 
         public async Task<Location> GetByCityAndAddress(string city, string address)

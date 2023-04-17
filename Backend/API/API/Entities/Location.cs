@@ -16,6 +16,6 @@ namespace API.Entities
         /// All vehicles for sale at this location;
         /// </summary>
         public virtual ICollection<Vehicle> OwnedVehicles { get; set; }
-        
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

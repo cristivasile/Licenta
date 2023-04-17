@@ -1,5 +1,6 @@
 ﻿using API.Entities;
 using API.Models.Input;
+using System.Collections.Generic;
 
 namespace API.Models.Return
 {
@@ -11,6 +12,18 @@ namespace API.Models.Return
             Id = ob.Id;
             City = ob.City;
             Address = ob.Address;
+
+            List<ScheduleModel> schedules = new();
+
+            foreach (var schedule in ob.Schedules)
+                schedules.Add(new ScheduleModel()
+                {
+                    Weekday = schedule.Weekday,
+                    OpeningTime = schedule.OpeningTime.ToString(),
+                    ClosingTime = schedule.ClosingTime.ToString(),
+                });
+
+            Schedules = schedules;
         }
     }
 }

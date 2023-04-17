@@ -4,13 +4,9 @@ using System.Threading.Tasks;
 
 namespace API.Interfaces.Repositories
 {
-    public interface IThumbnailRepostory
+    public interface IThumbnailRepostory : IRepositoryBase<Thumbnail>
     {
-        Task<List<Thumbnail>> GetAll();
         Task<Thumbnail> GetById(string id);
         Task<Thumbnail> GetByVehicleId(string id);
-        Task Create(Thumbnail newLocation);
-        Task Update(Thumbnail updatedLocation);
-        Task Delete(Thumbnail toDelete);
     }
 }

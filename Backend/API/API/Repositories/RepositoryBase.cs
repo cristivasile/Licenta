@@ -1,5 +1,6 @@
 ﻿using API.Context;
 using API.Entities;
+using API.Interfaces.Repositories;
 using API.Specifications;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace API.Repositories
 {
-    public abstract class RepositoryBase<EntityType> where EntityType: Entity
+    public abstract class RepositoryBase<EntityType> : IRepositoryBase<EntityType> where EntityType: Entity
     {
         protected readonly AppDbContext context;
         protected DbSet<EntityType> entitySet = null;

@@ -4,13 +4,9 @@ using System.Threading.Tasks;
 
 namespace API.Interfaces.Repositories
 {
-    public interface ILocationRepository
+    public interface ILocationRepository : IRepositoryBase<Location>
     {
-        Task<List<Location>> GetAll();
         Task<Location> GetById(string id);
         Task<Location> GetByCityAndAddress(string city, string address);
-        Task Create(Location newLocation);
-        Task Update(Location updatedLocation);
-        Task Delete(Location toDelete);
     }
 }

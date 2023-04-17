@@ -1,12 +1,13 @@
 import { apiUrl } from "../constants";
+import { ScheduleModel } from "../models/ScheduleModel";
 import { store } from "../redux/store";
 import { authenticatedFetch } from "./fetchInterceptor";
 
-export const postLocation = (cityValue: string, addressValue: string): Promise<Response> => {
+export const postLocation = (cityValue: string, addressValue: string, schedules: ScheduleModel[]): Promise<Response> => {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
-    body: JSON.stringify({ city: cityValue, address: addressValue })
+    body: JSON.stringify({ city: cityValue, address: addressValue, schedules: schedules })
   };
   return authenticatedFetch(apiUrl + "/api/Location", requestOptions);
 }
@@ -27,11 +28,11 @@ export const removeLocation = (id: string): Promise<Response> => {
   return authenticatedFetch(apiUrl + "/api/Location/" + id, requestOptions);
 }
 
-export const updateLocation = (id: string, updatedCity: string, updatedAddress: string): Promise<Response> => {
+export const updateLocation = (id: string, updatedCity: string, updatedAddress: string, schedules: ScheduleModel[]): Promise<Response> => {
   const requestOptions = {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
-    body: JSON.stringify({ city: updatedCity, address: updatedAddress })
+    body: JSON.stringify({ city: updatedCity, address: updatedAddress, schedules: schedules })
   };
   return authenticatedFetch(apiUrl + "/api/Location/" + id, requestOptions);
 }

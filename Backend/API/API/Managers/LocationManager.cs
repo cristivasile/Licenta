@@ -15,9 +15,12 @@ namespace API.Managers
     {
         private readonly ILocationRepository locationRepository;
         private readonly IVehicleRepository vehicleRepository;
-        public LocationManager(ILocationRepository locationRepository, IVehicleRepository vehicleRepository)
+        private readonly IScheduleRepository scheduleRepository;
+        public LocationManager(ILocationRepository locationRepository, IScheduleRepository scheduleRepository, 
+            IVehicleRepository vehicleRepository)
         {
             this.locationRepository = locationRepository;
+            this.scheduleRepository = scheduleRepository;
             this.vehicleRepository = vehicleRepository;
         }
 
@@ -28,17 +31,43 @@ namespace API.Managers
             if (location != null)
                 throw new Exception("Location already exists!");
 
-            string id = Utilities.GetGUID();
+            string locationId = Utilities.GetGUID();
 
             var createdLocation = new Location()
             {
-                Id = id,
+                Id = locationId,
                 City = newLocation.City,
                 Address = newLocation.Address,
             };
 
+            //check schedules
+            List<Schedule> newSchedules = new();
+            foreach (var newSchedule in newLocation.Schedules)
+            {
+                try
+                {
+                    newSchedules.Add(new Schedule()
+                    {
+                        LocationId = locationId,
+                        Weekday = newSchedule.Weekday,
+                        OpeningTime = TimeSpan.Parse(newSchedule.OpeningTime),
+                        ClosingTime = TimeSpan.Parse(newSchedule.ClosingTime)
+                    });
+                }
+                catch
+                {
+                    throw new Exception("Invalid TimeSpan format!");
+                }
+            }
+
+            //create location
             await locationRepository.Create(createdLocation);
-            return id;
+            
+            //create schedules
+            foreach(var createdSchedule in newSchedules)
+                await scheduleRepository.Create(createdSchedule);
+            
+            return locationId;
         }
 
         public async Task Delete(string id)
@@ -74,7 +103,39 @@ namespace API.Managers
             location.City = updatedLocation.City;
             location.Address = updatedLocation.Address;
 
+            //check schedules
+            List<Schedule> updatedSchedules = new();
+            foreach (var newSchedule in updatedLocation.Schedules)
+            {
+                try
+                {
+                    updatedSchedules.Add(new Schedule()
+                    {
+                        LocationId = id,
+                        Weekday = newSchedule.Weekday,
+                        OpeningTime = TimeSpan.Parse(newSchedule.OpeningTime),
+                        ClosingTime = TimeSpan.Parse(newSchedule.ClosingTime)
+                    });
+                }
+                catch
+                {
+                    throw new Exception("Invalid TimeSpan format!");
+                }
+            }
+
+            //update location
             await locationRepository.Update(location);
+
+            //remove old schedules
+            var oldSchedules = await scheduleRepository.GetByLocationId(id);
+            foreach(var oldSchedule in oldSchedules)
+                await scheduleRepository.Delete(oldSchedule);
+
+            //add updated schedules
+            foreach(var updatedSchedule in updatedSchedules)
+                await scheduleRepository.Create(updatedSchedule);
+
+
         }
 
     }

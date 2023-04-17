@@ -97,6 +97,7 @@ namespace API
 
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<IThumbnailRepostory, ThumbnailRepository>();
+            services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
             services.AddDbContext<AppDbContext>(options => options
                                                             .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))

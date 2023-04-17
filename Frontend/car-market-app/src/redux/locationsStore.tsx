@@ -21,6 +21,7 @@ export const locationsSlice = createSlice({
                 if (state.locations[i].id === action.payload.id) {
                     state.locations[i].address = action.payload.updatedAddress;
                     state.locations[i].city = action.payload.updatedCity;
+                    state.locations[i].schedules = action.payload.schedules;
                 }
         }
     },

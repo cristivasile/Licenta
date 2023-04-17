@@ -4,11 +4,7 @@ using System.Threading.Tasks;
 
 namespace API.Interfaces.Repositories
 {
-    public interface IStatusRepository
+    public interface IStatusRepository : IRepositoryBase<Status>
     {
-        Task<List<Status>> GetAll();
-        Task Create(Status newBodyType);
-        Task Update(Status updatedBodyType);
-        Task Delete(Status toDelete);
     }
 }

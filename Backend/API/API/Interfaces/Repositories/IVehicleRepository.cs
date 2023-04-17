@@ -5,17 +5,13 @@ using System.Threading.Tasks;
 
 namespace API.Interfaces.Repositories
 {
-    public interface IVehicleRepository
+    public interface IVehicleRepository : IRepositoryBase<Vehicle>
     {
         Task<int> GetNumberOfVehicles();
         Task<int> GetNumberOfAvailableVehicles();
-        Task<List<Vehicle>> GetAll();
         Task<List<Vehicle>> GetAvailable();
         Task<List<Vehicle>> GetAvailable(VehicleFiltersModel filters);
         Task<List<Vehicle>> GetByLocationId(string locationId);
         Task<Vehicle> GetById(string id);
-        Task Create(Vehicle newVehicle);
-        Task Update(Vehicle updatedVehicle);
-        Task Delete(Vehicle toDelete);
     }
 }

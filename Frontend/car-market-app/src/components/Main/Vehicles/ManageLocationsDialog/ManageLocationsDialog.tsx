@@ -1,10 +1,13 @@
-import { Box, Button, Dialog, DialogActions, DialogTitle, MenuItem, Tab, Tabs, TextField } from '@mui/material';
+import { Box, Button, Checkbox, Dialog, DialogActions, DialogTitle, FormControlLabel, MenuItem, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { FC, useState } from 'react';
 import { generateErrorMessage, generateSuccessMessage, TabPanel } from '../../../../common';
 import { useAppDispatch, useAppSelector } from '../../../../hooks';
 import { addLocation, removeLocationById, updateLocationById } from '../../../../redux/locationsStore';
 import { postLocation, removeLocation, updateLocation } from '../../../../services/locationsService';
 import Loading from '../../../Loading/Loading';
+import { ScheduleModel } from '../../../../models/ScheduleModel';
+import { WeekdayEnum } from '../../../../models/WeekdayEnum';
+import { LocationModel } from '../../../../models/LocationModel';
 
 interface ManageLocationsDialogProps {
   isOpen: boolean,
@@ -28,6 +31,41 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
   const [locationError, setLocationError] = useState(false);
   const [locationErrorText, setLocationErrorText] = useState("");
 
+  const [mondayOpen, setMondayOpen] = useState(true);
+  const [mondayOpenTime, setMondayOpenTime] = useState("09:00");
+  const [mondayCloseTime, setMondayCloseTime] = useState("18:00");
+  const [mondayError, setMondayError] = useState(false);
+
+  const [tuesdayOpen, setTuesdayOpen] = useState(true);
+  const [tuesdayOpenTime, setTuesdayOpenTime] = useState("09:00");
+  const [tuesdayCloseTime, setTuesdayCloseTime] = useState("18:00");
+  const [tuesdayError, setTuesdayError] = useState(false);
+
+  const [wednesdayOpen, setWednesdayOpen] = useState(true);
+  const [wednesdayOpenTime, setWednesdayOpenTime] = useState("09:00");
+  const [wednesdayCloseTime, setWednesdayCloseTime] = useState("18:00");
+  const [wednesdayError, setWednesdayError] = useState(false);
+
+  const [thursdayOpen, setThursdayOpen] = useState(true);
+  const [thursdayOpenTime, setThursdayOpenTime] = useState("09:00");
+  const [thursdayCloseTime, setThursdayCloseTime] = useState("18:00");
+  const [thursdayError, setThursdayError] = useState(false);
+
+  const [fridayOpen, setFridayOpen] = useState(true);
+  const [fridayOpenTime, setFridayOpenTime] = useState("09:00");
+  const [fridayCloseTime, setFridayCloseTime] = useState("18:00");
+  const [fridayError, setFridayError] = useState(false);
+
+  const [saturdayOpen, setSaturdayOpen] = useState(false);
+  const [saturdayOpenTime, setSaturdayOpenTime] = useState("09:00");
+  const [saturdayCloseTime, setSaturdayCloseTime] = useState("18:00");
+  const [saturdayError, setSaturdayError] = useState(false);
+
+  const [sundayOpen, setSundayOpen] = useState(false);
+  const [sundayOpenTime, setSundayOpenTime] = useState("09:00");
+  const [sundayCloseTime, setSundayCloseTime] = useState("18:00");
+  const [sundayError, setSundayError] = useState(false);
+
   const locations = useAppSelector((state) => state.location.locations);
   const dispatch = useAppDispatch();
 
@@ -41,12 +79,120 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
     setAddressErrorText("");
     setLocationError(false);
     setLocationErrorText("");
+
+    setMondayError(false);
+    setTuesdayError(false);
+    setWednesdayError(false);
+    setThursdayError(false);
+    setFridayError(false);
+    setSaturdayError(false);
+    setSundayError(false);
+  }
+
+  function validateTimes(): boolean {
+    var hasError = false;
+
+    if (mondayOpen && mondayOpenTime > mondayCloseTime) {
+      setMondayError(true)
+      hasError = true;
+    }
+
+    if (tuesdayOpen && tuesdayOpenTime > tuesdayCloseTime) {
+      setTuesdayError(true)
+      hasError = true;
+    }
+
+    if (wednesdayOpen && wednesdayOpenTime > wednesdayCloseTime) {
+      setWednesdayError(true)
+      hasError = true;
+    }
+
+    if (thursdayOpen && thursdayOpenTime > thursdayCloseTime) {
+      setThursdayError(true)
+      hasError = true;
+    }
+
+    if (fridayOpen && fridayOpenTime > fridayCloseTime) {
+      setFridayError(true)
+      hasError = true;
+    }
+
+    if (saturdayOpen && saturdayOpenTime > saturdayCloseTime) {
+      setSaturdayError(true)
+      hasError = true;
+    }
+
+    if (sundayOpen && sundayOpenTime > sundayCloseTime) {
+      setSundayError(true)
+      hasError = true;
+    }
+
+    return hasError;
+  }
+
+  function getSchedules(): ScheduleModel[] {
+
+    var result = new Array<ScheduleModel>();
+
+    if (mondayOpen)
+      result.push({
+        weekday: WeekdayEnum.Monday,
+        openingTime: mondayOpenTime,
+        closingTime: mondayCloseTime,
+      } as ScheduleModel);
+
+    if (tuesdayOpen)
+      result.push({
+        weekday: WeekdayEnum.Tuesday,
+        openingTime: tuesdayOpenTime,
+        closingTime: tuesdayCloseTime,
+      } as ScheduleModel);
+
+    if (wednesdayOpen)
+      result.push({
+        weekday: WeekdayEnum.Wednesday,
+        openingTime: wednesdayOpenTime,
+        closingTime: wednesdayCloseTime,
+      } as ScheduleModel);
+
+    if (thursdayOpen)
+      result.push({
+        weekday: WeekdayEnum.Thursday,
+        openingTime: thursdayOpenTime,
+        closingTime: thursdayCloseTime,
+      } as ScheduleModel);
+
+    if (fridayOpen)
+      result.push({
+        weekday: WeekdayEnum.Friday,
+        openingTime: fridayOpenTime,
+        closingTime: fridayCloseTime,
+      } as ScheduleModel);
+
+    if (saturdayOpen)
+      result.push({
+        weekday: WeekdayEnum.Saturday,
+        openingTime: saturdayOpenTime,
+        closingTime: saturdayCloseTime,
+      } as ScheduleModel);
+
+    if (sundayOpen)
+      result.push({
+        weekday: WeekdayEnum.Sunday,
+        openingTime: sundayOpenTime,
+        closingTime: sundayCloseTime,
+      } as ScheduleModel);
+
+    return result;
   }
 
   function addLocationClick() {
     clearErrors();
 
-    var hasError = false;
+    var hasError = validateTimes();
+    if (hasError)
+      setErrorMessage("Opening time must be before closing time!")
+
     if (cityValue.trim() === "") {
       hasError = true;
       setCityError(true);
@@ -62,9 +208,10 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
     if (hasError)
       return;
 
-    setLoading(true);
+    var schedules = getSchedules();
 
-    postLocation(cityValue, addressValue)
+    setLoading(true);
+    postLocation(cityValue, addressValue, schedules)
       .then(async response => {
         var responseText = await response.text();
         if (response.status !== 200) {
@@ -72,7 +219,7 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
         }
         else {
           //add the location to the list manually to avoid an unnecessary fetch
-          dispatch(addLocation({ id: responseText, city: cityValue, address: addressValue }));
+          dispatch(addLocation({ id: responseText, city: cityValue, address: addressValue, schedules: schedules }));
           setSuccessMessage("Location successfully added!");
         }
       })
@@ -130,7 +277,10 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
   function updateLocationClick() {
     clearErrors();
 
-    var hasError = false;
+    var hasError = validateTimes();
+    if (hasError)
+      setErrorMessage("Opening time must be before closing time!")
+
     if (cityValue.trim() === "") {
       hasError = true;
       setCityError(true);
@@ -153,8 +303,10 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
     if (hasError)
       return;
 
+    var schedules = getSchedules();
+
     setLoading(true);
-    updateLocation(locationValue, cityValue, addressValue)
+    updateLocation(locationValue, cityValue, addressValue, schedules)
       .then(async response => {
         var responseText = await response.text();
         if (response.status !== 200) {
@@ -162,7 +314,7 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
         }
         else {
           //update the location manually to avoid an unnecessary fetch
-          dispatch(updateLocationById({ id: locationValue, updatedCity: cityValue, updatedAddress: addressValue }));
+          dispatch(updateLocationById({ id: locationValue, updatedCity: cityValue, updatedAddress: addressValue, schedules: schedules }));
           setSuccessMessage("Location successfully updated!");
         }
       })
@@ -180,8 +332,68 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
       });
   }
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    clearErrors();
     setSelectedTab(newValue);
+  };
+
+  const handleLocationUpdateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    var location = locations.find(x => x.id === event.target.value) as LocationModel;
+
+    clearErrors();
+    setAddressValue(location.address)
+    setCityValue(location.city)
+
+    setMondayOpen(false);
+    setTuesdayOpen(false);
+    setWednesdayOpen(false);
+    setThursdayOpen(false);
+    setFridayOpen(false);
+    setSaturdayOpen(false);
+    setSundayOpen(false);
+
+    for(var schedule of location.schedules)
+      switch(schedule.weekday) {
+        case WeekdayEnum.Monday:
+          setMondayOpen(true);
+          setMondayOpenTime(schedule.openingTime);
+          setMondayCloseTime(schedule.closingTime);
+          break;
+        case WeekdayEnum.Tuesday:
+          setTuesdayOpen(true);
+          setTuesdayOpenTime(schedule.openingTime);
+          setTuesdayCloseTime(schedule.closingTime);
+          break;
+        case WeekdayEnum.Wednesday:
+          setWednesdayOpen(true);
+          setWednesdayOpenTime(schedule.openingTime);
+          setWednesdayCloseTime(schedule.closingTime);
+          break;
+        case WeekdayEnum.Thursday:
+          setThursdayOpen(true);
+          setThursdayOpenTime(schedule.openingTime);
+          setThursdayCloseTime(schedule.closingTime);
+          break;
+        case WeekdayEnum.Friday:
+          setFridayOpen(true);
+          setFridayOpenTime(schedule.openingTime);
+          setFridayCloseTime(schedule.closingTime);
+          break;
+        case WeekdayEnum.Saturday:
+          setSaturdayOpen(true);
+          setSaturdayOpenTime(schedule.openingTime);
+          setSaturdayCloseTime(schedule.closingTime);
+          break;
+        case WeekdayEnum.Sunday:
+          setSaturdayOpen(true);
+          setSundayOpenTime(schedule.openingTime);
+          setSaturdayCloseTime(schedule.closingTime);
+          break;
+        default:
+          break;
+      }
+
+    setLocationValue(event.target.value);
   };
 
   return (
@@ -201,19 +413,227 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
           <TextField value={cityValue} label="City" margin="dense" fullWidth autoFocus
             onChange={(event) => setCityValue(event.target.value)}
             error={cityError} helperText={cityErrorText}
-            type="text" name="address" className="halfSplitDialogField"/>
+            type="text" name="address" className="halfSplitDialogField" />
           <TextField value={addressValue} label="Address" margin="dense" fullWidth autoFocus
             error={addressError} helperText={addressErrorText}
             onChange={(event) => setAddressValue(event.target.value)}
-            type="text" name="address" className="halfSplitDialogField"/>
+            type="text" name="address" className="halfSplitDialogField" />
         </div>
+
+        <Typography>
+          Schedule
+        </Typography>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={mondayOpen} onChange={(event) => setMondayOpen(event.target.checked)} />}
+            label="Monday"
+          />
+          <div>
+            {mondayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={mondayOpenTime}
+                  error={mondayError}
+                  onChange={(event) => setMondayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={mondayCloseTime}
+                  error={mondayError}
+                  onChange={(event) => setMondayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={tuesdayOpen} onChange={(event) => setTuesdayOpen(event.target.checked)} />}
+            label="Tuesday"
+          />
+          <div>
+            {tuesdayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={tuesdayOpenTime}
+                  error={tuesdayError}
+                  onChange={(event) => setTuesdayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={tuesdayCloseTime}
+                  error={tuesdayError}
+                  onChange={(event) => setTuesdayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={wednesdayOpen} onChange={(event) => setWednesdayOpen(event.target.checked)} />}
+            label="Wednesday"
+          />
+          <div>
+            {wednesdayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={wednesdayOpenTime}
+                  error={wednesdayError}
+                  onChange={(event) => setWednesdayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={wednesdayCloseTime}
+                  error={wednesdayError}
+                  onChange={(event) => setWednesdayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={thursdayOpen} onChange={(event) => setThursdayOpen(event.target.checked)} />}
+            label="Thursday"
+          />
+          <div>
+            {thursdayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={thursdayOpenTime}
+                  error={thursdayError}
+                  onChange={(event) => setThursdayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={thursdayCloseTime}
+                  error={thursdayError}
+                  onChange={(event) => setThursdayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={fridayOpen} onChange={(event) => setFridayOpen(event.target.checked)} />}
+            label="Friday"
+          />
+          <div>
+            {fridayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={fridayOpenTime}
+                  error={fridayError}
+                  onChange={(event) => setFridayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={fridayCloseTime}
+                  error={fridayError}
+                  onChange={(event) => setFridayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={saturdayOpen} onChange={(event) => setSaturdayOpen(event.target.checked)} />}
+            label="Saturday"
+          />
+          <div>
+            {saturdayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={saturdayOpenTime}
+                  error={saturdayError}
+                  onChange={(event) => setSaturdayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={saturdayCloseTime}
+                  error={saturdayError}
+                  onChange={(event) => setSaturdayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={sundayOpen} onChange={(event) => setSundayOpen(event.target.checked)} />}
+            label="Sunday"
+          />
+          <div>
+            {sundayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={sundayOpenTime}
+                  error={sundayError}
+                  onChange={(event) => setSundayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={sundayCloseTime}
+                  error={sundayError}
+                  onChange={(event) => setSundayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
         <div className="rightDiv" style={{ marginTop: 20 }}>
           <Button disabled={loading} onClick={addLocationClick} variant="contained" >Add</Button>
         </div>
       </TabPanel>
       <TabPanel value={selectedTab} index={1}>
         <TextField value={locationValue} label="Select a location to modify" margin="dense" fullWidth autoFocus select
-          onChange={(event) => setLocationValue(event.target.value)}
+          onChange={handleLocationUpdateChange}
           error={locationError} helperText={locationErrorText}
           name="location">
           {locations.map((location) => (
@@ -226,12 +646,220 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
           <TextField value={cityValue} label="City" margin="dense" fullWidth autoFocus
             onChange={(event) => setCityValue(event.target.value)}
             error={cityError} helperText={cityErrorText}
-            type="text" name="address" className="halfSplitDialogField"/>
+            type="text" name="address" className="halfSplitDialogField" />
           <TextField value={addressValue} label="Address" margin="dense" fullWidth autoFocus
             error={addressError} helperText={addressErrorText}
             onChange={(event) => setAddressValue(event.target.value)}
-            type="text" name="address" className="halfSplitDialogField"/>
+            type="text" name="address" className="halfSplitDialogField" />
         </div>
+
+        <Typography>
+          Schedule
+        </Typography>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={mondayOpen} onChange={(event) => setMondayOpen(event.target.checked)} />}
+            label="Monday"
+          />
+          <div>
+            {mondayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={mondayOpenTime}
+                  error={mondayError}
+                  onChange={(event) => setMondayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={mondayCloseTime}
+                  error={mondayError}
+                  onChange={(event) => setMondayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={tuesdayOpen} onChange={(event) => setTuesdayOpen(event.target.checked)} />}
+            label="Tuesday"
+          />
+          <div>
+            {tuesdayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={tuesdayOpenTime}
+                  error={tuesdayError}
+                  onChange={(event) => setTuesdayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={tuesdayCloseTime}
+                  error={tuesdayError}
+                  onChange={(event) => setTuesdayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={wednesdayOpen} onChange={(event) => setWednesdayOpen(event.target.checked)} />}
+            label="Wednesday"
+          />
+          <div>
+            {wednesdayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={wednesdayOpenTime}
+                  error={wednesdayError}
+                  onChange={(event) => setWednesdayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={wednesdayCloseTime}
+                  error={wednesdayError}
+                  onChange={(event) => setWednesdayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={thursdayOpen} onChange={(event) => setThursdayOpen(event.target.checked)} />}
+            label="Thursday"
+          />
+          <div>
+            {thursdayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={thursdayOpenTime}
+                  error={thursdayError}
+                  onChange={(event) => setThursdayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={thursdayCloseTime}
+                  error={thursdayError}
+                  onChange={(event) => setThursdayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={fridayOpen} onChange={(event) => setFridayOpen(event.target.checked)} />}
+            label="Friday"
+          />
+          <div>
+            {fridayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={fridayOpenTime}
+                  error={fridayError}
+                  onChange={(event) => setFridayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={fridayCloseTime}
+                  error={fridayError}
+                  onChange={(event) => setFridayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={saturdayOpen} onChange={(event) => setSaturdayOpen(event.target.checked)} />}
+            label="Saturday"
+          />
+          <div>
+            {saturdayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={saturdayOpenTime}
+                  error={saturdayError}
+                  onChange={(event) => setSaturdayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={saturdayCloseTime}
+                  error={saturdayError}
+                  onChange={(event) => setSaturdayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
+        <div className="splitDiv">
+          <FormControlLabel
+            control={<Checkbox checked={sundayOpen} onChange={(event) => setSundayOpen(event.target.checked)} />}
+            label="Sunday"
+          />
+          <div>
+            {sundayOpen ?
+              <>
+                <TextField sx={{ marginRight: "5px" }}
+                  label="Opens at"
+                  type="time"
+                  value={sundayOpenTime}
+                  error={sundayError}
+                  onChange={(event) => setSundayOpenTime(event.target.value)}
+                />
+                <TextField
+                  label="Closes at"
+                  type="time"
+                  value={sundayCloseTime}
+                  error={sundayError}
+                  onChange={(event) => setSundayCloseTime(event.target.value)}
+                />
+              </>
+              :
+              <></>
+            }
+          </div>
+        </div>
+
         <div className="rightDiv" style={{ marginTop: 20 }}>
           <Button disabled={loading} onClick={updateLocationClick} variant="contained">Update</Button>
         </div>

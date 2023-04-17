@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace API.Interfaces.Repositories
 {
-    public interface IVehicleTypeRepository : IRepositoryBase<VehicleType>
+    public interface IScheduleRepository : IRepositoryBase<Schedule>
     {
-        Task<VehicleType> GetById(string brand, string model);
+        Task<List<Schedule>> GetByLocationId(string locationId);
     }
 }

@@ -1,14 +1,18 @@
+import { ScheduleModel, mapJsonToScheduleModels } from "./ScheduleModel";
+
 export interface LocationModel {
     id: string,
     city: string,
-    address: string
+    address: string,
+    schedules: ScheduleModel[]
 };
 
 export function jsonToLocationModel(json:any) : LocationModel {
     return {
         id: json.id,
         city: json.city,
-        address: json.address
+        address: json.address,
+        schedules: mapJsonToScheduleModels(json.schedules)
     } as LocationModel;
 }
 
