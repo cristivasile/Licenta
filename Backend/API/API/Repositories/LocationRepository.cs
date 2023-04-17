@@ -11,9 +11,7 @@ namespace API.Repositories
     public class LocationRepository : RepositoryBase<Location>, ILocationRepository
     {
         public LocationRepository(AppDbContext context) : base(context)
-        {
-            entitySet = context.Locations;
-        }
+            => entitySet = context.Locations;
 
         public override async Task<List<Location>> GetAll()
         {

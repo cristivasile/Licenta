@@ -17,5 +17,6 @@ namespace API.Entities
         /// </summary>
         public virtual ICollection<Vehicle> OwnedVehicles { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
+        public virtual ICollection<AppointmentType> AppointmentTypes { get; set; }
     }
 }

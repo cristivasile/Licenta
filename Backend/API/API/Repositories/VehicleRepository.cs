@@ -13,9 +13,7 @@ namespace API.Repositories
     public class VehicleRepository : RepositoryBase<Vehicle>, IVehicleRepository
     {
         public VehicleRepository(AppDbContext context) : base(context)
-        {
-            entitySet = context.Vehicles;
-        }
+            => entitySet = context.Vehicles;
 
         public override async Task<List<Vehicle>> GetAll()
         {

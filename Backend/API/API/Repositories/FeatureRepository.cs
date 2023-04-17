@@ -10,9 +10,7 @@ namespace API.Repositories
     public class FeatureRepository : RepositoryBase<Feature>, IFeatureRepository
     {
         public FeatureRepository(AppDbContext context) : base(context) 
-        {
-            entitySet = context.Features;
-        }
+            => entitySet = context.Features;
 
         public async Task<Feature> GetById(string id) 
             => await ApplySpecification(new FeatureByIdSpecification(id)).FirstOrDefaultAsync();

@@ -8,8 +8,8 @@ namespace API.Interfaces.Managers
     public interface IFeatureManager
     {
         Task<List<FeatureModel>> GetAll();
-        Task<string> Create(FeatureCreateModel newVehicle);
-        Task Update(string id, FeatureCreateModel updatedVehicle);
+        Task<string> Create(FeatureCreateModel toCreate);
+        Task Update(string id, FeatureCreateModel toUpdate);
         Task Delete(string id);
     }
 }

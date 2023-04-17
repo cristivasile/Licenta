@@ -11,9 +11,7 @@ namespace API.Repositories
     public class ScheduleRepository : RepositoryBase<Schedule>, IScheduleRepository
     {
         public ScheduleRepository(AppDbContext context) : base(context)
-        {
-            entitySet = context.Schedules;
-        }
+            => entitySet = context.Schedules;
 
         public async Task<List<Schedule>> GetByLocationId(string locationId)
             => await ApplySpecification(new ScheduleByLocationIdSpecification(locationId)).ToListAsync();

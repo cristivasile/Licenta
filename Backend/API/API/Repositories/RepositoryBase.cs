@@ -13,10 +13,10 @@ namespace API.Repositories
     {
         protected readonly AppDbContext context;
         protected DbSet<EntityType> entitySet = null;
+
         public RepositoryBase(AppDbContext context)
-        {
-            this.context = context;
-        }
+            => this.context = context;
+
         /// <summary>
         /// Adds a new <Entity> object to the database
         /// </summary>

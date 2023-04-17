@@ -8,9 +8,9 @@ namespace API.Interfaces.Managers
     public interface ILocationManager
     {
         //returns the id after creating
-        Task<string> Create(LocationCreateModel newVehicle);
+        Task<string> Create(LocationCreateModel toCreate);
         Task<List<LocationModel>> GetAll();
-        Task Update(string id, LocationCreateModel updatedVehicle); 
+        Task Update(string id, LocationCreateModel toUpdate); 
         Task Delete(string id);
     }
 }

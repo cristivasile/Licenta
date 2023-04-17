@@ -95,6 +95,9 @@ namespace API
             services.AddScoped<IPictureManager, PictureManager>();
             services.AddScoped<IPictureRepository, PictureRepository>();
 
+            services.AddScoped<IAppointmentTypeManager, AppointmentTypeManager>();
+            services.AddScoped<IAppointmentTypeRepository, AppointmentTypeRepository>();
+
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<IThumbnailRepostory, ThumbnailRepository>();
             services.AddScoped<IScheduleRepository, ScheduleRepository>();

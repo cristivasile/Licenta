@@ -10,9 +10,7 @@ namespace API.Repositories
     public class ThumbnailRepository : RepositoryBase<Thumbnail>, IThumbnailRepostory
     {
         public ThumbnailRepository(AppDbContext context) : base(context)
-        {
-            entitySet = context.Thumbnails;
-        }
+            => entitySet = context.Thumbnails;
 
         public async Task<Thumbnail> GetById(string id)
             => await ApplySpecification(new ThumbnailByIdSpecification(id)).FirstOrDefaultAsync();

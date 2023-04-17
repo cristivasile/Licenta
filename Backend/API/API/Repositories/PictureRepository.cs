@@ -12,9 +12,7 @@ namespace API.Repositories
     public class PictureRepository : RepositoryBase<Picture>, IPictureRepository
     {
         public PictureRepository(AppDbContext context) : base(context)
-        {
-            entitySet = context.Images;
-        }
+            => entitySet = context.Images;
 
         public async Task<Picture> GetById(string id)
            => await ApplySpecification(new PictureByIdSpecification(id)).FirstOrDefaultAsync();
