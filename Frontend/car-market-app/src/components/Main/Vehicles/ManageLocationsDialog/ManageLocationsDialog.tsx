@@ -8,6 +8,9 @@ import Loading from '../../../Loading/Loading';
 import { ScheduleModel } from '../../../../models/ScheduleModel';
 import { WeekdayEnum } from '../../../../models/WeekdayEnum';
 import { LocationModel } from '../../../../models/LocationModel';
+import { AppointmentTypeModel, mapJsonToAppointmentTypeModels } from '../../../../models/AppointmentTypeModel';
+import { deleteAppointmentType, getAppointmentTypesBylocationId, postAppointmentType, putAppointmentType } from '../../../../services/appointmentTypesService';
+import { handleNumericInput } from '../../../../services/utils';
 
 interface ManageLocationsDialogProps {
   isOpen: boolean,
@@ -21,8 +24,14 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
   const [cityValue, setCityValue] = useState("");
   const [addressValue, setAddressValue] = useState("");
   const [locationValue, setLocationValue] = useState("");
+  const [appointmentLocationValue, setAppointmentLocationValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedAppointmentTab, setSelectedAppointmentTab] = useState(0);
+  const [appointmentTypeName, setAppointmentTypeName] = useState("");
+  const [appointmentTypeDuration, setAppointmentTypeDuration] = useState(15);
+  const [currentAppointmentTypes, setCurrentAppointmentTypes] = useState(new Array<AppointmentTypeModel>());
+  const [selectedAppointmentType, setSelectedAppointmentType] = useState("");
 
   const [cityError, setCityError] = useState(false);
   const [cityErrorText, setCityErrorText] = useState("");
@@ -30,6 +39,12 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
   const [addressErrorText, setAddressErrorText] = useState("");
   const [locationError, setLocationError] = useState(false);
   const [locationErrorText, setLocationErrorText] = useState("");
+  const [appointmentTypeNameError, setAppointmentTypeNameError] = useState(false);
+  const [appointmentTypeNameErrorText, setAppointmentTypeNameErrorText] = useState("");
+  const [appointmentTypeDurationError, setAppointmentTypeDurationError] = useState(false);
+  const [appointmentTypeDurationErrorText, setAppointmentTypeDurationErrorText] = useState("");
+  const [selectedAppointmentTypeError, setSelectedAppointmentTypeError] = useState(false);
+  const [selectedAppointmentTypeErrorText, setSelectedAppointmentTypeErrorText] = useState("");
 
   const [mondayOpen, setMondayOpen] = useState(true);
   const [mondayOpenTime, setMondayOpenTime] = useState("09:00");
@@ -79,6 +94,12 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
     setAddressErrorText("");
     setLocationError(false);
     setLocationErrorText("");
+    setAppointmentTypeNameError(false);
+    setAppointmentTypeNameErrorText("");
+    setAppointmentTypeDurationError(false);
+    setAppointmentTypeDurationErrorText("");
+    setSelectedAppointmentTypeError(false);
+    setSelectedAppointmentTypeErrorText("");
 
     setMondayError(false);
     setTuesdayError(false);
@@ -96,32 +117,26 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
       setMondayError(true)
       hasError = true;
     }
-
     if (tuesdayOpen && tuesdayOpenTime > tuesdayCloseTime) {
       setTuesdayError(true)
       hasError = true;
     }
-
     if (wednesdayOpen && wednesdayOpenTime > wednesdayCloseTime) {
       setWednesdayError(true)
       hasError = true;
     }
-
     if (thursdayOpen && thursdayOpenTime > thursdayCloseTime) {
       setThursdayError(true)
       hasError = true;
     }
-
     if (fridayOpen && fridayOpenTime > fridayCloseTime) {
       setFridayError(true)
       hasError = true;
     }
-
     if (saturdayOpen && saturdayOpenTime > saturdayCloseTime) {
       setSaturdayError(true)
       hasError = true;
     }
-
     if (sundayOpen && sundayOpenTime > sundayCloseTime) {
       setSundayError(true)
       hasError = true;
@@ -140,42 +155,36 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
         openingTime: mondayOpenTime,
         closingTime: mondayCloseTime,
       } as ScheduleModel);
-
     if (tuesdayOpen)
       result.push({
         weekday: WeekdayEnum.Tuesday,
         openingTime: tuesdayOpenTime,
         closingTime: tuesdayCloseTime,
       } as ScheduleModel);
-
     if (wednesdayOpen)
       result.push({
         weekday: WeekdayEnum.Wednesday,
         openingTime: wednesdayOpenTime,
         closingTime: wednesdayCloseTime,
       } as ScheduleModel);
-
     if (thursdayOpen)
       result.push({
         weekday: WeekdayEnum.Thursday,
         openingTime: thursdayOpenTime,
         closingTime: thursdayCloseTime,
       } as ScheduleModel);
-
     if (fridayOpen)
       result.push({
         weekday: WeekdayEnum.Friday,
         openingTime: fridayOpenTime,
         closingTime: fridayCloseTime,
       } as ScheduleModel);
-
     if (saturdayOpen)
       result.push({
         weekday: WeekdayEnum.Saturday,
         openingTime: saturdayOpenTime,
         closingTime: saturdayCloseTime,
       } as ScheduleModel);
-
     if (sundayOpen)
       result.push({
         weekday: WeekdayEnum.Sunday,
@@ -332,9 +341,197 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
       });
   }
 
+  function fetchAppointmentTypes(locationId: string) {
+    setLoading(true);
+    getAppointmentTypesBylocationId(locationId)
+      .then(async response => {
+        if (response.status !== 200) {
+          var responseText = await response.text();
+          setErrorMessage(responseText !== "" ? responseText : response.statusText);
+        }
+        else {
+          setCurrentAppointmentTypes(mapJsonToAppointmentTypeModels(await response.json()));
+        }
+      })
+      .catch((err) => {
+        if (err.message === "Failed to fetch") {
+          setErrorMessage("The server is currently unavailable");
+        }
+        else {
+          setErrorMessage("An unexpected error happened");
+          console.log(err.message);
+        }
+      })
+      .then(() => {
+        setLoading(false)
+      });
+  }
+
+  function addAppointmentTypeClick() {
+    clearErrors();
+
+    var hasError = false;
+
+    if (appointmentTypeName.trim() === "") {
+      hasError = true;
+      setAppointmentTypeNameError(true);
+      setAppointmentTypeNameErrorText("Please input a name!");
+    }
+
+    if (Number.isNaN(appointmentTypeDuration) || appointmentTypeDuration <= 0) {
+      hasError = true;
+      setAppointmentTypeDurationError(true);
+      setAppointmentTypeDurationErrorText("Please input a valid duration!");
+    }
+
+    if (appointmentLocationValue === "") {
+      hasError = true;
+      setLocationError(true);
+      setLocationErrorText("Please select a location to update!");
+    }
+
+    if (hasError)
+      return;
+
+    setLoading(true);
+    postAppointmentType(appointmentTypeName, appointmentTypeDuration, appointmentLocationValue)
+      .then(async response => {
+        if (response.status !== 200) {
+          var responseText = await response.text();
+          setErrorMessage(responseText !== "" ? responseText : response.statusText);
+        }
+        else {
+          setSuccessMessage("Appointment type successfully added!");
+          fetchAppointmentTypes(appointmentLocationValue);
+        }
+      })
+      .catch((err) => {
+        if (err.message === "Failed to fetch") {
+          setErrorMessage("The server is currently unavailable");
+        }
+        else {
+          setErrorMessage("An unexpected error happened");
+          console.log(err.message);
+        }
+      })
+      .then(() => {
+        setLoading(false)
+      });
+  }
+
+  function updateAppointmentTypeClick() {
+    clearErrors();
+
+    var hasError = false;
+
+    if (appointmentTypeName.trim() === "") {
+      hasError = true;
+      setAppointmentTypeNameError(true);
+      setAppointmentTypeNameErrorText("Please input a name!");
+    }
+
+    if (Number.isNaN(appointmentTypeDuration) || appointmentTypeDuration <= 0) {
+      hasError = true;
+      setAppointmentTypeDurationError(true);
+      setAppointmentTypeDurationErrorText("Please input a valid duration!");
+    }
+
+    if (appointmentLocationValue.trim() === "") {
+      hasError = true;
+      setLocationError(true);
+      setLocationErrorText("Please select a location to update!");
+    }
+
+    if (selectedAppointmentType.trim() === "") {
+      hasError = true;
+      setSelectedAppointmentTypeError(true);
+      setSelectedAppointmentTypeErrorText("Please select an appointment type!");
+    }
+
+    if (hasError)
+      return;
+
+    setLoading(true);
+    putAppointmentType(selectedAppointmentType, appointmentTypeName, appointmentTypeDuration, appointmentLocationValue)
+      .then(async response => {
+        if (response.status !== 200) {
+          var responseText = await response.text();
+          setErrorMessage(responseText !== "" ? responseText : response.statusText);
+        }
+        else {
+          setSuccessMessage("Appointment type successfully updated!");
+          fetchAppointmentTypes(appointmentLocationValue);
+        }
+      })
+      .catch((err) => {
+        if (err.message === "Failed to fetch") {
+          setErrorMessage("The server is currently unavailable");
+        }
+        else {
+          setErrorMessage("An unexpected error happened");
+          console.log(err.message);
+        }
+      })
+      .then(() => {
+        setLoading(false)
+      });
+  }
+
+  function deleteAppointmentTypeClick() {
+    clearErrors();
+
+    var hasError = false;
+
+    if (appointmentLocationValue.trim() === "") {
+      hasError = true;
+      setLocationError(true);
+      setLocationErrorText("Please select a location to update!");
+    }
+
+    if (selectedAppointmentType.trim() === "") {
+      hasError = true;
+      setSelectedAppointmentTypeError(true);
+      setSelectedAppointmentTypeErrorText("Please select an appointment type!");
+    }
+
+    if (hasError)
+      return;
+
+    setLoading(true);
+    deleteAppointmentType(selectedAppointmentType)
+      .then(async response => {
+        if (response.status !== 200) {
+          var responseText = await response.text();
+          setErrorMessage(responseText !== "" ? responseText : response.statusText);
+        }
+        else {
+          setSuccessMessage("Appointment type successfully deleted!");
+          fetchAppointmentTypes(appointmentLocationValue);
+        }
+      })
+      .catch((err) => {
+        if (err.message === "Failed to fetch") {
+          setErrorMessage("The server is currently unavailable");
+        }
+        else {
+          setErrorMessage("An unexpected error happened");
+          console.log(err.message);
+        }
+      })
+      .then(() => {
+        setLoading(false)
+      });
+  }
+
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     clearErrors();
     setSelectedTab(newValue);
+  };
+
+  const handleAppointmentTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    clearErrors();
+    setSelectedAppointmentType("");
+    setSelectedAppointmentTab(newValue);
   };
 
   const handleLocationUpdateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -352,8 +549,8 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
     setSaturdayOpen(false);
     setSundayOpen(false);
 
-    for(var schedule of location.schedules)
-      switch(schedule.weekday) {
+    for (var schedule of location.schedules)
+      switch (schedule.weekday) {
         case WeekdayEnum.Monday:
           setMondayOpen(true);
           setMondayOpenTime(schedule.openingTime);
@@ -406,6 +603,7 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
           <Tab label="Add" />
           <Tab label="Modify" />
           <Tab label="Remove" />
+          <Tab label="Appointments" />
         </Tabs>
       </Box>
       <TabPanel value={selectedTab} index={0}>
@@ -878,6 +1076,93 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
         <div className="rightDiv" style={{ marginTop: 20 }}>
           <Button disabled={loading} onClick={removeLocationClick} variant="contained">Remove</Button>
         </div>
+      </TabPanel>
+
+      <TabPanel value={selectedTab} index={3}>
+        <Typography sx={{ marginBottom: "1em" }} fontSize={18} color="primary">
+          Manage appointment types
+        </Typography>
+
+        <TextField value={appointmentLocationValue} label="Select a location" margin="dense" fullWidth autoFocus select
+          onChange={(event) => { setAppointmentLocationValue(event.target.value); fetchAppointmentTypes(event.target.value) }}
+          error={locationError} helperText={locationErrorText}
+          name="location">
+          {locations.map((location) => (
+            <MenuItem key={location.city + ", " + location.address} value={location.id}>
+              {location.city + ", " + location.address}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <Box className="selectorBox">
+          <Tabs value={selectedAppointmentTab} onChange={handleAppointmentTabChange}>
+            <Tab label="Add" />
+            <Tab label="Modify" />
+            <Tab label="Remove" />
+          </Tabs>
+        </Box>
+
+        <TabPanel value={selectedAppointmentTab} index={0}>
+          <div className="splitDiv">
+            <TextField value={appointmentTypeName} label="Name" margin="dense" fullWidth autoFocus
+              onChange={(event) => setAppointmentTypeName(event.target.value)}
+              error={appointmentTypeNameError} helperText={appointmentTypeNameErrorText}
+              type="text" name="name" className="halfSplitDialogField" />
+            <TextField value={appointmentTypeDuration} label="Duration" margin="dense" fullWidth autoFocus
+              error={appointmentTypeDurationError} helperText={appointmentTypeDurationErrorText}
+              onChange={(event) => handleNumericInput(event, setAppointmentTypeDuration)}
+              type="number" name="address" className="halfSplitDialogField" />
+          </div>
+
+          <div className="rightDiv" style={{ marginTop: 20 }}>
+            <Button disabled={loading} onClick={addAppointmentTypeClick} variant="contained"> Add </Button>
+          </div>
+        </TabPanel>
+
+        <TabPanel value={selectedAppointmentTab} index={1}>
+          <TextField value={selectedAppointmentType} label="Select an appointment type" margin="dense" fullWidth autoFocus select
+            onChange={(event) => setSelectedAppointmentType(event.target.value)}
+            error={selectedAppointmentTypeError} helperText={selectedAppointmentTypeErrorText}
+            name="appointmnetType">
+            {currentAppointmentTypes.map((appointmentType) => (
+              <MenuItem key={appointmentType.name + " - " + appointmentType.duration} value={appointmentType.id}>
+                {appointmentType.name + " - " + appointmentType.duration}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <div className="splitDiv">
+            <TextField value={appointmentTypeName} label="Name" margin="dense" fullWidth autoFocus
+              onChange={(event) => setAppointmentTypeName(event.target.value)}
+              error={appointmentTypeNameError} helperText={appointmentTypeNameErrorText}
+              type="text" name="name" className="halfSplitDialogField" />
+            <TextField value={appointmentTypeDuration} label="Duration" margin="dense" fullWidth autoFocus
+              error={appointmentTypeDurationError} helperText={appointmentTypeDurationErrorText}
+              onChange={(event) => handleNumericInput(event, setAppointmentTypeDuration)}
+              type="number" name="address" className="halfSplitDialogField" />
+          </div>
+
+          <div className="rightDiv" style={{ marginTop: 20 }}>
+            <Button disabled={loading} onClick={updateAppointmentTypeClick} variant="contained"> Modify </Button>
+          </div>
+        </TabPanel>
+
+        <TabPanel value={selectedAppointmentTab} index={2}>
+          <TextField value={selectedAppointmentType} label="Select an appointment type" margin="dense" fullWidth autoFocus select
+            onChange={(event) => setSelectedAppointmentType(event.target.value)}
+            error={selectedAppointmentTypeError} helperText={selectedAppointmentTypeErrorText}
+            name="appointmnetType">
+            {currentAppointmentTypes.map((appointmentType) => (
+              <MenuItem key={appointmentType.name + " - " + appointmentType.duration} value={appointmentType.id}>
+                {appointmentType.name + " - " + appointmentType.duration}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <div className="rightDiv" style={{ marginTop: 20 }}>
+            <Button disabled={loading} onClick={deleteAppointmentTypeClick} variant="contained"> Delete </Button>
+          </div>
+        </TabPanel>
       </TabPanel>
 
       {generateErrorMessage(errorMessage)}

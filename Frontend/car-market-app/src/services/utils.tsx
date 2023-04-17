@@ -55,3 +55,20 @@ export const getDateTimeDate = (date: Date): string => {
 
   return day + '/' + (monthIndex < 10 ? '0' : '') + (monthIndex + 1) + '/' + year;
 }
+
+export const handleNumericInput = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, 
+                                    setter: React.Dispatch<React.SetStateAction<number>>, isFloat = false): void => {
+  var value = event.target.value;
+  var number;
+
+  if (value !== "") {
+    if (isFloat)
+      number = parseFloat(value);
+    else
+      number = parseInt(value, 10);
+  }
+  else
+    number = NaN;
+
+  setter(number);
+}

@@ -4,7 +4,7 @@ import { generateErrorMessage, generateSuccessMessage } from '../../../common';
 import { useAppSelector } from '../../../hooks';
 import { notifyFetchFail } from '../../../services/toastNotificationsService';
 import { createVehicle, updateVehicle } from '../../../services/vehiclesService';
-import { capitalizeFirstLetter, compressImage, fileToBase64 } from '../../../services/utils';
+import { capitalizeFirstLetter, compressImage, fileToBase64, handleNumericInput } from '../../../services/utils';
 import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
 import { driveTrainsMap, DriveTrainTypeEnum } from '../../../models/DriveTrainTypeEnum';
 import { powerTrainsMap, PowerTrainTypeEnum } from '../../../models/PowerTrainTypeEnum';
@@ -354,21 +354,7 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
       return defaultImage;
   }
 
-  function handleNumericInput(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<number>>, isFloat = false) {
-    var value = event.target.value;
-    var number;
 
-    if (value !== "") {
-      if (isFloat)
-        number = parseFloat(value);
-      else
-        number = parseInt(value, 10);
-    }
-    else
-      number = NaN;
-
-    setter(number);
-  }
 
   return (
     <Dialog open={props.isOpen} onClose={() => { clearMessages(); props.onClose(); }} PaperProps={{ sx: { width: "50em", maxWidth: "50em" } }}>

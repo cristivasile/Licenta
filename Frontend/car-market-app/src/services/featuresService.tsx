@@ -1,6 +1,6 @@
 import { apiUrl } from "../constants";
 import { store } from "../redux/store";
-import { authenticatedFetch } from "./fetchInterceptor";
+import { authenticatedFetch } from "./authenticatedFetch";
 
 export const postFeature = (name: string): Promise<Response> => {
   const requestOptions = {

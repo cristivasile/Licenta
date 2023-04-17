@@ -2,7 +2,7 @@ import { apiUrl } from "../constants";
 import { VehicleCreateModel, VehicleFiltersModel } from "../models/VehicleModel";
 import { store } from "../redux/store";
 import { isAdmin } from "./authenticationService";
-import { authenticatedFetch } from "./fetchInterceptor";
+import { authenticatedFetch } from "./authenticatedFetch";
 
 export const createVehicle = (newVehicle: VehicleCreateModel): Promise<Response> => {
 
@@ -142,7 +142,7 @@ export const getVehicleTypesDictionary = (): Promise<Response> => {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
     };
-    return fetch(apiUrl + "/api/Vehicle/getBrandModelDictionary", requestOptions);
+    return authenticatedFetch(apiUrl + "/api/Vehicle/getBrandModelDictionary", requestOptions);
 }
 
 export const sellVehicle = (id: string, username: string | null, isSold: boolean): Promise<Response> => {

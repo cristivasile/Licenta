@@ -1,6 +1,6 @@
 import { apiUrl } from "../constants";
 import { store } from "../redux/store";
-import { authenticatedFetch } from "./fetchInterceptor";
+import { authenticatedFetch } from "./authenticatedFetch";
 
 export const postBodyType = (name: string): Promise<Response> => {
   const requestOptions = {
@@ -16,7 +16,7 @@ export const getBodyTypes = (): Promise<Response> => {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token }
   };
-  return fetch(apiUrl + "/api/Body-Type/getAll", requestOptions);
+  return authenticatedFetch(apiUrl + "/api/Body-Type/getAll", requestOptions);
 }
 
 export const removeBodyType = (name: string): Promise<Response> => {

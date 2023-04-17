@@ -1,7 +1,7 @@
 import { apiUrl } from "../constants";
 import { ScheduleModel } from "../models/ScheduleModel";
 import { store } from "../redux/store";
-import { authenticatedFetch } from "./fetchInterceptor";
+import { authenticatedFetch } from "./authenticatedFetch";
 
 export const postLocation = (cityValue: string, addressValue: string, schedules: ScheduleModel[]): Promise<Response> => {
   const requestOptions = {
