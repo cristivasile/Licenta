@@ -15,13 +15,14 @@ namespace API.Models.Return
 
             List<ScheduleModel> schedules = new();
 
-            foreach (var schedule in ob.Schedules)
-                schedules.Add(new ScheduleModel()
-                {
-                    Weekday = schedule.Weekday,
-                    OpeningTime = schedule.OpeningTime.ToString(),
-                    ClosingTime = schedule.ClosingTime.ToString(),
-                });
+            if(ob.Schedules != null)
+                foreach (var schedule in ob.Schedules)
+                    schedules.Add(new ScheduleModel()
+                    {
+                        Weekday = schedule.Weekday,
+                        OpeningTime = schedule.OpeningTime.ToString(),
+                        ClosingTime = schedule.ClosingTime.ToString(),
+                    });
 
             Schedules = schedules;
         }

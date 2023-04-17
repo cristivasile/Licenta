@@ -4,6 +4,7 @@ using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Models.Input;
 using API.Models.Return;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,16 +25,22 @@ namespace API.Managers
 
         public async Task Create(AppointmentTypeCreateModel toCreate)
         {
-            var locationCheck = locationRepository.GetById(toCreate.LocationId);
+            var locationCheck = await locationRepository.GetById(toCreate.LocationId);
 
             if (locationCheck == null)
-                throw new System.Exception("Location does not exist!");
+                throw new Exception("Location does not exist!");
+
+            var nameCheck = await appointmentTypeRepository.GetByLocationId(toCreate.LocationId);
+
+            foreach (var type in nameCheck)
+                if (type.Name.ToLower() == toCreate.Name.ToLower())
+                    throw new Exception("An appointment type with this name already exists!");
 
             var appointmentType = new AppointmentType() 
             {
                 Id = Utilities.GetGUID(),
                 LocationId = toCreate.LocationId,
-                Name = toCreate.Name,
+                Name = toCreate.Name.Trim(),
                 Duration = toCreate.Duration,
             };
 
@@ -46,6 +53,8 @@ namespace API.Managers
 
             if (appointmentType == null)
                 throw new KeyNotFoundException();
+
+            //TODO - delete appointments
 
             await appointmentTypeRepository.Delete(appointmentType);
         }
