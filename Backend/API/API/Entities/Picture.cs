@@ -9,7 +9,7 @@ namespace API.Entities
 
         [Required]
         public string Base64Image { get; set; }
-
+        [Required]
         public string VehicleId { get; set; }
         public virtual Vehicle Vehicle { get; set; }
     }

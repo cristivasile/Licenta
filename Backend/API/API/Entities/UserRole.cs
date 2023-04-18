@@ -2,8 +2,5 @@
 
 namespace API.Entities
 {
-    public class UserRole : IdentityUserRole<string>
-    {
-
-    }
+    public class UserRole : IdentityUserRole<string> { }
 }

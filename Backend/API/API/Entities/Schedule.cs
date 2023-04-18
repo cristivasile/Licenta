@@ -19,12 +19,14 @@ namespace API.Entities
     [PrimaryKey(nameof(LocationId), nameof(Weekday))]
     public class Schedule: Entity
     {
+        [Required]
         public WeekdayEnum Weekday { get; set; }
-        public string LocationId { get; set; }
         [Required]
         public TimeSpan OpeningTime { get; set; }
         [Required]
         public TimeSpan ClosingTime { get; set; }
+        [Required]
+        public string LocationId { get; set; }
         public virtual Location Location { get; set; }
     }
 }

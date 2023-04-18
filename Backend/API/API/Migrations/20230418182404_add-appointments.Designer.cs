@@ -4,6 +4,7 @@ using API.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230418182404_add-appointments")]
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
+    partial class addappointments
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,43 +29,37 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Appointment", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AppointmentTypeId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LocationId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("VehicleId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AppointmentTypeId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("LocationId");
 
-                    b.HasIndex("VehicleId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Appointments");
                 });
@@ -143,7 +142,6 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VehicleId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -235,13 +233,13 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VehicleId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("VehicleId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[VehicleId] IS NOT NULL");
 
                     b.ToTable("Thumbnails");
                 });
@@ -351,7 +349,6 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LocationId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Model")
@@ -515,27 +512,21 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Entities.AppointmentType", "AppointmentType")
                         .WithMany("Appointments")
-                        .HasForeignKey("AppointmentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AppointmentTypeId");
+
+                    b.HasOne("API.Entities.Location", "Location")
+                        .WithMany("Appointments")
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("API.Entities.User", "User")
                         .WithMany("Appointments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("API.Entities.Vehicle", "Vehicle")
-                        .WithMany("Appointments")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("AppointmentType");
 
-                    b.Navigation("User");
+                    b.Navigation("Location");
 
-                    b.Navigation("Vehicle");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("API.Entities.AppointmentType", b =>
@@ -553,9 +544,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Entities.Vehicle", "Vehicle")
                         .WithMany("Images")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VehicleId");
 
                     b.Navigation("Vehicle");
                 });
@@ -592,9 +581,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Entities.Vehicle", "Vehicle")
                         .WithOne("Thumbnail")
-                        .HasForeignKey("API.Entities.Thumbnail", "VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("API.Entities.Thumbnail", "VehicleId");
 
                     b.Navigation("Vehicle");
                 });
@@ -624,9 +611,7 @@ namespace API.Migrations
 
                     b.HasOne("API.Entities.Location", "Location")
                         .WithMany("OwnedVehicles")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("API.Entities.VehicleType", "VehicleType")
                         .WithMany("Vehicles")
@@ -706,6 +691,8 @@ namespace API.Migrations
                 {
                     b.Navigation("AppointmentTypes");
 
+                    b.Navigation("Appointments");
+
                     b.Navigation("OwnedVehicles");
 
                     b.Navigation("Schedules");
@@ -720,8 +707,6 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Vehicle", b =>
                 {
-                    b.Navigation("Appointments");
-
                     b.Navigation("Images");
 
                     b.Navigation("Status");

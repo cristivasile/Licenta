@@ -38,6 +38,10 @@ namespace API.Entities
     {
         [Key]
         public string Id { get; set; }
+        [Required]
+        public string Brand { get; set; }
+        [Required]
+        public string Model { get; set; }
         public string Description { get; set; }
         [Required]
         public int Odometer { get; set; }
@@ -58,14 +62,13 @@ namespace API.Entities
         public TransmissionEnum TransmissionType { get; set; }
 
         public virtual Status Status { get; set; }
-
-        public string Brand { get; set; }
-        public string Model { get; set; }
         public virtual VehicleType VehicleType { get; set; }
 
+        [Required]
         public string LocationId { get; set; }
         public virtual Location Location { get; set; }
 
+        [Required]
         public string BodyTypeName { get; set; }
         public virtual BodyType BodyType { get; set; }
 
@@ -76,6 +79,7 @@ namespace API.Entities
         /// </summary>
         public virtual ICollection<Feature> Features { get; set; }
         public virtual ICollection<Picture> Images { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
     }
 }
 

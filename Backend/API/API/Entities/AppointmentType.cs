@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Entities
 {
@@ -13,5 +14,6 @@ namespace API.Entities
         [Required]
         public string LocationId { get; set; }
         public virtual Location Location { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
     }
 }

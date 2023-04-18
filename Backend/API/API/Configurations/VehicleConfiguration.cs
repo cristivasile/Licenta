@@ -7,8 +7,6 @@ namespace API.Configurations
     {
         public void Configure(EntityTypeBuilder<Vehicle> builder)
         {
-            builder.HasKey(x => x.Id);
-
             builder.Property(x => x.Price)
                 .HasDefaultValue(0);
 

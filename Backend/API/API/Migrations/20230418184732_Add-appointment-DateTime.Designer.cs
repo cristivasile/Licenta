@@ -4,6 +4,7 @@ using API.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230418184732_Add-appointment-DateTime")]
+    partial class AddappointmentDateTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,8 +27,11 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Appointment", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AppointmentTypeId")
                         .IsRequired()
@@ -42,6 +48,10 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LocationId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -50,17 +60,13 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("VehicleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AppointmentTypeId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("LocationId");
 
-                    b.HasIndex("VehicleId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Appointments");
                 });
@@ -519,23 +525,23 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("API.Entities.Location", "Location")
+                        .WithMany("Appointments")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("API.Entities.User", "User")
                         .WithMany("Appointments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("API.Entities.Vehicle", "Vehicle")
-                        .WithMany("Appointments")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("AppointmentType");
 
-                    b.Navigation("User");
+                    b.Navigation("Location");
 
-                    b.Navigation("Vehicle");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("API.Entities.AppointmentType", b =>
@@ -706,6 +712,8 @@ namespace API.Migrations
                 {
                     b.Navigation("AppointmentTypes");
 
+                    b.Navigation("Appointments");
+
                     b.Navigation("OwnedVehicles");
 
                     b.Navigation("Schedules");
@@ -720,8 +728,6 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Vehicle", b =>
                 {
-                    b.Navigation("Appointments");
-
                     b.Navigation("Images");
 
                     b.Navigation("Status");

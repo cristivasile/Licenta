@@ -14,6 +14,9 @@ namespace API.Repositories
             => entitySet = context.Schedules;
 
         public async Task<List<Schedule>> GetByLocationId(string locationId)
-            => await ApplySpecification(new ScheduleByLocationIdSpecification(locationId)).ToListAsync();
+            => await ApplySpecification(new SchedulesByLocationIdSpecification(locationId)).ToListAsync();
+
+        public async Task<Schedule> GetByLocationIdAndWeekday(string locationId, WeekdayEnum weekday)
+            => await ApplySpecification(new ScheduleByLocationIdAndWeekdaySpecification(locationId, weekday)).FirstOrDefaultAsync();
     }
 }

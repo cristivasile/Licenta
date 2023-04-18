@@ -1126,7 +1126,7 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
             name="appointmnetType">
             {currentAppointmentTypes.map((appointmentType) => (
               <MenuItem key={appointmentType.name + " - " + appointmentType.duration} value={appointmentType.id}>
-                {appointmentType.name + " - " + appointmentType.duration}
+                {appointmentType.name + " - " + appointmentType.duration + " minutes"}
               </MenuItem>
             ))}
           </TextField>
@@ -1154,7 +1154,7 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
             name="appointmnetType">
             {currentAppointmentTypes.map((appointmentType) => (
               <MenuItem key={appointmentType.name + " - " + appointmentType.duration} value={appointmentType.id}>
-                {appointmentType.name + " - " + appointmentType.duration}
+                {appointmentType.name + " - " + appointmentType.duration + " minutes"}
               </MenuItem>
             ))}
           </TextField>

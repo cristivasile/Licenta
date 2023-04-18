@@ -13,7 +13,9 @@ namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20230417163658_add-appointment-types")]
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     partial class addappointmenttypes
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

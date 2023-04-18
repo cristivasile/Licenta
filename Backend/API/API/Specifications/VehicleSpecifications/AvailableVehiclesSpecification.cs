@@ -6,10 +6,10 @@ namespace API.Specifications.VehicleSpecifications
     {
         public AvailableVehiclesSpecification() : base(x => x.Status.IsSold == false)
         {
+            SplitQuery = true;
+
             AddInclude(x => x.Status);
             AddInclude(x => x.Location);
-
-            SplitQuery = true;
         }
     }
 }

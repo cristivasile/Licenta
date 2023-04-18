@@ -19,10 +19,10 @@ namespace API.Context
         public DbSet<Picture> Images { get; set; }
         public DbSet<Thumbnail> Thumbnails { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentType> AppointmentTypes { get; set; }
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
+
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

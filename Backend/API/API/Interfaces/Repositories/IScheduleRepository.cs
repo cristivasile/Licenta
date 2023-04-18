@@ -7,5 +7,6 @@ namespace API.Interfaces.Repositories
     public interface IScheduleRepository : IRepositoryBase<Schedule>
     {
         Task<List<Schedule>> GetByLocationId(string locationId);
+        Task<Schedule> GetByLocationIdAndWeekday(string locationId, WeekdayEnum weekday);
     }
 }
