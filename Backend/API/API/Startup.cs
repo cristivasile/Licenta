@@ -151,7 +151,7 @@ namespace API
                 options.AddPolicy("Admin", policy => policy.RequireRole("Admin")
                 .RequireAuthenticatedUser().AddAuthenticationSchemes("AuthScheme").Build());
 
-                options.AddPolicy("Sysadmin", policy => policy.RequireRole("Sysadmin")
+                options.AddPolicy("Sysadmin", policy => policy.RequireRole("SysAdmin")
                 .RequireAuthenticatedUser().AddAuthenticationSchemes("AuthScheme").Build());
             });
 

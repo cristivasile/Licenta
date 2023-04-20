@@ -16,7 +16,7 @@ import { getFeatures } from '../../../services/featuresService';
 import { getBodyTypes } from '../../../services/bodyTypeService.';
 import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
 import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
-import { isAdmin } from '../../../services/authenticationService';
+import { isAdmin, isSysAdmin } from '../../../services/authenticationService';
 import './Vehicles.scss';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import TuneIcon from '@mui/icons-material/Tune';
@@ -32,6 +32,7 @@ import {
   setMinYearFilter, setModelFilter, setSelectedPage, setSortAscending, setSortTypeFilter, setTransmissionFilter, setVehiclesPerPage
 } from '../../../redux/vehiclesMainFiltersStore';
 import { useNavigate } from 'react-router-dom';
+import AddAdminDialog from './AddAdminDialog/AddAdminDialog';
 
 interface VehiclesProps { }
 
@@ -42,11 +43,13 @@ const Vehicles: FC<VehiclesProps> = () => {
 
   const [loading, setLoading] = useState(false);
   const showAdminCommands = isAdmin(useAppSelector((state) => state.user.role) || "");
+  const showSysadminCommands = isSysAdmin(useAppSelector((state) => state.user.role) || "");
   const isLogged = useAppSelector((state) => state.user.isLogged);
   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
   const [featureDialogOpen, setFeatureDialogOpen] = useState(false);
   const [bodyTypeDialogOpen, setBodyTypeDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
+  const [addAdminDialogOpen, setAddAdminDialogOpen] = useState(false);
 
   //get from redux store in order to keep state after navigating
   const selectedPage = useAppSelector((state) => state.vehiclesMainFiltersStore.selectedPage);
@@ -273,6 +276,14 @@ const Vehicles: FC<VehiclesProps> = () => {
     setVehicleDialogOpen(false);
   }
 
+  function openAdminDialog() {
+    setAddAdminDialogOpen(true);
+  }
+
+  function closeAdminDialog() {
+    setAddAdminDialogOpen(false);
+  }
+
   function applyFilters() {
     setLoading(true);
     fetchVehicles(selectedPage);
@@ -315,8 +326,8 @@ const Vehicles: FC<VehiclesProps> = () => {
     return number;
   }
 
-  function navigateToVehicle(id: string){
-    if(isLogged)
+  function navigateToVehicle(id: string) {
+    if (isLogged)
       navigate("./view/" + id);
     else
       generateToastError("You must be logged in to view vehicle details!");
@@ -324,11 +335,28 @@ const Vehicles: FC<VehiclesProps> = () => {
 
   return (
     <div className="vehicles">
-      <ManageLocationsDialog isOpen={locationDialogOpen} onClose={closeLocationDialog} />
-      <ManageFeaturesDialog isOpen={featureDialogOpen} onClose={closeFeatureDialog} />
-      <ManageBodyTypesDialog isOpen={bodyTypeDialogOpen} onClose={closeBodyTypeDialog} />
-      <VehicleDialog isOpen={vehicleDialogOpen} onClose={closeVehicleDialog}
-        forUpdate={false} vehicle={null} reloadVehicleCallback={null}/>
+      {
+        showAdminCommands ?
+          <>
+            <ManageLocationsDialog isOpen={locationDialogOpen} onClose={closeLocationDialog} />
+            <ManageFeaturesDialog isOpen={featureDialogOpen} onClose={closeFeatureDialog} />
+            <ManageBodyTypesDialog isOpen={bodyTypeDialogOpen} onClose={closeBodyTypeDialog} />
+            <VehicleDialog isOpen={vehicleDialogOpen} onClose={closeVehicleDialog}
+              forUpdate={false} vehicle={null} reloadVehicleCallback={null} />
+            {
+              showSysadminCommands ?
+                <>
+                  <AddAdminDialog isOpen={addAdminDialogOpen} onClose={closeAdminDialog} />
+                </>
+                :
+                <></>
+            }
+          </>
+          :
+          <>
+          </>
+      }
+
       {loading ? <Loading /> : <></>}
 
       <Accordion>
@@ -339,7 +367,7 @@ const Vehicles: FC<VehiclesProps> = () => {
           </Typography>
         </AccordionSummary>
 
-        <AccordionDetails sx={{ maxHeight: "20em", overflowY: "auto"}}>
+        <AccordionDetails sx={{ maxHeight: "20em", overflowY: "auto" }}>
           <div style={{ width: "100%" }}>
             <div className="filtersDiv">
               <TextField value={brandFilter} label="Brand" margin="dense" fullWidth select
@@ -405,7 +433,7 @@ const Vehicles: FC<VehiclesProps> = () => {
               <div className="SortGroup">
                 <TextField value={sortType} label="Sort" margin="dense" fullWidth select
                   onChange={(event) => dispatch(setSortTypeFilter(event.target.value))}
-                  name="sortType" sx={{ width: "12em", marginRight: "1em", marginBottom:".5em" }}>
+                  name="sortType" sx={{ width: "12em", marginRight: "1em", marginBottom: ".5em" }}>
                   {sortTypes.map((type) => (
                     <MenuItem key={type[0]} value={type[1]}>
                       {type[0]}
@@ -439,6 +467,16 @@ const Vehicles: FC<VehiclesProps> = () => {
                 onClick={openLocationDialog}>Manage locations</Button>
               <Button disabled={loading} sx={{ marginTop: ".4em", marginBottom: ".4em" }} variant="contained" startIcon={<MenuIcon />}
                 onClick={openBodyTypeDialog}>Manage body types</Button>
+              {
+                showSysadminCommands ?
+                  <>
+                    <Button disabled={loading} sx={{ marginTop: ".4em", marginBottom: ".4em" }} variant="contained" startIcon={<AddCircleIcon />}
+                      onClick={openAdminDialog}>Create admin account</Button>
+                  </>
+                  :
+                  <>
+                  </>
+              }
             </div>
           </div>
           :
@@ -473,12 +511,12 @@ const Vehicles: FC<VehiclesProps> = () => {
       <div className="vehiclesListContainer">
         {vehicles.map((vehicle) => (
           <div className="vehicleItemContainer" key={vehicle.id}>
-            <VehicleItem vehicle={vehicle} navigateToVehicle={navigateToVehicle}/>
+            <VehicleItem vehicle={vehicle} navigateToVehicle={navigateToVehicle} />
           </div>
         ))}
       </div>
       {
-        !loading && vehicleCount !== 0?
+        !loading && vehicleCount !== 0 ?
           <div className="paginationSelectorContainer">
             <Pagination disabled={loading} count={pageCount} page={selectedPage} onChange={handlePageChange} color="primary" />
           </div>

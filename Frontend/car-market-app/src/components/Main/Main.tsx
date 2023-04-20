@@ -16,7 +16,7 @@ import { PrivateOutlet } from '../../App';
 interface MainProps {
 }
 
-const Main: FC<MainProps> = (props: MainProps) => {
+const Main: FC<MainProps> = (_: MainProps) => {
     const userName = useAppSelector((state) => state.user.loggedUser);
     const isLogged = useAppSelector((state) => state.user.isLogged);
     const token = useAppSelector((state) => state.user.token) || "";
