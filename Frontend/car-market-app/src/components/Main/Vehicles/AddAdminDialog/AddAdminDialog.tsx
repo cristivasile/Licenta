@@ -110,7 +110,7 @@ const AddAdminDialog: FC<AddAdminDialogProps> = (props: AddAdminDialogProps) => 
         <Dialog open={props.isOpen} onClose={() => props.onClose()} PaperProps={{ sx: { width: "50em" } }}>
             {loading ? <Loading /> : <></>}
 
-            <DialogTitle className="formTitle">Manage features</DialogTitle>
+            <DialogTitle className="formTitle">Add an admin</DialogTitle>
 
             <DialogContent>
                 <TextField value={emailValue} label="Email*" margin="dense" fullWidth

@@ -47,11 +47,11 @@ export const signUp = (username: string, password: string, email: string): Promi
 export const signUpAdmin = (username: string, password: string, email: string): Promise<Response> => {
   const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
       body: JSON.stringify({ email: email, username: username, password: password })
     };
 
-return fetch(apiUrl + "/api/auth/signUpAdmin", requestOptions);
+return authenticatedFetch(apiUrl + "/api/auth/signUpAdmin", requestOptions);
 }
 
 export const getUsernames = () : Promise<Response> => {
