@@ -24,7 +24,7 @@ import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
 import { setFeaturesFromJson } from '../../../redux/featuresStore';
 import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
 import ImagesEditDialog from './ImagesEditDialog/ImagesEditDialog';
-import { getAppointmentByVehicleId } from '../../../services/appointmentService';
+import { deleteAppointment, getAppointmentByVehicleId } from '../../../services/appointmentService';
 import { AppointmentModel, jsonToAppointmentModel } from '../../../models/AppointmentModel';
 import AppointmentDialog from './AppointmentDialog/AppointmentDialog';
 
@@ -66,6 +66,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
         if (response.status === 200) {
           var json = await response.json();
           setAppointment(jsonToAppointmentModel(json));
+          setHasAppointment(true);  
         }
         else {
           setHasAppointment(false);
@@ -250,6 +251,29 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
     setVehicleDialogOpen(false);
   }
 
+  function cancelAppointmentClick() {
+    setLoading(true);
+
+    deleteAppointment(appointment.id)
+      .then(async response => {
+        if (response.status !== 200) {
+          notifyBadResultCode(response.status);
+        }
+        else {
+
+          setHasAppointment(false);
+          setAppointment({} as AppointmentModel);
+        }
+      })
+      .catch((err) => {
+        notifyFetchFail(err);
+        return;
+      })
+      .then(() => {
+        setLoading(false);
+      });
+  }
+
   function goBackToMain() {
     navigate("../../");
   }
@@ -307,7 +331,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                 {hasAppointment === true ? //inform user that he has a reservation
                   <div className="vehicleMessageContainer">
                     <Typography fontSize={18}>
-                      <>You have an upcoming {appointment.appointmentTypeName} on {appointment.date.toLocaleDateString('en-UK', appointmentDateOptions)}</>
+                      <>You have a(n) upcoming {appointment.appointmentTypeName} on {appointment.date.toLocaleDateString('en-UK', appointmentDateOptions)}</>
                     </Typography>
                   </div>
                   : <></>
@@ -463,10 +487,19 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
                       :
                       <>
+                      {
+                        hasAppointment?
+                        <Button disabled={loading} variant="contained" onClick={cancelAppointmentClick}
+                        sx={{ marginRight: "1em", marginBottom: "1%" }}>
+                        Cancel appointment
+                        </Button>
+                        :
                         <Button disabled={loading} variant="contained" onClick={openAppointmentDialog}
                           sx={{ marginRight: "1em", marginBottom: "1%" }}>
                           Make an appointment
                         </Button>
+                      }
+
                       </>
                   }
 

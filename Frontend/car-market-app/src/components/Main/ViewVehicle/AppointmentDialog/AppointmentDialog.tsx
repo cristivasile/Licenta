@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField } from '@mui/material';
-import { FC, useEffect, useState, useRef } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Loading from '../../../Loading/Loading';
 import { generateErrorMessage, generateSuccessMessage } from '../../../../common';
 import { AppointmentTypeModel, mapJsonToAppointmentTypeModels } from '../../../../models/AppointmentTypeModel';
@@ -222,6 +222,7 @@ const AppointmentDialog: FC<AppointmentDialogProps> = (props: AppointmentDialogP
                     setSelectedInterval(undefined);
                     setAvailableIntervals(new Array<Date>());
                     setSuccessMessage("Appointment booked!");
+                    props.onClose();
                 }
             })
             .catch((err) => {

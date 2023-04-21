@@ -5,6 +5,7 @@ namespace API.Models.Return
 {
     public class AppointmentModel
     {
+        public string Id { get; set; }
         public string Username { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -13,9 +14,13 @@ namespace API.Models.Return
         public DateTime Date { get; set; }
         public string AppointmentTypeName { get; set; }
         public uint AppointmentDuration { get; set; }
+        public string VehicleBrand { get; set; }
+        public string VehicleModel { get; set; }
 
         public AppointmentModel(Appointment ob)
         {
+            Id = ob.Id;
+
             if (ob.User != null)
                 Username = ob.User.UserName;
 
@@ -29,6 +34,12 @@ namespace API.Models.Return
             {
                 AppointmentTypeName = ob.AppointmentType.Name;
                 AppointmentDuration = ob.AppointmentType.Duration;
+            }
+
+            if (ob.Vehicle != null)
+            {
+                VehicleBrand = ob.Vehicle.Brand;
+                VehicleModel = ob.Vehicle.Model;
             }
         }
     }

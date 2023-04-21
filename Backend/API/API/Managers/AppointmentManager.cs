@@ -89,7 +89,7 @@ namespace API.Managers
         {
             var appointmentList = await appointmentRepository.GetByLocationId(locationId, upcoming);
 
-            return appointmentList.Select(x => new AppointmentModel(x)).ToList();
+            return appointmentList.Select(x => new AppointmentModel(x)).OrderBy(x => x.Date).ToList();
         }
 
         public async Task<List<AppointmentModel>> GetAllByUsername(string username, bool upcoming = true)
@@ -101,7 +101,7 @@ namespace API.Managers
 
             var appointmentList = await appointmentRepository.GetByUserId(user.Id, upcoming);
 
-            return appointmentList.Select(x => new AppointmentModel(x)).ToList();
+            return appointmentList.Select(x => new AppointmentModel(x)).OrderBy(x => x.Date).ToList();
         }
 
         public async Task<AppointmentModel> GetByUserAndVehicleId(AppointmentUserRequestModel request, bool upcoming = true)

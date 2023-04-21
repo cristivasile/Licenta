@@ -1,0 +1,56 @@
+@import "../../../../Theme.scss";
+
+#viewAppointmentsContainer{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    max-height: 50em;
+    overflow-y: auto;
+    padding-bottom: 1em;
+
+    #appointmentMessageContainer{
+        box-sizing: border-box;
+        margin-top: 1em;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .viewAppointmentRow{
+        display:flex;
+        flex-direction: row;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 1em;
+        cursor: pointer;
+        align-items: center;
+        margin-top: 1em;
+        border: 3px solid $main-color;
+        border-radius: .5em;
+
+        .viewAppointmentPersonalDetails{
+            width: 10em;
+        }
+
+        .viewAppointmentType{
+            width:10em;
+        }
+
+        .viewAppointmentVehicle{
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .deleteButtonContainer{
+            margin-left: auto;
+        }
+    }
+
+    .viewAppointmentRow:hover {
+        background-color: $background-color;
+    }
+}

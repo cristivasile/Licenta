@@ -2,6 +2,7 @@ import { Accordion, AccordionDetails, Button, Checkbox, FormControlLabel, MenuIt
 import { FC, useEffect, useState } from 'react';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MenuIcon from '@mui/icons-material/Menu';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import VehicleDialog from '../VehicleDialog/VehicleDialog';
 import Loading from '../../Loading/Loading';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
@@ -33,6 +34,7 @@ import {
 } from '../../../redux/vehiclesMainFiltersStore';
 import { useNavigate } from 'react-router-dom';
 import AddAdminDialog from './AddAdminDialog/AddAdminDialog';
+import ViewAppointmentsDialog from './ViewAppointmentsDialog/ViewAppointmentsDialog';
 
 interface VehiclesProps { }
 
@@ -50,6 +52,7 @@ const Vehicles: FC<VehiclesProps> = () => {
   const [bodyTypeDialogOpen, setBodyTypeDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
   const [addAdminDialogOpen, setAddAdminDialogOpen] = useState(false);
+  const [viewAppointmentsDialogOpen, setViewAppoinmentsDialogOpen] = useState(false);
 
   //get from redux store in order to keep state after navigating
   const selectedPage = useAppSelector((state) => state.vehiclesMainFiltersStore.selectedPage);
@@ -284,6 +287,34 @@ const Vehicles: FC<VehiclesProps> = () => {
     setAddAdminDialogOpen(false);
   }
 
+  function openViewAppointmentsDialog() {
+    setLoading(true);
+
+    getLocations()
+      .then(async response => {
+        if (response.status !== 200) {
+          notifyBadResultCode(response.status);
+        }
+        else {
+          var json = await response.json();
+          dispatch(setLocationsFromJson(json));
+          setViewAppoinmentsDialogOpen(true);
+        }
+      })
+      .catch((err) => {
+        notifyFetchFail(err);
+        return;
+      })
+      .then(() => {
+        setLoading(false);
+      });
+
+  }
+
+  function closeViewAppointmentsDialog() {
+    setViewAppoinmentsDialogOpen(false);
+  }
+
   function applyFilters() {
     setLoading(true);
     fetchVehicles(selectedPage);
@@ -338,6 +369,8 @@ const Vehicles: FC<VehiclesProps> = () => {
       {
         showAdminCommands ?
           <>
+            <ViewAppointmentsDialog isOpen={viewAppointmentsDialogOpen} onClose={closeViewAppointmentsDialog}
+              navigateToVehicleCallback={navigateToVehicle}/>
             <ManageLocationsDialog isOpen={locationDialogOpen} onClose={closeLocationDialog} />
             <ManageFeaturesDialog isOpen={featureDialogOpen} onClose={closeFeatureDialog} />
             <ManageBodyTypesDialog isOpen={bodyTypeDialogOpen} onClose={closeBodyTypeDialog} />
@@ -459,6 +492,8 @@ const Vehicles: FC<VehiclesProps> = () => {
         showAdminCommands ?
           <div className="adminToolbar">
             <div className="adminToolbarButtonsDiv">
+              <Button disabled={loading} sx={{ marginTop: ".4em", marginBottom: ".4em" }} variant="contained" startIcon={<VisibilityIcon />}
+                onClick={openViewAppointmentsDialog}>View appointments</Button>
               <Button disabled={loading} sx={{ marginTop: ".4em", marginBottom: ".4em" }} variant="contained" startIcon={<AddCircleIcon />}
                 onClick={openVehicleDialog}>Add vehicle</Button>
               <Button disabled={loading} sx={{ marginTop: ".4em", marginBottom: ".4em" }} variant="contained" startIcon={<MenuIcon />}

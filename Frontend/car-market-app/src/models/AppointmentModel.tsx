@@ -1,4 +1,5 @@
 export interface AppointmentModel {
+    id: string,
     username: string,
     firstName: string,
     lastName: string,
@@ -7,6 +8,8 @@ export interface AppointmentModel {
     date: Date,
     appointmentTypeName: string,
     appointmentDuration: number,
+    vehicleBrand: string,
+    vehicleModel: string,
 };
 
 export interface AppointmentCreateModel {
@@ -20,6 +23,7 @@ export interface AppointmentCreateModel {
 
 export function jsonToAppointmentModel(json:any) : AppointmentModel {
     return {
+        id: json.id,
         username: json.username,
         firstName: json.firstName,
         lastName: json.lastName,
@@ -28,6 +32,8 @@ export function jsonToAppointmentModel(json:any) : AppointmentModel {
         date: new Date(json.date),
         appointmentTypeName: json.appointmentTypeName,
         appointmentDuration: json.appointmentDuration,
+        vehicleBrand: json.vehicleBrand,
+        vehicleModel: json.vehicleModel,
     } as AppointmentModel;
 }
 

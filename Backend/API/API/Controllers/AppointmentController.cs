@@ -42,13 +42,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("all/appointmentsByLocationId/{locationId}")]
+        [HttpGet("all/appointmentsByLocationId/{locationId}/{upcoming}")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> ReadAllAppointmentsByLocationId([FromRoute] string locationId)
+        public async Task<IActionResult> ReadAllAppointmentsByLocationId([FromRoute] string locationId, [FromRoute] bool upcoming)
         {
             try
             {
-                var appointments = await appointmentManager.GetAllByLocationId(locationId, upcoming: false);
+                var appointments = await appointmentManager.GetAllByLocationId(locationId, upcoming);
                 return Ok(appointments);
             }
             catch (Exception ex)
