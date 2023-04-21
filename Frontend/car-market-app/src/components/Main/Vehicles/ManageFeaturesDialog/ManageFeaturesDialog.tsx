@@ -12,7 +12,6 @@ interface ManageFeaturessDialogProps {
 }
 
 const ManageFeaturesDialog: FC<ManageFeaturessDialogProps> = (props: ManageFeaturessDialogProps) => {
-
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [nameValue, setNameValue] = useState("");

@@ -57,43 +57,38 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("appointmentsByVehicle/{vehicleId}")]
+        [HttpGet("appointmentByVehicle/{vehicleId}")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> ReadAppointmentsByVehicleId([FromRoute] string vehicleId)
+        public async Task<IActionResult> ReadAppointmentByVehicleId([FromRoute] string vehicleId)
         {
-            ClaimsIdentity identity = HttpContext.User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                IEnumerable<Claim> claims = identity.Claims;
-                var usernameClaim = claims.FirstOrDefault(c => c.Type == "username");
-                if (usernameClaim != null)
+            var username = User.Identity.Name;
+
+            if(username != null)
+                try
                 {
-                    var username = usernameClaim.Value;
-
-                    try
-                    {
-                        var appointments = await appointmentManager.GetAllByUserAndVehicleId(new() 
-                                            { Username = username, VehicleId = vehicleId}, upcoming: true);
-                        return Ok(appointments);
-                    }
-                    catch(Exception ex)
-                    {
-                        return BadRequest(ex.Message);
-                    }
-
+                    var appointments = await appointmentManager.GetByUserAndVehicleId(new() 
+                                        { Username = username, VehicleId = vehicleId}, upcoming: true);
+                    return Ok(appointments);
                 }
-            }
+                catch (KeyNotFoundException)
+                {
+                    return NotFound();
+                }
+                catch(Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
 
             return Unauthorized();
         }
 
-        [HttpPost("appointmentsByUserAndVehicle")]
+        [HttpPost("appointmentByUserAndVehicleId")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> ReadAppointmentsByUserAndVehicleId([FromBody] AppointmentUserRequestModel request)
+        public async Task<IActionResult> ReadAppointmentByUserAndVehicleId([FromBody] AppointmentUserRequestModel request)
         {
             try
             {
-                var appointments = await appointmentManager.GetAllByUserAndVehicleId(request, upcoming: true);
+                var appointments = await appointmentManager.GetByUserAndVehicleId(request, upcoming: true);
                 return Ok(appointments);
             }
             catch (Exception ex)
@@ -121,20 +116,53 @@ namespace API.Controllers
         [Authorize(Policy = "User")]
         public async Task<IActionResult> CreateAppointment([FromBody] AppointmentCreateModel newAppointment)
         {
-            try
+            var username = User.Identity.Name;
+
+            if (username != null)
             {
-                await appointmentManager.Create(newAppointment);
-                return Ok();
+                try
+                {
+                    await appointmentManager.Create(newAppointment, username);
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Unauthorized();
         }
 
         [HttpDelete("appointments/{id}")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> DeleteAppointment([FromRoute] string id)
+        {
+            var username = User.Identity.Name;
+
+            if (username != null)
+                try
+                {
+                    var appointments = await appointmentManager.GetAllByUsername(username);
+
+                    if (!appointments.Any(x => x.Username == username))
+                        throw new Exception("Appointment does not belong to this user!");
+
+                    await appointmentManager.Delete(id);
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+
+            return Unauthorized();
+        }
+
+        [HttpDelete("appointments/admin/{id}")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> DeleteAppointmentAdmin([FromRoute] string id)
         {
             try
             {

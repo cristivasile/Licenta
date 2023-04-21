@@ -1,9 +1,11 @@
 ﻿using API.Entities;
+using API.Helpers;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Models.Input;
 using API.Models.Return;
 using Azure.Core;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -20,10 +22,10 @@ namespace API.Managers
         private readonly IVehicleRepository vehicleRepository;
         private readonly IScheduleRepository scheduleRepository;
         private readonly UserManager<User> userManager;
-        private static int upcomingAppointmentLimit = 3;
-        private static int upcomingAppointmentLimitPerVehicle = 1;
-        private static int daysLimit = 60;
-        private static int minimumAppointmentDuration = 5;
+        private readonly static int upcomingAppointmentLimit = 3;
+        private readonly static int daysLimit = 60;
+        private readonly static int minimumAppointmentDuration = 5;
+        private readonly static int intervalSize = 15;
 
         public AppointmentManager(IAppointmentRepository appointmentRepository, IAppointmentTypeRepository appointmentTypeRepository,
             IVehicleRepository vehicleRepository, IScheduleRepository scheduleRepository, UserManager<User> userManager)
@@ -35,9 +37,9 @@ namespace API.Managers
             this.userManager = userManager;
         }
 
-        public async Task Create(AppointmentCreateModel newAppointment)
+        public async Task Create(AppointmentCreateModel newAppointment, string username)
         {
-            var user = await userManager.FindByNameAsync(newAppointment.Username);
+            var user = await userManager.FindByNameAsync(username);
             var vehicle = await vehicleRepository.GetById(newAppointment.VehicleId);
 
             if (user == null)
@@ -49,16 +51,19 @@ namespace API.Managers
             if (vehicle == null)
                 throw new Exception("Vehicle does not exist!");
 
+            if (vehicle.Status.IsSold)
+                throw new Exception("Vehicle has already been sold!");
+
             if ((await appointmentRepository.GetByUserId(user.Id, upcoming: true)).Count == upcomingAppointmentLimit)
                 throw new Exception($"Appointment limit of {upcomingAppointmentLimit} reached!");
 
-            if ((await appointmentRepository.GetByUserIdAndVehicleId(user.Id, newAppointment.VehicleId, upcoming: true)).Count 
-                == upcomingAppointmentLimitPerVehicle)
-                throw new Exception($"Appointment limit of {upcomingAppointmentLimitPerVehicle} reached!");
+            if (await appointmentRepository.GetByUserIdAndVehicleId(user.Id, newAppointment.VehicleId, upcoming: true) != null)
+                throw new Exception("User already has an appointment for this vehicle!");
 
             var appointment = new Appointment()
             {
-                Date = newAppointment.Date,
+                Id = Utilities.GetGUID(),
+                Date = newAppointment.Date.ToLocalTime(),
                 FirstName = newAppointment.FirstName,
                 LastName = newAppointment.LastName,
                 Phone = newAppointment.Phone,
@@ -99,19 +104,22 @@ namespace API.Managers
             return appointmentList.Select(x => new AppointmentModel(x)).ToList();
         }
 
-        public async Task<List<AppointmentModel>> GetAllByUserAndVehicleId(AppointmentUserRequestModel request, bool upcoming = true)
+        public async Task<AppointmentModel> GetByUserAndVehicleId(AppointmentUserRequestModel request, bool upcoming = true)
         {
             var user = await userManager.FindByNameAsync(request.Username);
 
             if (user == null)
                 throw new Exception("User does not exist!");
 
-            var appointmentList = await appointmentRepository.GetByUserIdAndVehicleId(user.Id, request.VehicleId, upcoming);
+            var appointment = await appointmentRepository.GetByUserIdAndVehicleId(user.Id, request.VehicleId, upcoming);
 
-            return appointmentList.Select(x => new AppointmentModel(x)).ToList();
+            if (appointment == null)
+                throw new KeyNotFoundException();
+
+            return new AppointmentModel(appointment);
         }
 
-        public async Task<Dictionary<DateTime, List<DateTime>>> GetAvailableAppointmentTimes(AppointmentIntervalsRequestModel request)
+        public async Task<Dictionary<string, List<DateTime>>> GetAvailableAppointmentTimes(AppointmentIntervalsRequestModel request)
         {
             if (request.NumberOfDaysToGenerate > daysLimit)
                 throw new Exception($"Cannot generate intervals for more than {daysLimit} days");
@@ -132,6 +140,7 @@ namespace API.Managers
                 var weekday = (WeekdayEnum)dayOfWeek;
 
                 //get the schedule for the day of week
+                var schedules = await scheduleRepository.GetByLocationId(request.LocationId);
                 var schedule = await scheduleRepository.GetByLocationIdAndWeekday(request.LocationId, weekday);
                 if (schedule == null)
                 {
@@ -151,8 +160,7 @@ namespace API.Managers
                     bool isValid = true;
 
                     foreach(var appointment in appointmentsToday)
-                        if ((appointment.Date >= currentTime && appointment.Date.AddMinutes(request.AppointmentDuration) <= currentTime)
-                            || (appointment.Date >= currentEndTime && appointment.Date.AddMinutes(request.AppointmentDuration) <= currentEndTime))
+                        if (appointment.Date < currentEndTime && appointment.Date.AddMinutes(appointment.AppointmentType.Duration) > currentTime)
                         {
                             isValid = false;
                             break;
@@ -163,7 +171,7 @@ namespace API.Managers
                         validTimesForToday.Add(currentTime);
                     }
 
-                    currentTime = currentTime.AddMinutes(request.AppointmentDuration);
+                    currentTime = currentTime.AddMinutes(intervalSize);
                 }
 
                 if (validTimesForToday.Count > 0)
@@ -172,7 +180,18 @@ namespace API.Managers
                 currentDay = currentDay.AddDays(1);
             }
 
-            return result;
+            var mappedResult = new Dictionary<string, List<DateTime>>();
+
+            foreach (var pair in result)
+            {
+                // Extract only the date part of the DateTime key
+                string dateString = pair.Key.Date.ToString("yyyy-MM-dd");
+
+                // Add the values to the new dictionary
+                mappedResult[dateString] = pair.Value;
+            }
+
+            return mappedResult;
         }
     }
 }

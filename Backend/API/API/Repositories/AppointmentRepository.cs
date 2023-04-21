@@ -28,7 +28,7 @@ namespace API.Repositories
         public async Task<List<Appointment>> GetByUserId(string userId, bool upcoming = true)
             => await ApplySpecification(new AppointmentsByUserIdSpecification(userId, upcoming)).ToListAsync();
 
-        public async Task<List<Appointment>> GetByUserIdAndVehicleId(string userId, string locationId, bool upcoming = true)
-            => await ApplySpecification(new AppointmentsByUserIdAndVehicleIdSpecification(userId, locationId, upcoming)).ToListAsync();
+        public async Task<Appointment> GetByUserIdAndVehicleId(string userId, string locationId, bool upcoming = true)
+            => await ApplySpecification(new AppointmentsByUserIdAndVehicleIdSpecification(userId, locationId, upcoming)).FirstOrDefaultAsync();
     }
 }

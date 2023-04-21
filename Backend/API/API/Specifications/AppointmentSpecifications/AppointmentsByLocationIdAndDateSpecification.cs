@@ -12,6 +12,7 @@ namespace API.Specifications.AppointmentSpecifications
 
             AddInclude(x => x.Vehicle);
             AddInclude(x => x.Vehicle.Location);
+            AddInclude(x => x.AppointmentType);
         }
     }
 }

@@ -19,7 +19,6 @@ export const isAdmin = (role: string): boolean => {
  * @param role the user's role
  */
 export const isSysAdmin = (role: string): boolean => {
-  console.log(role);
   if (role.toLowerCase() === sysadminRole)
     return true;
   return false;

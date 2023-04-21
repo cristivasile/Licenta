@@ -24,6 +24,9 @@ import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
 import { setFeaturesFromJson } from '../../../redux/featuresStore';
 import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
 import ImagesEditDialog from './ImagesEditDialog/ImagesEditDialog';
+import { getAppointmentByVehicleId } from '../../../services/appointmentService';
+import { AppointmentModel, jsonToAppointmentModel } from '../../../models/AppointmentModel';
+import AppointmentDialog from './AppointmentDialog/AppointmentDialog';
 
 interface ViewVehicleProps { }
 
@@ -43,11 +46,43 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   const [imagesEditDialogOpen, setImagesEditDialogOpen] = useState(false);
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false);
   const [sellDialogOpen, setSellDialogOpen] = useState(false);
+  const [appointmentDialogOpen, setAppointmentDialogOpen] = useState(false);
+  const [hasAppointment, setHasAppointment] = useState(false);
+  const [appointment, setAppointment] = useState({} as AppointmentModel);
   const userIsAdmin = isAdmin(useAppSelector((state) => state.user.role) as string);
 
-  function loadVehicle(loadImages: boolean) {
+  const appointmentDateOptions = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  } as Intl.DateTimeFormatOptions;
+
+  async function loadAppointment() {
     setLoading(true);
-    getVehicleById(id as string)
+    await getAppointmentByVehicleId(id as string)
+      .then(async response => {
+        if (response.status === 200) {
+          var json = await response.json();
+          setAppointment(jsonToAppointmentModel(json));
+        }
+        else {
+          setHasAppointment(false);
+        }
+      })
+      .catch((err) => {
+        notifyFetchFail(err);
+        return;
+      })
+      .then(() => {
+        setLoading(false);
+      });
+  }
+
+  async function loadVehicle(loadImages: boolean) {
+    setLoading(true);
+    await getVehicleById(id as string)
       .then(async response => {
         if (response.status !== 200) {
           notifyBadResultCode(response.status);
@@ -57,7 +92,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
           setVehicle(mapJsonToDetailedVehicleModel(json));
           setImagesLoading(loadImages);
 
-          if (json.thumbnail !== undefined && json.thumbnail.length !== 0){  //set thumbnail as preview until the images arrive
+          if (json.thumbnail !== undefined && json.thumbnail.length !== 0) {  //set thumbnail as preview until the images arrive
             setImage(json.thumbnail);
           }
         }
@@ -72,14 +107,14 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   }
 
   useEffect(() => {
+    loadAppointment();
     loadVehicle(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   //after re-render, if vehicle changed and images are marked as loading run images fetch
   useEffect(() => {
-
-    if(imagesLoading){
+    if (imagesLoading) {
       getImagesByVehicleId(id as string)
         .then(async response => {
           if (response.status !== 200) {
@@ -89,7 +124,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
             var json = await response.json();
             setImagesLoading(false);
 
-            if (json !== undefined && json.length !== 0){
+            if (json !== undefined && json.length !== 0) {
               var updatedVehicle = vehicle;
               updatedVehicle.images = json;
               setImageCount(json.length);
@@ -110,7 +145,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   }, [vehicle, id, imagesLoading]);
 
   async function openImageGallery() {
-    if(vehicle.images !== undefined && vehicle.images.length > 0 && imagesLoading !== true)
+    if (vehicle.images !== undefined && vehicle.images.length > 0 && imagesLoading !== true)
       setImageGalleryOpen(true);
   }
 
@@ -119,7 +154,7 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
   }
 
   async function openImagesEditDialog() {
-    if(vehicle.images !== undefined && vehicle.images.length > 0 && imagesLoading !== true)
+    if (vehicle.images !== undefined && vehicle.images.length > 0 && imagesLoading !== true)
       setImagesEditDialogOpen(true);
   }
 
@@ -133,6 +168,14 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
   function closeSellDialog() {
     setSellDialogOpen(false);
+  }
+
+  function openAppointmentDialog() {
+    setAppointmentDialogOpen(true);
+  }
+
+  function closeAppointmentDialog() {
+    setAppointmentDialogOpen(false);
   }
 
   function setPreviousImage() {
@@ -213,17 +256,22 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
   return (
     <div className="ViewVehicle">
-      {userIsAdmin ? <SellVehicleDialog reloadVehicleCallback={loadVehicle} vehicleId={vehicle.id} 
-        isOpen={sellDialogOpen} onClose={closeSellDialog} /> 
-        : <></>}
-      {userIsAdmin ? <ImagesEditDialog initialImages={vehicle.images} isOpen={imagesEditDialogOpen} 
-        onClose={closeImagesEditDialog} reloadVehicleCallback={loadVehicle} vehicleId={vehicle.id}/> 
+      {userIsAdmin ?
+        <SellVehicleDialog reloadVehicleCallback={loadVehicle} vehicleId={vehicle.id}
+          isOpen={sellDialogOpen} onClose={closeSellDialog} />
+        :
+        <AppointmentDialog reloadAppointmentCallback={loadAppointment}
+          locationId = {vehicle.location !== undefined ? vehicle.location.id : ""}
+          vehicleId = {vehicle.id}
+          isOpen={appointmentDialogOpen} onClose={closeAppointmentDialog} />}
+      {userIsAdmin ? <ImagesEditDialog initialImages={vehicle.images} isOpen={imagesEditDialogOpen}
+        onClose={closeImagesEditDialog} reloadVehicleCallback={loadVehicle} vehicleId={vehicle.id} />
         : <></>}
       {userIsAdmin ? <VehicleDialog isOpen={vehicleDialogOpen} onClose={closeVehicleDialog}
-        forUpdate={true} vehicle={vehicle} reloadVehicleCallback={loadVehicle} /> 
+        forUpdate={true} vehicle={vehicle} reloadVehicleCallback={loadVehicle} />
         : <></>}
       <ImageGalleryDialog isOpen={imageGalleryOpen} onClose={closeImageGallery}
-        vehicleImages={vehicle.images} inheritedSelectedImageIndex={selectedImageIndex}/>
+        vehicleImages={vehicle.images} inheritedSelectedImageIndex={selectedImageIndex} />
       {loading ? <Loading /> : <></>}
       <div className="buttonContainer">
         <Button variant="contained" sx={{ marginLeft: ".3em", marginTop: ".3em" }} size="large"
@@ -249,9 +297,17 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
 
               <div className="viewVehicleContent">
                 {vehicle.status.isSold === true ? //inform admin that the vehicle is sold
-                  <div className="vehicleSoldContainer">
+                  <div className="vehicleMessageContainer">
                     <Typography fontSize={18}>
                       <>This vehicle was sold to {vehicle.status.purchasedBy} on {getDateTimeDate(vehicle.status.dateSold as Date)}</>
+                    </Typography>
+                  </div>
+                  : <></>
+                }
+                {hasAppointment === true ? //inform user that he has a reservation
+                  <div className="vehicleMessageContainer">
+                    <Typography fontSize={18}>
+                      <>You have an upcoming {appointment.appointmentTypeName} on {appointment.date.toLocaleDateString('en-UK', appointmentDateOptions)}</>
                     </Typography>
                   </div>
                   : <></>
@@ -385,12 +441,12 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                   {
                     userIsAdmin ?
                       <>
-                        <Button disabled={loading} variant="contained" onClick={openImagesEditDialog} 
-                        sx={{marginRight: "1em", marginBottom: "1%"}}>
+                        <Button disabled={loading} variant="contained" onClick={openImagesEditDialog}
+                          sx={{ marginRight: "1em", marginBottom: "1%" }}>
                           Modify images
                         </Button>
-                        <Button disabled={loading} variant="contained" onClick={openVehicleDialog} 
-                        sx={{marginRight: "1em", marginBottom: "1%"}}>
+                        <Button disabled={loading} variant="contained" onClick={openVehicleDialog}
+                          sx={{ marginRight: "1em", marginBottom: "1%" }}>
                           Modify vehicle
                         </Button>
                         {
@@ -406,7 +462,12 @@ const ViewVehicle: FC<ViewVehicleProps> = () => {
                       </>
 
                       :
-                      <></>
+                      <>
+                        <Button disabled={loading} variant="contained" onClick={openAppointmentDialog}
+                          sx={{ marginRight: "1em", marginBottom: "1%" }}>
+                          Make an appointment
+                        </Button>
+                      </>
                   }
 
                 </div>

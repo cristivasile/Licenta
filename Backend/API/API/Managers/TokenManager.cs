@@ -32,13 +32,14 @@ namespace API.Managers
             foreach(var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim(ClaimTypes.Name, user.UserName));
             }
 
             var secretKey = config.GetSection("Jwt").GetSection("Token").Get<string>();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
+             
             var tokenDescription = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
