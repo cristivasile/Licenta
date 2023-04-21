@@ -81,7 +81,8 @@ const ViewAppointmentsDialog: FC<ViewAppointmentsDialogProps> = (props: ViewAppo
     function getTimeString(date: Date): string {
 
         var castDate = new Date(date);
-        return castDate.getHours().toString().padStart(2, '0') + ":" + castDate.getMinutes().toString().padStart(2, '0')
+        return castDate.getHours().toString().padStart(2, '0') + ":" + castDate.getMinutes().toString().padStart(2, '0') 
+        + " - " + castDate.getDay().toString().padStart(2, '0') + "/" + castDate.getMonth().toString().padStart(2, '0')
     }
 
     function handleAppointmentClick(vehicleId: string) {
@@ -89,7 +90,7 @@ const ViewAppointmentsDialog: FC<ViewAppointmentsDialogProps> = (props: ViewAppo
         props.onClose();
     }
     return (
-        <Dialog open={props.isOpen} onClose={() => props.onClose()} PaperProps={{ sx: { width: "50em" } }}>
+        <Dialog open={props.isOpen} onClose={() => props.onClose()} PaperProps={{ sx: { width: "50em", maxWidth: "50em" } }}>
             {loading ? <Loading /> : <></>}
 
             <DialogTitle className="formTitle">View appointments</DialogTitle>
@@ -133,12 +134,12 @@ const ViewAppointmentsDialog: FC<ViewAppointmentsDialogProps> = (props: ViewAppo
                                     <div className="viewAppointmentType">
                                         <div className="typeDiv">
                                             <Typography color="primary" sx={{ fontWeight: "bold" }}>
-                                                {appointment.appointmentTypeName}
+                                                {appointment.appointmentTypeName + ' (' + appointment.appointmentDuration + " min)"}
                                             </Typography>
                                         </div>
                                         <div className="durationDiv">
                                             <Typography>
-                                                {getTimeString(appointment.date) + ' (' + appointment.appointmentDuration + " min)"}
+                                                {getTimeString(appointment.date)}
                                             </Typography>
                                         </div>
                                     </div>
