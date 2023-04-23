@@ -5,6 +5,7 @@ import Error404 from '../Error404/Error404';
 import './Auth.scss';
 import Login from './Login';
 import Register from './Register';
+import Confirmation from './Confirmation';
 
 interface AuthProps {}
 
@@ -19,17 +20,22 @@ const Auth: FC<AuthProps> = () => {
 
   const loginProps = {
     userName: authUser,
-    setUserFunction: setAuthUser
+    setUserCallback: setAuthUser
   }
 
   const registerProps = loginProps;
   
+  const confirmationProps = {
+    setUserCallback: setAuthUser
+  }
+
   return (
     <div className="Auth">
       <Routes>
         <Route path="" element={<Navigate to="login"/>}/> {/*redirect empty auth to login page*/}
         <Route path="login" element={<Login {...loginProps} />}/>
         <Route path="register" element={<Register {...registerProps}/>}/>
+        <Route path="confirmation/:token" element={<Confirmation {...confirmationProps}/>}/>
         <Route path="*" element={<Error404 />}/>  {/*Any other route goes to 404*/}
       </Routes>
     </div>

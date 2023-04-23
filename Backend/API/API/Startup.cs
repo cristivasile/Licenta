@@ -3,6 +3,7 @@ using API.Entities;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Managers;
+using API.Models;
 using API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -39,7 +40,7 @@ namespace API
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Car market app API", Version = "v1" });
 
                 //for auth token in swagger
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -101,9 +102,15 @@ namespace API
             services.AddScoped<IAppointmentTypeManager, AppointmentTypeManager>();
             services.AddScoped<IAppointmentTypeRepository, AppointmentTypeRepository>();
 
+            services.AddScoped<IConfirmationTokenManager, ConfirmationTokenManager>();
+            services.AddScoped<IConfirmationTokenRepository, ConfirmationTokenRepository>();
+
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<IThumbnailRepostory, ThumbnailRepository>();
             services.AddScoped<IScheduleRepository, ScheduleRepository>();
+
+            services.Configure<EmailConfiguration>(Configuration.GetSection("MailDetails"));
+            services.AddScoped<IEmailManager, EmailManager>();
 
             services.AddDbContext<AppDbContext>(options => options
                                                             .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
@@ -113,7 +120,7 @@ namespace API
             services.AddIdentity<User, Role>()
                     .AddEntityFrameworkStores<AppDbContext>();
             services.AddScoped<IAuthenticationManager, AuthenticationManager>();
-            services.AddScoped<ITokenManager, TokenManager>();
+            services.AddScoped<IAuthenticationTokenManager, AuthenticationTokenManager>();
 
             services.AddCors(options =>
             {

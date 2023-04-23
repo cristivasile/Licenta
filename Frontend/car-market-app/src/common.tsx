@@ -24,13 +24,21 @@ export function TabPanel(props: any) {
   /**
    * Used to notify the user of errors inside forms 
    */
-  export const generateErrorMessage = (errorMessage: string) => (
-    <div className="errorMessage leftMargin">{errorMessage}</div>
+  export const generateErrorMessage = (errorMessage: string, size: number = 18) => (
+    <div className="errorMessage">
+      <Typography sx={{fontWeight:"bold"}} fontSize={size}>
+        {errorMessage}
+      </Typography>
+    </div>
   );
   
   /**
    * Used to notify the user of a successful operation inside forms 
    */
-  export const generateSuccessMessage = (successMessage: string) => (
-    <div className="successMessage leftMargin">{successMessage}</div>
+  export const generateSuccessMessage = (successMessage: string, size: number = 18) => (
+    <div className="successMessage">
+      <Typography sx={{fontWeight:"bold"}} fontSize={size}>
+      {successMessage}
+      </Typography>
+    </div>
   );

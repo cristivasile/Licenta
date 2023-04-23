@@ -7,5 +7,6 @@ namespace API.Entities
     {
         public virtual ICollection<Status> PurchasedVehicleStatuses { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<ConfirmationToken> ConfirmationTokens { get; set; }
     }
 }

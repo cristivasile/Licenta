@@ -33,21 +33,21 @@ export const logIn = (username: string, password: string): Promise<Response> => 
   return fetch(apiUrl + "/api/auth/login", requestOptions);
 }
 
-export const signUp = (username: string, password: string, email: string): Promise<Response> => {
+export const signUp = (username: string, password: string, email: string, websiteAddress: string): Promise<Response> => {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, username: username, password: password })
+        body: JSON.stringify({ email: email, username: username, password: password, websiteConfirmationPageAddress: websiteAddress + "/auth/confirmation/" })
       };
 
   return fetch(apiUrl + "/api/auth/signUp", requestOptions);
 }
 
-export const signUpAdmin = (username: string, password: string, email: string): Promise<Response> => {
+export const signUpAdmin = (username: string, password: string, email: string, websiteAddress: string): Promise<Response> => {
   const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
-      body: JSON.stringify({ email: email, username: username, password: password })
+      body: JSON.stringify({ email: email, username: username, password: password, websiteConfirmationPageAddress: websiteAddress + "/auth/confirmation/"})
     };
 
 return authenticatedFetch(apiUrl + "/api/auth/signUpAdmin", requestOptions);
@@ -59,4 +59,12 @@ export const getUsernames = () : Promise<Response> => {
     headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token }
   };
   return authenticatedFetch(apiUrl + "/api/auth/getUsernames", requestOptions);
+}
+
+export const confirmEmail = (token: string) : Promise<Response> => {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' } 
+  };
+  return fetch(apiUrl + "/api/auth/confirmEmail/" + token, requestOptions);
 }

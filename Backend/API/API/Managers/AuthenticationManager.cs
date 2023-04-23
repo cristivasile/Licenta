@@ -1,5 +1,6 @@
 ﻿using API.Context;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces.Managers;
 using API.Models;
 using API.Models.Input;
@@ -16,15 +17,18 @@ namespace API.Managers
     {
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
-        private readonly ITokenManager tokenManager;
-        private readonly AppDbContext storage;
+        private readonly IAuthenticationTokenManager authTokenManager;
+        private readonly IConfirmationTokenManager confirmationTokenManager;
+        private readonly IEmailManager emailManager;
 
-        public AuthenticationManager(UserManager<User> uManager, SignInManager<User> sManager, ITokenManager tManager, AppDbContext context)
+        public AuthenticationManager(UserManager<User> userManager, SignInManager<User> signInManager, IAuthenticationTokenManager authTokenManager,
+            IConfirmationTokenManager confirmationTokenManager, IEmailManager emailManager)
         {
-            userManager = uManager;
-            signInManager = sManager;
-            tokenManager = tManager;
-            storage = context;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            this.authTokenManager = authTokenManager;
+            this.confirmationTokenManager = confirmationTokenManager;
+            this.emailManager = emailManager;
         }
 
         public async Task<List<string>> GetUsernames()
@@ -41,6 +45,9 @@ namespace API.Managers
             if (user == null)
                 throw new Exception("User does not exist!");
 
+            if (!user.EmailConfirmed)
+                throw new Exception("Please confirm your email first!");
+
             var tryLogin = await signInManager.CheckPasswordSignInAsync(user, login.Password, true);
 
             if (tryLogin.IsLockedOut)
@@ -49,7 +56,7 @@ namespace API.Managers
             if (!tryLogin.Succeeded)
                 throw new Exception("Incorrect password!");
 
-            var token = await tokenManager.GenerateToken(user);
+            var token = await authTokenManager.GenerateToken(user);
 
             result.AccessToken = token;
 
@@ -69,10 +76,14 @@ namespace API.Managers
         {
             var result = new IdentityResult();
 
+            var newUserId = Utilities.GetGUID();
+
             var user = new User()
             {
+                Id = newUserId,
                 Email = newUser.Email,
-                UserName = newUser.Username
+                UserName = newUser.Username,
+                EmailConfirmed = false
             };
 
             //check if email is valid
@@ -108,10 +119,15 @@ namespace API.Managers
                 throw new Exception("Invalid email!");
 
             //check if email already exists
-            var emailExists = storage.Users.Any(x => x.Email.ToLower() == newUser.Email.ToLower());
+            var userEmailCheck = await userManager.FindByEmailAsync(user.Email);
 
-            if (emailExists)
-                throw new Exception("Email already exists!");
+            if (userEmailCheck != null)
+            {
+                if(userEmailCheck.EmailConfirmed)
+                    throw new Exception("Email already exists!");
+                if (!userEmailCheck.EmailConfirmed)
+                    await userManager.DeleteAsync(userEmailCheck);
+            }
 
             if (user.UserName.Length < 6)
                 throw new Exception("Username must have at least 6 characters!");
@@ -127,8 +143,33 @@ namespace API.Managers
             if (!result.Succeeded)
                 throw new Exception(string.Join("\n", result.Errors.Select(x => x.Description)));
 
-            foreach (string role in roles)
+            foreach (var role in roles)
                 await userManager.AddToRoleAsync(user, role);
+
+            var emailConfirmationToken = await confirmationTokenManager.Create(newUserId, ConfirmationTokenTypeEnum.EmailConfirmation);
+
+            var confirmationEmailBody = "To confirm your email address, please click the link: <a href='" + newUser.WebsiteConfirmationPageAddress + emailConfirmationToken.Token + "'>Confirm</a>";
+
+            await emailManager.SendEmail(newUser.Email, "Confirm your email address", confirmationEmailBody);
         }
+
+        public async Task<string> ConfirmEmail(string tkn)
+        {
+            var token = await confirmationTokenManager.GetByToken(tkn);
+
+            if (token == null)
+                throw new KeyNotFoundException();
+            else if (token.Type != ConfirmationTokenTypeEnum.EmailConfirmation)
+                throw new Exception("Incorrect token type!");
+
+            var user = await userManager.FindByIdAsync(token.UserId) ?? throw new Exception("User no longer exists!");
+            await confirmationTokenManager.Delete(tkn);
+
+            user.EmailConfirmed = true;
+            await userManager.UpdateAsync(user);
+
+            return user.UserName;
+        }
+
     }
 }

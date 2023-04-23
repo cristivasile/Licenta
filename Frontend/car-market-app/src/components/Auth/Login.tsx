@@ -13,7 +13,7 @@ import { logIn } from '../../services/authenticationService';
 
 interface LoginProps { 
   userName: string;
-  setUserFunction: Function;
+  setUserCallback: Function;
 }
 
 const Login: FC<LoginProps> = (props: LoginProps) => {
@@ -100,7 +100,7 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
   }
 
   function goToRegister() {
-    props.setUserFunction(usernameValue);
+    props.setUserCallback(usernameValue);
     navigate("../register");
   }
 
@@ -130,7 +130,7 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
             <Button disabled={loading} variant="contained" type="submit">Log in</Button>
           </div>
         </form>
-        <div> <button onClick={goToMain} className="linkButton">Go back to main</button></div>
+        <div> <button onClick={goToMain} className="linkButton">Go to main</button></div>
         <div> Need an account? <button onClick={goToRegister} className="linkButton">Register</button></div>
       </div>
     </div>

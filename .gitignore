@@ -1,3 +1,4 @@
 Backend/API/API/bin
 Backend/API/API/obj
 Backend/API/.vs
+Backend/API/API/appsettings.Development.json

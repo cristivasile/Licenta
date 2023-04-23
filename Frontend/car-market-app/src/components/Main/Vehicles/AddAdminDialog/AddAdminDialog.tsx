@@ -82,7 +82,7 @@ const AddAdminDialog: FC<AddAdminDialogProps> = (props: AddAdminDialogProps) => 
 
         setLoading(true);
 
-        signUpAdmin(usernameValue, passwordValue, emailValue)
+        signUpAdmin(usernameValue, passwordValue, emailValue, window.location.origin)
             .then(async response => {
                 if (response.status !== 200) {
                     var responseText = await response.text();

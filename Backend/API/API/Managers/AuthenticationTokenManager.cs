@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace API.Managers
 {
-    public class TokenManager : ITokenManager
+    public class AuthenticationTokenManager : IAuthenticationTokenManager
     {
         private readonly IConfiguration config;
         private readonly UserManager<User> userManager;
         private readonly int tokenExpirationInMinutes = 60;
 
-        public TokenManager(IConfiguration config, UserManager<User> manager)
+        public AuthenticationTokenManager(IConfiguration config, UserManager<User> manager)
         {
             this.config = config;
             userManager = manager;

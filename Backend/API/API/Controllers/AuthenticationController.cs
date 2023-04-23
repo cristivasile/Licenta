@@ -1,10 +1,12 @@
 ﻿using API.Interfaces.Managers;
 using API.Models.Input;
+using Azure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -61,6 +63,24 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("confirmEmail/{token}")]
+        public async Task<IActionResult> ConfirmEmail([FromRoute] string token)
+        {
+            try
+            {
+                var username = await authenticationManager.ConfirmEmail(token);
+                return Ok(username);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
             }
         }
 

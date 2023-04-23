@@ -1,14 +1,14 @@
 import { Button, TextField } from '@mui/material';
 import { FC, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { generateErrorMessage } from '../../common';
+import { generateErrorMessage, generateSuccessMessage } from '../../common';
 import { signUp } from '../../services/authenticationService';
 import Loading from '../Loading/Loading';
 import './Auth.scss';
 
 interface RegisterProps { 
   userName: string;
-  setUserFunction: Function;
+  setUserCallback: Function;
 }
 
 const Register: FC<RegisterProps> = (props: RegisterProps) => {
@@ -25,7 +25,8 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
   const [passwordErrorText, setPasswordErrorText] = useState("");
   const [repeatError, setRepeatError] = useState(false);
   const [repeatErrorText, setRepeatErrorText] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");    //used for API request errors
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
     setRepeatErrorText("");
   }
 
-  const hamdleRegister = (event: FormEvent) => {
+  const handleRegister = (event: FormEvent) => {
     clearErrors();
     event.preventDefault();
 
@@ -83,13 +84,13 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
 
     setLoading(true);
 
-    signUp(usernameValue, passwordValue, emailValue)
+    signUp(usernameValue, passwordValue, emailValue, window.location.origin)
       .then(async response => {
         if (response.status !== 200) {
           setErrorMessage(await response.text());
         }
         else{
-          goToLogin();
+          setSuccessMessage("A confirmation email has been sent to " + emailValue);
         }
       })
       .catch((err) => {
@@ -111,7 +112,7 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
   }
 
   function goToLogin() {
-    props.setUserFunction(usernameValue);
+    props.setUserCallback(usernameValue);
     navigate("../login");
   }
   
@@ -123,7 +124,7 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
       {loading? <Loading/> : <></>}
       <div className="authContainer">
         <div className="formTitle">Register</div>
-        <form onSubmit={hamdleRegister} className="authForm">
+        <form onSubmit={handleRegister} className="authForm">
           <div className="inputDiv">
             <TextField value={emailValue} label="Email*" margin="dense" fullWidth
               onChange={(event) => setEmailValue(event.target.value)}
@@ -149,11 +150,12 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
               error={repeatError} helperText={repeatErrorText} />
           </div>
           {generateErrorMessage(errorMessage)}
+          {generateSuccessMessage(successMessage)}
           <div className="buttonDiv">
             <Button disabled={loading} variant="contained" type="submit">Register</Button>
           </div>
         </form>
-        <div> <button onClick={goToMain} className="linkButton">Go back to main</button></div>
+        <div> <button onClick={goToMain} className="linkButton">Go to main</button></div>
         <div> Already have an account? <button onClick={goToLogin} className="linkButton">Login</button></div>
       </div>
     </div>

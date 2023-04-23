@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace API.Interfaces.Managers
 {
-    public interface ITokenManager
+    public interface IAuthenticationTokenManager
     {
         Task<string> GenerateToken(User user);
     }
