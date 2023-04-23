@@ -34,12 +34,12 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
 
   function validate(){
     var hasError = false;
-    if(usernameValue === ""){
+    if(usernameValue.trim() === ""){
       setUsernameError(true);
       setUsernameErrorText("User cannot be empty");
       hasError = true;
     }
-    if(passwordValue === ""){
+    if(passwordValue.trim() === ""){
       setPasswordError(true);
       setPasswordErrorText("Password cannot be empty");
       hasError = true;
@@ -67,7 +67,7 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
     //disable login button
     setLoading(true);
 
-    logIn(usernameValue, passwordValue)
+    logIn(usernameValue.trim(), passwordValue.trim())
       .then(async response => {
         if (response.status !== 200) {
           setErrorMessage(await response.text());

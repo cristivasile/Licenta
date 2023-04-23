@@ -52,7 +52,7 @@ const SellVehicleDialog: FC<SellVehicleDialogProps> = (props: SellVehicleDialogP
 
         //disable buttons
         setLoading(true);
-        sellVehicle(props.vehicleId, username, true)
+        sellVehicle(props.vehicleId, username.trim(), true)
             .then(async response => {
                 if (response.status !== 200) {
                     setErrorMessage(await response.text());

@@ -132,7 +132,7 @@ const ManageFeaturesDialog: FC<ManageFeaturessDialogProps> = (props: ManageFeatu
             return;
 
         setLoading(true);
-        updateFeature(selectedFeatureValue, nameValue)
+        updateFeature(selectedFeatureValue, nameValue.trim())
             .then(async response => {
                 var responseText = await response.text();
                 if (response.status !== 200) {

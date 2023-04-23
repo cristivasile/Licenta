@@ -288,10 +288,10 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
     var vehicleModel: VehicleCreateModel = {
       images: base64Images,
       thumbnailImage: base64ThumbnailImage,
-      brand: brandValue,
-      model: modelValue,
+      brand: brandValue.trim(),
+      model: modelValue.trim(),
       bodyType: bodyTypeValue,
-      description: descriptionValue,
+      description: descriptionValue.trim(),
       address: locationValue,
       odometer: odometerValue,
       year: yearValue,

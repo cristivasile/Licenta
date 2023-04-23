@@ -220,7 +220,7 @@ const ManageLocationsDialog: FC<ManageLocationsDialogProps> = (props: ManageLoca
     var schedules = getSchedules();
 
     setLoading(true);
-    postLocation(cityValue, addressValue, schedules)
+    postLocation(cityValue.trim(), addressValue.trim(), schedules)
       .then(async response => {
         var responseText = await response.text();
         if (response.status !== 200) {

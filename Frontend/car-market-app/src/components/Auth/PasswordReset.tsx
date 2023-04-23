@@ -62,7 +62,7 @@ const PasswordReset: FC<PasswordResetProps> = (props: PasswordResetProps) => {
             return;
 
         setLoading(true);
-        resetPassword(username || "", passwordValue, token || "")
+        resetPassword(username || "", passwordValue.trim(), token || "")
             .then(async response => {
                 if (response.status !== 200) {
                     setErrorMessage(await response.text());

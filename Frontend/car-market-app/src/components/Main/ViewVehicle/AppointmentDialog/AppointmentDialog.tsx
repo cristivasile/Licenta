@@ -204,8 +204,8 @@ const AppointmentDialog: FC<AppointmentDialogProps> = (props: AppointmentDialogP
         setLoading(true);
 
         var input = { 
-            firstName: firstNameValue,
-            lastName: lastNameValue,
+            firstName: firstNameValue.trim(),
+            lastName: lastNameValue.trim(),
             phone: phoneValue,
             date: selectedInterval,
             vehicleId: props.vehicleId,

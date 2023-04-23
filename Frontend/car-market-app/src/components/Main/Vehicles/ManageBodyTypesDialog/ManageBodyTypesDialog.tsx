@@ -49,7 +49,7 @@ const ManageBodyTypesDialog: FC<ManageBodyTypesDialogProps> = (props: ManageBody
 
         setLoading(true);
 
-        postBodyType(nameValue)
+        postBodyType(nameValue.trim())
             .then(async response => {
                 var responseText = await response.text();
                 if (response.status !== 200) {

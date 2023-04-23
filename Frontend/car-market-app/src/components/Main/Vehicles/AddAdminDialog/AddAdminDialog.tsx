@@ -31,28 +31,28 @@ const AddAdminDialog: FC<AddAdminDialogProps> = (props: AddAdminDialogProps) => 
     function validate() {
         var hasError = false;
 
-        if (emailValue === "") {
+        if (emailValue.trim() === "") {
             setEmailError(true);
             setEmailErrorText("Email cannot be empty");
             hasError = true;
         }
-        if (usernameValue === "") {
+        if (usernameValue.trim() === "") {
             setUsernameError(true);
             setUsernameErrorText("User cannot be empty");
             hasError = true;
         }
-        if (passwordValue === "") {
+        if (passwordValue.trim() === "") {
             setPasswordError(true);
             setPasswordErrorText("Password cannot be empty");
             hasError = true;
         }
 
-        if (repeatValue === "") {
+        if (repeatValue.trim() === "") {
             setRepeatError(true);
             setRepeatErrorText("Repeated password cannot be empty");
             hasError = true;
         }
-        else if (passwordValue !== repeatValue) {
+        else if (passwordValue.trim() !== repeatValue.trim()) {
             setErrorMessage("Repeated password does not match!");
             hasError = true;
         }
@@ -82,7 +82,7 @@ const AddAdminDialog: FC<AddAdminDialogProps> = (props: AddAdminDialogProps) => 
 
         setLoading(true);
 
-        signUpAdmin(usernameValue, passwordValue, emailValue, window.location.origin)
+        signUpAdmin(usernameValue.trim(), passwordValue.trim(), emailValue.trim(), window.location.origin)
             .then(async response => {
                 if (response.status !== 200) {
                     var responseText = await response.text();
