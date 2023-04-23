@@ -102,7 +102,7 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
           console.log(err.message);
         }
       })
-      .then(response => {
+      .then(() => {
         setLoading(false)
       });
   };

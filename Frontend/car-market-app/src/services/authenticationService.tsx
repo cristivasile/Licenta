@@ -37,7 +37,7 @@ export const signUp = (username: string, password: string, email: string, websit
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, username: username, password: password, websiteConfirmationPageAddress: websiteAddress + "/auth/confirmation/" })
+        body: JSON.stringify({ email: email, username: username, password: password, websiteConfirmationPageLink: websiteAddress + "/auth/confirmation/" })
       };
 
   return fetch(apiUrl + "/api/auth/signUp", requestOptions);
@@ -47,7 +47,7 @@ export const signUpAdmin = (username: string, password: string, email: string, w
   const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + store.getState().user.token },
-      body: JSON.stringify({ email: email, username: username, password: password, websiteConfirmationPageAddress: websiteAddress + "/auth/confirmation/"})
+      body: JSON.stringify({ email: email, username: username, password: password, websiteConfirmationPageLink: websiteAddress + "/auth/confirmation/"})
     };
 
 return authenticatedFetch(apiUrl + "/api/auth/signUpAdmin", requestOptions);
@@ -68,3 +68,22 @@ export const confirmEmail = (token: string) : Promise<Response> => {
   };
   return fetch(apiUrl + "/api/auth/confirmEmail/" + token, requestOptions);
 }
+
+export const requestPasswordReset = (username: string, email: string, websiteAddress: string): Promise<Response> => {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, username: username, websiteResetPasswordLink: websiteAddress + "/auth/resetPassword/"})
+  };
+  return fetch(apiUrl + "/api/auth/passwordResetRequest", requestOptions);
+}
+
+export const resetPassword = (username: string, newPassword: string, token: string): Promise<Response> => {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: username, newPassword: newPassword, token: token})
+  };
+  return fetch(apiUrl + "/api/auth/passwordReset", requestOptions);
+}
+

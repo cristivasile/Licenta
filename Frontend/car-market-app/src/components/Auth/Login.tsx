@@ -104,6 +104,10 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
     navigate("../register");
   }
 
+  function goToReset() {
+    navigate("../requestPasswordReset");
+  }
+
   return (
     <div className="pageContainer">
       {loading? <Loading/> : <></>}
@@ -131,7 +135,8 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
           </div>
         </form>
         <div> <button onClick={goToMain} className="linkButton">Go to main</button></div>
-        <div> Need an account? <button onClick={goToRegister} className="linkButton">Register</button></div>
+        <div style={{marginTop:".5em"}}> Need an account? <button onClick={goToRegister} className="linkButton">Register</button></div>
+        <div style={{marginTop:".5em"}}> Forgot your password? <button onClick={goToReset} className="linkButton">Reset it</button></div>
       </div>
     </div>
   );

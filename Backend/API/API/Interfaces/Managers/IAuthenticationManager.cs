@@ -15,5 +15,7 @@ namespace API.Interfaces.Managers
         /// If successful, returns the username for which the email was confirmed
         /// </summary>
         Task<string> ConfirmEmail(string token);
+        Task RequestPasswordReset(PasswordResetRequestModel request);
+        Task ResetPassword(PasswordResetModel passwordReset);
     }
 }

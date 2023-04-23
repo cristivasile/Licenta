@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,6 +21,7 @@ namespace API.Managers
         private readonly IAuthenticationTokenManager authTokenManager;
         private readonly IConfirmationTokenManager confirmationTokenManager;
         private readonly IEmailManager emailManager;
+        private readonly int passwordResetTokenExpiry = 15; //password reset token expiration in minutes
 
         public AuthenticationManager(UserManager<User> userManager, SignInManager<User> signInManager, IAuthenticationTokenManager authTokenManager,
             IConfirmationTokenManager confirmationTokenManager, IEmailManager emailManager)
@@ -123,10 +125,20 @@ namespace API.Managers
 
             if (userEmailCheck != null)
             {
-                if(userEmailCheck.EmailConfirmed)
+                if (userEmailCheck.EmailConfirmed)
                     throw new Exception("Email already exists!");
-                if (!userEmailCheck.EmailConfirmed)
-                    await userManager.DeleteAsync(userEmailCheck);
+                else
+                    await userManager.DeleteAsync(userEmailCheck);    //email not yet confirmed, delete
+            }
+
+            var userCheck = await userManager.FindByNameAsync(user.UserName);
+
+            if(userCheck != null)
+            {
+                if (userCheck.EmailConfirmed)
+                    throw new Exception("User already exists!");
+                else
+                    await userManager.DeleteAsync(userEmailCheck);  //email not yet confirmed, delete
             }
 
             if (user.UserName.Length < 6)
@@ -148,7 +160,8 @@ namespace API.Managers
 
             var emailConfirmationToken = await confirmationTokenManager.Create(newUserId, ConfirmationTokenTypeEnum.EmailConfirmation);
 
-            var confirmationEmailBody = "To confirm your email address, please click the link: <a href='" + newUser.WebsiteConfirmationPageAddress + emailConfirmationToken.Token + "'>Confirm</a>";
+            var confirmationEmailBody = "Hello,<br><br>To confirm your email address, please click the link: <a href='" 
+                + $"{newUser.WebsiteConfirmationPageLink + emailConfirmationToken.Token}'>Confirm</a>";
 
             await emailManager.SendEmail(newUser.Email, "Confirm your email address", confirmationEmailBody);
         }
@@ -171,5 +184,47 @@ namespace API.Managers
             return user.UserName;
         }
 
+        public async Task RequestPasswordReset(PasswordResetRequestModel request)
+        {
+            var user = await userManager.FindByNameAsync(request.Username) ?? throw new KeyNotFoundException();
+
+            if (user.Email != request.Email)
+                throw new Exception("Incorrect email!");
+
+            var tokens = await confirmationTokenManager.GetByUserId(user.Id);
+
+            if (tokens.Any(x => x.Type == ConfirmationTokenTypeEnum.PasswordChange && x.CreationTime.AddMinutes(passwordResetTokenExpiry) > DateTime.Now))
+                throw new Exception($"A reset email has already been sent in the last {passwordResetTokenExpiry} minutes");
+
+            var passwordResetToken = await confirmationTokenManager.Create(user.Id, ConfirmationTokenTypeEnum.PasswordChange);
+
+            var passwordResetEmailBody = $"Hello {request.Username},<br><br>To reset your password, please click the link: <a href='{ 
+                request.WebsiteResetPasswordLink + user.UserName + '/' + passwordResetToken.Token }" +
+                $"'>Reset</a><br>This link is valid for {passwordResetTokenExpiry} minutes.<br>If you did not request a password change, ignore this email.";
+
+            await emailManager.SendEmail(user.Email, "Password reset request", passwordResetEmailBody);
+        }
+
+        public async Task ResetPassword(PasswordResetModel passwordReset)
+        {
+            var user = await userManager.FindByNameAsync(passwordReset.Username) ?? throw new Exception("User does not exist!");
+
+            var token = await confirmationTokenManager.GetByToken(passwordReset.Token);
+
+            if (token == null || token.UserId != user.Id)
+                throw new Exception("Invalid token!");
+
+            if (token.CreationTime.AddMinutes(passwordResetTokenExpiry) < DateTime.Now)
+                throw new Exception("The token has expired! Send another reset request!");
+
+            string resetToken = await userManager.GeneratePasswordResetTokenAsync(user);    //create a new Identity token and use it immediately
+            var result = await userManager.ResetPasswordAsync(user, resetToken, passwordReset.NewPassword);
+
+            if (!result.Succeeded)
+                throw new Exception(string.Join("\n", result.Errors.Select(x => x.Description)));
+
+            //delete spent token
+            await confirmationTokenManager.Delete(token.Token);
+        }
     }
 }

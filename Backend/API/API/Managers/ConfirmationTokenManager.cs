@@ -44,18 +44,10 @@ namespace API.Managers
         }
 
         public async Task<ConfirmationToken> GetByToken(string token)
-        {
-            var foundToken = await confirmationTokenRepository.GetByToken(token);
-
-            if (foundToken == null)
-                throw new KeyNotFoundException(token);
-
-            return foundToken;
-        }
+            => await confirmationTokenRepository.GetByToken(token);
 
         public async Task<List<ConfirmationToken>> GetByUserId(string userId)
-        {
-           return await confirmationTokenRepository.GetByUserId(userId);
-        }
+           => await confirmationTokenRepository.GetByUserId(userId);
+        
     }
 }

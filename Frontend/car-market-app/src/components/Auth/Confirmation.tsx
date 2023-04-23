@@ -38,7 +38,7 @@ const Confirmation: FC<ConfirmationProps> = (props: ConfirmationProps) => {
                     console.log(err.message);
                 }
             })
-            .then(response => {
+            .then(() => {
                 setLoading(false)
             });
     }
@@ -48,7 +48,6 @@ const Confirmation: FC<ConfirmationProps> = (props: ConfirmationProps) => {
     }
 
     function goToLogin(username: string) {
-        console.log(username);
         props.setUserCallback(username);
         navigate("/auth/login");
     }

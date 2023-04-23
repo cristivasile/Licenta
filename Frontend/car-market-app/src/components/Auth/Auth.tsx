@@ -6,6 +6,8 @@ import './Auth.scss';
 import Login from './Login';
 import Register from './Register';
 import Confirmation from './Confirmation';
+import PasswordResetRequest from './PasswordResetRequest';
+import PasswordReset from './PasswordReset';
 
 interface AuthProps {}
 
@@ -29,6 +31,8 @@ const Auth: FC<AuthProps> = () => {
     setUserCallback: setAuthUser
   }
 
+  const resetPasswordProps = confirmationProps;
+
   return (
     <div className="Auth">
       <Routes>
@@ -36,6 +40,8 @@ const Auth: FC<AuthProps> = () => {
         <Route path="login" element={<Login {...loginProps} />}/>
         <Route path="register" element={<Register {...registerProps}/>}/>
         <Route path="confirmation/:token" element={<Confirmation {...confirmationProps}/>}/>
+        <Route path="resetPassword/:username/:token" element={<PasswordReset {...resetPasswordProps}/>}/>
+        <Route path="requestPasswordReset" element={<PasswordResetRequest/>}/>
         <Route path="*" element={<Error404 />}/>  {/*Any other route goes to 404*/}
       </Routes>
     </div>

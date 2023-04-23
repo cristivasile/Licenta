@@ -3,6 +3,7 @@ using API.Models.Input;
 using Azure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +81,39 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("passwordResetRequest")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] PasswordResetRequestModel passwordResetRequest)
+        {
+            try
+            {
+                await authenticationManager.RequestPasswordReset(passwordResetRequest);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("passwordReset")]
+        public async Task<IActionResult> PasswordReset([FromBody] PasswordResetModel passwordReset)
+        {
+            try
+            {
+                await authenticationManager.ResetPassword(passwordReset);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

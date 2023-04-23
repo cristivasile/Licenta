@@ -118,7 +118,8 @@ namespace API
 
             //-- authentication config
             services.AddIdentity<User, Role>()
-                    .AddEntityFrameworkStores<AppDbContext>();
+                    .AddEntityFrameworkStores<AppDbContext>()
+                    .AddDefaultTokenProviders();
             services.AddScoped<IAuthenticationManager, AuthenticationManager>();
             services.AddScoped<IAuthenticationTokenManager, AuthenticationTokenManager>();
 
