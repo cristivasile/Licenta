@@ -10,8 +10,12 @@
     top: 10%;
     font-size: 4em;
     font-weight: bolder;
-    color: $accent2-color;
-    text-shadow:  1px 1px 2px $main-color;
+    color: white;
+    text-shadow:
+    -2px -2px 0 $main-color,
+    2px -2px 0 $main-color,
+    -2px 2px 0 $main-color,
+    2px 2px 0 $main-color;
 }
 
 .authContainer{

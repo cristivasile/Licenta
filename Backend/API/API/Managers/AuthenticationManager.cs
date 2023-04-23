@@ -186,7 +186,7 @@ namespace API.Managers
 
         public async Task RequestPasswordReset(PasswordResetRequestModel request)
         {
-            var user = await userManager.FindByNameAsync(request.Username) ?? throw new KeyNotFoundException();
+            var user = await userManager.FindByNameAsync(request.Username) ?? throw new Exception("User does not exist!");
 
             if (user.Email != request.Email)
                 throw new Exception("Incorrect email!");
