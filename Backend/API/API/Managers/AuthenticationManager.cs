@@ -2,8 +2,9 @@
 using API.Entities;
 using API.Helpers;
 using API.Interfaces.Managers;
-using API.Models;
+using API.Interfaces.Repositories;
 using API.Models.Input;
+using API.Models.Return;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,16 +22,18 @@ namespace API.Managers
         private readonly IAuthenticationTokenManager authTokenManager;
         private readonly IConfirmationTokenManager confirmationTokenManager;
         private readonly IEmailManager emailManager;
+        private readonly IUserDetailsRepository userDetailsRepository;
         private readonly int passwordResetTokenExpiry = 15; //password reset token expiration in minutes
 
         public AuthenticationManager(UserManager<User> userManager, SignInManager<User> signInManager, IAuthenticationTokenManager authTokenManager,
-            IConfirmationTokenManager confirmationTokenManager, IEmailManager emailManager)
+            IConfirmationTokenManager confirmationTokenManager, IEmailManager emailManager, IUserDetailsRepository userDetailsRepository)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.authTokenManager = authTokenManager;
             this.confirmationTokenManager = confirmationTokenManager;
             this.emailManager = emailManager;
+            this.userDetailsRepository = userDetailsRepository;
         }
 
         public async Task<List<string>> GetUsernames()
@@ -38,10 +41,8 @@ namespace API.Managers
             return await userManager.Users.Select(u => u.UserName).OrderBy(u => u).ToListAsync();
         }
 
-        public async Task<TokenModel> Login(LoginModel login)
+        public async Task<LoginReturnModel> Login(LoginModel login)
         {
-            var result = new TokenModel();
-
             var user = await userManager.FindByNameAsync(login.Username);
 
             if (user == null)
@@ -59,22 +60,28 @@ namespace API.Managers
                 throw new Exception("Incorrect password!");
 
             var token = await authTokenManager.GenerateToken(user);
-
-            result.AccessToken = token;
-
             var roles = await userManager.GetRolesAsync(user);
+            var userDetails = await userDetailsRepository.GetByUIserId(user.Id);
 
-            //return the highest role
-            if (roles.Count == 1)
-                result.Role = "User";
-            else if (roles.Count == 2)
+            var result = new LoginReturnModel()
+            {
+                AccessToken = token,
+                HasRecommendations = userDetails != null,
+            };
+
+            if (roles.Contains("Sysadmin"))
+                result.Role = "Sysadmin";
+            else if (roles.Contains("Admin"))
                 result.Role = "Admin";
-            else result.Role = "Sysadmin";
+            else if (roles.Contains("User"))
+                result.Role = "User";
+            else
+                throw new Exception("User has no roles!");
 
             return result;
         }
 
-        public async Task SignUp(RegisterModel newUser, List<string> roles)
+        public async Task SignUp(UserCreateModel newUser, List<string> roles)
         {
             var result = new IdentityResult();
 

@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace API.Entities
 {
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AgeGroup
     {
         Young = 0,      //18 - 39
@@ -10,19 +12,21 @@ namespace API.Entities
         Old = 2,        //60+
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Sex
     {
         Male = 0,   
         Female = 1,
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Region
     {
         Urban = 0,
         Rural = 1,
     }
 
-    public class RecommendationDetails
+    public class UserDetails : Entity
     {
         [Key]
         public string UserId { get; set; }

@@ -25,7 +25,7 @@ namespace API.Controllers
         }
 
         [HttpPost("signUp")]
-        public async Task<IActionResult> CreateUser([FromBody] RegisterModel newUser)
+        public async Task<IActionResult> CreateUser([FromBody] UserCreateModel newUser)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace API.Controllers
 
         [HttpPost("signUpAdmin")]
         [Authorize(Policy = "Sysadmin")]
-        public async Task<IActionResult> CreateAdmin([FromBody] RegisterModel newUser)
+        public async Task<IActionResult> CreateAdmin([FromBody] UserCreateModel newUser)
         {
             try
             {

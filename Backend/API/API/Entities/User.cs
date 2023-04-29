@@ -9,6 +9,6 @@ namespace API.Entities
         public virtual ICollection<Appointment> Appointments { get; set; }
         public virtual ICollection<ConfirmationToken> ConfirmationTokens { get; set; }
         public virtual ICollection<VehicleView> VehicleViews { get; set; }
-        public virtual RecommendationDetails RecommendationDetails { get; set; }
+        public virtual UserDetails UserDetails { get; set; }
     }
 }

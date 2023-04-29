@@ -4,6 +4,7 @@ using API.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230429085947_Create-recommendation-classes")]
+    partial class Createrecommendationclasses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,6 +178,25 @@ namespace API.Migrations
                     b.ToTable("Images");
                 });
 
+            modelBuilder.Entity("API.Entities.RecommendationDetails", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AgeGroup")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Region")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sex")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("RecommendationDetails");
+                });
+
             modelBuilder.Entity("API.Entities.Schedule", b =>
                 {
                     b.Property<string>("LocationId")
@@ -306,25 +328,6 @@ namespace API.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("API.Entities.UserDetails", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AgeGroup")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Region")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Sex")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("UserDetails");
-                });
-
             modelBuilder.Entity("API.Entities.Vehicle", b =>
                 {
                     b.Property<string>("Id")
@@ -409,24 +412,21 @@ namespace API.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
+                    b.Property<string>("UserID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("VehicleId")
+                    b.Property<string>("VehicleID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserID");
 
-                    b.HasIndex("VehicleId");
+                    b.HasIndex("VehicleID");
 
-                    b.ToTable("VehicleViews");
+                    b.ToTable("VehicleView");
                 });
 
             modelBuilder.Entity("FeatureVehicle", b =>
@@ -637,6 +637,17 @@ namespace API.Migrations
                     b.Navigation("Vehicle");
                 });
 
+            modelBuilder.Entity("API.Entities.RecommendationDetails", b =>
+                {
+                    b.HasOne("API.Entities.User", "User")
+                        .WithOne("RecommendationDetails")
+                        .HasForeignKey("API.Entities.RecommendationDetails", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("API.Entities.Schedule", b =>
                 {
                     b.HasOne("API.Entities.Location", "Location")
@@ -676,17 +687,6 @@ namespace API.Migrations
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("API.Entities.UserDetails", b =>
-                {
-                    b.HasOne("API.Entities.User", "User")
-                        .WithOne("UserDetails")
-                        .HasForeignKey("API.Entities.UserDetails", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("API.Entities.Vehicle", b =>
                 {
                     b.HasOne("API.Entities.BodyType", "BodyType")
@@ -718,13 +718,13 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Entities.User", "User")
                         .WithMany("VehicleViews")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("API.Entities.Vehicle", "Vehicle")
                         .WithMany("VehicleViews")
-                        .HasForeignKey("VehicleId")
+                        .HasForeignKey("VehicleID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -826,7 +826,7 @@ namespace API.Migrations
 
                     b.Navigation("PurchasedVehicleStatuses");
 
-                    b.Navigation("UserDetails");
+                    b.Navigation("RecommendationDetails");
 
                     b.Navigation("VehicleViews");
                 });

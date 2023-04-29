@@ -108,6 +108,8 @@ namespace API
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<IThumbnailRepostory, ThumbnailRepository>();
             services.AddScoped<IScheduleRepository, ScheduleRepository>();
+            services.AddScoped<IUserDetailsRepository, UserDetailsRepository>();
+            services.AddScoped<IVehicleViewRepository, VehicleViewRepository>();
 
             services.Configure<EmailConfiguration>(Configuration.GetSection("MailDetails"));
             services.AddScoped<IEmailManager, EmailManager>();
