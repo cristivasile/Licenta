@@ -27,6 +27,7 @@ namespace API.Managers
         private static readonly int maxDescriptionLength = 2500; 
 
         private readonly IVehicleRepository vehicleRepository;
+        private readonly IVehicleViewRepository vehicleViewRepository;
         private readonly IFeatureRepository featureRepository;
         private readonly IBodyTypeRepository bodyTypeRepository;
         private readonly IVehicleTypeRepository vehicleTypeRepository;
@@ -34,13 +35,17 @@ namespace API.Managers
         private readonly ILocationRepository locationRepository;
         private readonly IThumbnailRepostory thumbnailRepository;
         private readonly IPictureRepository pictureRepository;
+        private readonly IRecommendationManager recommendationManager;
+        private readonly IUserDetailsRepository userDetailsRepository;
         private readonly UserManager<User> userManager;
 
-        public VehicleManager(IVehicleRepository vehicleRepository, IFeatureRepository featureRepository, ILocationRepository locationRepository,
-            IBodyTypeRepository bodyTypeRepository, IVehicleTypeRepository vehicleTypeRepository, IStatusRepository statusRepository, 
-            IPictureRepository pictureRepository, IThumbnailRepostory thumbnailRepository, UserManager<User> userManager)
+        public VehicleManager(IVehicleRepository vehicleRepository, IVehicleViewRepository vehicleViewRepository, IFeatureRepository featureRepository, 
+            ILocationRepository locationRepository, IBodyTypeRepository bodyTypeRepository, IVehicleTypeRepository vehicleTypeRepository, IStatusRepository statusRepository, 
+            IPictureRepository pictureRepository, IThumbnailRepostory thumbnailRepository, IRecommendationManager recommendationManager,
+            IUserDetailsRepository userDetailsRepository, UserManager<User> userManager)
         {
             this.vehicleRepository = vehicleRepository;
+            this.vehicleViewRepository = vehicleViewRepository;
             this.featureRepository = featureRepository;
             this.bodyTypeRepository = bodyTypeRepository;
             this.vehicleTypeRepository = vehicleTypeRepository;
@@ -48,6 +53,8 @@ namespace API.Managers
             this.locationRepository = locationRepository;
             this.pictureRepository = pictureRepository;
             this.thumbnailRepository = thumbnailRepository;
+            this.recommendationManager = recommendationManager;
+            this.userDetailsRepository = userDetailsRepository;
             this.userManager = userManager;
         }
 
@@ -61,12 +68,28 @@ namespace API.Managers
             return vehicleRepository.GetNumberOfAvailableVehicles();
         }
 
-        public async Task<DetailedVehicleModel> GetById(string id)
+        public async Task<DetailedVehicleModel> GetById(string id, string username)
         {
             var vehicle = await vehicleRepository.GetById(id);
 
             if (vehicle == null)
-                return null;
+                throw new KeyNotFoundException();
+
+            //add a View instance
+            var user = await userManager.FindByNameAsync(username) ?? throw new Exception("User does not exist!");
+
+            if (await userDetailsRepository.GetByUIserId(user.Id) != null)  //only add a view entry for users with details
+            {
+                var newView = new VehicleView
+                {
+                    Date = DateTime.Now,
+                    UserId = user.Id,
+                    VehicleId = vehicle.Id,
+                    Id = Utilities.GetGUID(),
+                };
+
+                await vehicleViewRepository.Create(newView);
+            }
 
             return new DetailedVehicleModel(vehicle);
         }
@@ -76,7 +99,7 @@ namespace API.Managers
             var vehicle = await vehicleRepository.GetById(id);
 
             if (vehicle == null)
-                return null;
+                throw new KeyNotFoundException();
 
             return new FullVehicleModel(vehicle);
         }
@@ -84,7 +107,7 @@ namespace API.Managers
         /// <summary>
         /// Given a queryable collection applies filters and sorting.
         /// </summary>
-        private IEnumerable<VehicleModel> ApplyFilters(IQueryable<VehicleModel> vehicleQueryable, VehicleFiltersModel filters)
+        private async Task<IEnumerable<VehicleModel>> ApplyFiltersAsync(IQueryable<VehicleModel> vehicleQueryable, VehicleFiltersModel filters)
         {
             if (filters.Brand != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Brand.ToLower() == filters.Brand.ToLower());
@@ -135,8 +158,18 @@ namespace API.Managers
                     case FiltersSortTypeEnum.Power:
                         result = result.OrderBy(x => sortMultiplier * x.Power).ToList();
                         break;
-                    default:
+                    case FiltersSortTypeEnum.Recommended:
+
+                        if (filters.Username == null)
+                            throw new Exception("User cannot be null for recommended sort type!");
+
+                        var user = await userManager.FindByNameAsync(filters.Username) ?? throw new KeyNotFoundException(); //should never happen
+                        var details = await userDetailsRepository.GetByUIserId(user.Id);
+
+                        result = await recommendationManager.SortByRecommended(result, details);
                         break;
+                    default:
+                        throw new Exception("Unsupported sort type!");
                 }
             }
 
@@ -153,7 +186,7 @@ namespace API.Managers
 
         private async Task<VehiclesPageModel> GetFilteredPage(IEnumerable<VehicleModel> vehicles, VehicleFiltersModel filters)
         {
-            vehicles = ApplyFilters(vehicles.AsQueryable(), filters);
+            vehicles = await ApplyFiltersAsync(vehicles.AsQueryable(), filters);
             var count = vehicles.Count();
             vehicles = ApplyPagination(vehicles, filters);
 

@@ -105,6 +105,8 @@ namespace API
             services.AddScoped<IConfirmationTokenManager, ConfirmationTokenManager>();
             services.AddScoped<IConfirmationTokenRepository, ConfirmationTokenRepository>();
 
+            services.AddScoped<IRecommendationManager, RecommendationManager>();
+
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddScoped<IThumbnailRepostory, ThumbnailRepository>();
             services.AddScoped<IScheduleRepository, ScheduleRepository>();

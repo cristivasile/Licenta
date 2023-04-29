@@ -10,6 +10,7 @@ namespace API.Models.Input
         Price = 1,
         Mileage = 2,
         Power = 3,
+        Recommended = 4,
     }
 
     public class VehicleFiltersModel : VehiclePaginationModel
@@ -27,5 +28,6 @@ namespace API.Models.Input
         public TransmissionEnum? Transmission { get; set; }
         public FiltersSortTypeEnum? Sort { get; set; }
         public bool? SortAsc { get; set; }
+        public string? Username { get; set; }   //must not be null for Sort = Recommended
     }
 }

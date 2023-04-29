@@ -1,4 +1,5 @@
 ﻿using API.Interfaces.Managers;
+using API.Managers;
 using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,32 +36,68 @@ namespace API.Controllers
         [HttpPost("getAvailable")]
         public async Task<IActionResult> ReadAvailableVehicles([FromBody] VehicleFiltersModel filters)
         {
-            var vehicles = await vehicleManager.GetAvailable(filters);
-            return Ok(vehicles);
+            var username = User.Identity.Name;
+
+            if (username != null)
+                try
+                {
+                    filters.Username = username;
+                    var vehicles = await vehicleManager.GetAvailable(filters);
+                    return Ok(vehicles);
+                }
+                catch (KeyNotFoundException)
+                {
+                    return NotFound();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+
+            return Unauthorized();
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = "User")]
         public async Task<IActionResult> ReadById([FromRoute] string id)
         {
-            var vehicle = await vehicleManager.GetById(id);
+            var username = User.Identity.Name;
 
-            if (vehicle == null)
-                return NotFound();
+            if (username != null)
+                try
+                {
+                    var vehicle = await vehicleManager.GetById(id, username);
+                    return Ok(vehicle);
+                }
+                catch (KeyNotFoundException)
+                {
+                    return NotFound();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
 
-            return Ok(vehicle);
+            return Unauthorized();
         }
 
         [HttpGet("admin/{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> ReadByIdExtended([FromRoute] string id)
         {
-            var vehicle = await vehicleManager.GetByIdExtended(id);
-
-            if (vehicle == null)
+            try
+            {
+                var vehicle = await vehicleManager.GetByIdExtended(id);
+                return Ok(vehicle);
+            }
+            catch (KeyNotFoundException)
+            {
                 return NotFound();
-
-            return Ok(vehicle);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("getBrandModelDictionary")]

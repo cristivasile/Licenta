@@ -77,10 +77,7 @@ namespace API.Managers
 
         public async Task Delete(string appointmentId)
         {
-            var appointment = await appointmentRepository.GetById(appointmentId);
-
-            if (appointment == null)
-                throw new KeyNotFoundException();
+            var appointment = await appointmentRepository.GetById(appointmentId) ?? throw new KeyNotFoundException();
 
             await appointmentRepository.Delete(appointment);
         }

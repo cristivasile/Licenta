@@ -165,12 +165,26 @@ namespace API.Managers
             foreach (var role in roles)
                 await userManager.AddToRoleAsync(user, role);
 
+            //send the confirmation email
             var emailConfirmationToken = await confirmationTokenManager.Create(newUserId, ConfirmationTokenTypeEnum.EmailConfirmation);
 
             var confirmationEmailBody = "Hello,<br><br>To confirm your email address, please click the link: <a href='" 
                 + $"{newUser.WebsiteConfirmationPageLink + emailConfirmationToken.Token}'>Confirm</a>";
 
-            await emailManager.SendEmail(newUser.Email, "Confirm your email address", confirmationEmailBody);
+            _ = emailManager.SendEmail(newUser.Email, "Confirm your email address", confirmationEmailBody);
+
+            //create an UserDetails entry
+            if (newUser.UserDetails != null)
+            {
+                var details = new UserDetails {
+                    UserId = newUserId,
+                    AgeGroup = newUser.UserDetails.AgeGroup,
+                    Region = newUser.UserDetails.Region,
+                    Sex = newUser.UserDetails.Sex,
+                };
+
+                await userDetailsRepository.Create(details);
+            }
         }
 
         public async Task<string> ConfirmEmail(string tkn)
