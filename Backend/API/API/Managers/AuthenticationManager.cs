@@ -43,10 +43,7 @@ namespace API.Managers
 
         public async Task<LoginReturnModel> Login(LoginModel login)
         {
-            var user = await userManager.FindByNameAsync(login.Username);
-
-            if (user == null)
-                throw new Exception("User does not exist!");
+            var user = await userManager.FindByNameAsync(login.Username) ?? throw new Exception("User does not exist");
 
             if (!user.EmailConfirmed)
                 throw new Exception("Please confirm your email first!");

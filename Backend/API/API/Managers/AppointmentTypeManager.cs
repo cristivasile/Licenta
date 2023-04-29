@@ -25,10 +25,7 @@ namespace API.Managers
 
         public async Task Create(AppointmentTypeCreateModel toCreate)
         {
-            var locationCheck = await locationRepository.GetById(toCreate.LocationId);
-
-            if (locationCheck == null)
-                throw new Exception("Location does not exist!");
+            _ = await locationRepository.GetById(toCreate.LocationId) ?? throw new Exception("Location does not exist!");
 
             var nameCheck = await appointmentTypeRepository.GetByLocationId(toCreate.LocationId);
 
@@ -49,12 +46,7 @@ namespace API.Managers
 
         public async Task Delete(string id)
         {
-            var appointmentType = await appointmentTypeRepository.GetById(id);
-
-            if (appointmentType == null)
-                throw new KeyNotFoundException();
-
-            //TODO - delete appointments
+            var appointmentType = await appointmentTypeRepository.GetById(id) ?? throw new KeyNotFoundException();
 
             await appointmentTypeRepository.Delete(appointmentType);
         }
@@ -68,10 +60,7 @@ namespace API.Managers
 
         public async Task Update(string id, AppointmentTypeCreateModel toUpdate)
         {
-            var appointmentType = await appointmentTypeRepository.GetById(id);
-
-            if (appointmentType == null) 
-                throw new KeyNotFoundException();
+            var appointmentType = await appointmentTypeRepository.GetById(id) ?? throw new KeyNotFoundException();
 
             appointmentType.Duration = toUpdate.Duration;
             appointmentType.Name = toUpdate.Name;

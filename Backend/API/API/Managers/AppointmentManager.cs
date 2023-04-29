@@ -91,10 +91,7 @@ namespace API.Managers
 
         public async Task<List<AppointmentModel>> GetAllByUsername(string username, bool upcoming = true)
         {
-            var user = await userManager.FindByNameAsync(username);
-
-            if (user == null)
-                throw new Exception("User does not exist!");
+            var user = await userManager.FindByNameAsync(username) ?? throw new KeyNotFoundException();
 
             var appointmentList = await appointmentRepository.GetByUserId(user.Id, upcoming);
 
@@ -103,15 +100,9 @@ namespace API.Managers
 
         public async Task<AppointmentModel> GetByUserAndVehicleId(AppointmentUserRequestModel request, bool upcoming = true)
         {
-            var user = await userManager.FindByNameAsync(request.Username);
+            var user = await userManager.FindByNameAsync(request.Username) ?? throw new KeyNotFoundException();
 
-            if (user == null)
-                throw new Exception("User does not exist!");
-
-            var appointment = await appointmentRepository.GetByUserIdAndVehicleId(user.Id, request.VehicleId, upcoming);
-
-            if (appointment == null)
-                throw new KeyNotFoundException();
+            var appointment = await appointmentRepository.GetByUserIdAndVehicleId(user.Id, request.VehicleId, upcoming) ?? throw new KeyNotFoundException();
 
             return new AppointmentModel(appointment);
         }
@@ -137,7 +128,6 @@ namespace API.Managers
                 var weekday = (WeekdayEnum)dayOfWeek;
 
                 //get the schedule for the day of week
-                var schedules = await scheduleRepository.GetByLocationId(request.LocationId);
                 var schedule = await scheduleRepository.GetByLocationIdAndWeekday(request.LocationId, weekday);
                 if (schedule == null)
                 {

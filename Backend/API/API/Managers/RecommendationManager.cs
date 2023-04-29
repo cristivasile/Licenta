@@ -69,9 +69,9 @@ namespace API.Managers
                 desirability += GetSimilarity(priceAverage, vehicle.Price);
                 desirability += GetSimilarity(powerAverage, vehicle.Power);
 
-                if (bodyTypeViewDictionary.ContainsKey(vehicle.BodyType))
+                if (bodyTypeViewDictionary.TryGetValue(vehicle.BodyType, out int value))
                     // 2 * to assign a bigger importance to body types
-                    desirability += 2 * (bodyTypeViewDictionary[vehicle.BodyType] / views.Count);   
+                    desirability += 2 * (value / views.Count);   
             }
 
             vehiclesToSort = vehiclesToSort.OrderByDescending(x => vehicleDesirability[x.Id]).ToList();
@@ -79,7 +79,7 @@ namespace API.Managers
             return vehiclesToSort;
         }
 
-        private double GetSimilarity(double x, double y)
+        private static double GetSimilarity(double x, double y)
         {
             double midpoint = (x / 2) + (x * 2);
             double distance = Math.Abs(y - midpoint) / Math.Abs(x - midpoint);

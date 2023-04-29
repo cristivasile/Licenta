@@ -36,6 +36,10 @@ namespace API.Controllers
                 var appointments = await appointmentManager.GetAllByLocationId(locationId, upcoming: true);
                 return Ok(appointments);
             }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
@@ -50,6 +54,10 @@ namespace API.Controllers
             {
                 var appointments = await appointmentManager.GetAllByLocationId(locationId, upcoming);
                 return Ok(appointments);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -90,6 +98,10 @@ namespace API.Controllers
             {
                 var appointments = await appointmentManager.GetByUserAndVehicleId(request, upcoming: true);
                 return Ok(appointments);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -151,6 +163,10 @@ namespace API.Controllers
                     await appointmentManager.Delete(id);
 
                     return Ok();
+                }
+                catch (KeyNotFoundException)
+                {
+                    return NotFound();
                 }
                 catch (Exception ex)
                 {

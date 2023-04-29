@@ -189,9 +189,13 @@ namespace API.Controllers
                 await vehicleManager.Delete(id);
                 return Ok();
             }
-            catch
+            catch (KeyNotFoundException)
             {
                 return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     } 

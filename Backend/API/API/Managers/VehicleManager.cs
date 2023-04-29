@@ -70,10 +70,7 @@ namespace API.Managers
 
         public async Task<DetailedVehicleModel> GetById(string id, string username)
         {
-            var vehicle = await vehicleRepository.GetById(id);
-
-            if (vehicle == null)
-                throw new KeyNotFoundException();
+            var vehicle = await vehicleRepository.GetById(id) ?? throw new KeyNotFoundException();
 
             //add a View instance
             var user = await userManager.FindByNameAsync(username) ?? throw new Exception("User does not exist!");
@@ -96,10 +93,7 @@ namespace API.Managers
 
         public async Task<FullVehicleModel> GetByIdExtended(string id)
         {
-            var vehicle = await vehicleRepository.GetById(id);
-
-            if (vehicle == null)
-                throw new KeyNotFoundException();
+            var vehicle = await vehicleRepository.GetById(id) ?? throw new KeyNotFoundException();
 
             return new FullVehicleModel(vehicle);
         }
@@ -291,10 +285,7 @@ namespace API.Managers
             {
                 foreach (var featureName in inputVehicle.Features)
                 {
-                    var feature = await featureRepository.GetById(featureName);
-                    if (feature == null)
-                        throw new Exception("Invalid feature given!");
-
+                    var feature = await featureRepository.GetById(featureName) ?? throw new Exception("Invalid feature given!");
                     featuresList.Add(feature);
                 }
             }
@@ -361,10 +352,7 @@ namespace API.Managers
 
         public async Task Update(string id, VehicleCreateModel updatedVehicle)
         {
-            var currentVehicle = await vehicleRepository.GetById(id);
-
-            if (currentVehicle == null)
-                throw new KeyNotFoundException("Vehicle doesn't exist!");
+            var currentVehicle = await vehicleRepository.GetById(id) ?? throw new KeyNotFoundException();
 
             //will throw an exception if validation fails
             await ValidateInputVehicle(updatedVehicle);
@@ -375,10 +363,7 @@ namespace API.Managers
             {
                 foreach (var featureName in updatedVehicle.Features)
                 {
-                    var feature = await featureRepository.GetById(featureName);
-                    if (feature == null)
-                        throw new Exception("Invalid feature given!");
-
+                    var feature = await featureRepository.GetById(featureName) ?? throw new Exception("Invalid feature given!");
                     featuresList.Add(feature);
                 }
             }
@@ -451,11 +436,7 @@ namespace API.Managers
 
         public async Task UpdateStatus(string id, VehicleStatusUpdateModel updatedStatus)
         {
-            var currentVehicle = await vehicleRepository.GetById(id);
-
-            ///404 not found
-            if (currentVehicle == null)
-                throw new KeyNotFoundException("The vehicle was not found!");
+            var currentVehicle = await vehicleRepository.GetById(id) ?? throw new KeyNotFoundException();
 
             var status = currentVehicle.Status;
             if (updatedStatus.IsSold)
@@ -463,9 +444,7 @@ namespace API.Managers
                 if (updatedStatus.Username == null)
                     throw new Exception("A sold vehicle must be purchased by an user!");
 
-                var user = await userManager.FindByNameAsync(updatedStatus.Username);
-                if (user == null)
-                    throw new Exception("User does not exist!");
+                var user = await userManager.FindByNameAsync(updatedStatus.Username) ?? throw new Exception("User does not exist!");
 
                 status.DateSold = DateTime.Now;
                 status.IsSold = true;
@@ -482,11 +461,7 @@ namespace API.Managers
 
         public async Task UpdateImages(string id, List<string> updatedImages)
         {
-            var currentVehicle = await vehicleRepository.GetById(id);
-
-            ///404 not found
-            if (currentVehicle == null)
-                throw new KeyNotFoundException("The vehicle was not found!");
+            var currentVehicle = await vehicleRepository.GetById(id) ?? throw new KeyNotFoundException();
 
             //check images
             foreach (var image in updatedImages)
@@ -514,10 +489,7 @@ namespace API.Managers
 
         public async Task Delete(string id)
         {
-            var currentVehicle = await vehicleRepository.GetById(id);
-
-            if (currentVehicle == null)
-                throw new Exception("Vehicle doesn't exist!");
+            var currentVehicle = await vehicleRepository.GetById(id) ?? throw new KeyNotFoundException();
 
             await vehicleRepository.Delete(currentVehicle);
 
@@ -529,7 +501,7 @@ namespace API.Managers
             var filteredVehicles = vehicles.Where(x => x.Brand == brand && x.Model == model);
 
             //remove if necessary
-            if (filteredVehicles.Count() == 0)
+            if (filteredVehicles.Any())
                 await vehicleTypeRepository.Delete(await vehicleTypeRepository.GetById(brand, model));
 
             //remove thumbnail
