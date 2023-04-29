@@ -142,7 +142,7 @@ namespace API.Managers
                 if (userCheck.EmailConfirmed)
                     throw new Exception("User already exists!");
                 else
-                    await userManager.DeleteAsync(userEmailCheck);  //email not yet confirmed, delete
+                    await userManager.DeleteAsync(userCheck);  //email not yet confirmed, delete
             }
 
             if (user.UserName.Length < 6)
