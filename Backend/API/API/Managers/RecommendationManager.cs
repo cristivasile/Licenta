@@ -29,12 +29,8 @@ namespace API.Managers
         {
             var details = await userDetailsRepository.GetByUserId(userId) ?? throw new Exception("Cannot sort by recommended for a user without details!");
 
-            var usersTask = userDetailsRepository.GetSimilarUsers(details);
-            var vehiclesTask = vehicleRepository.GetAll();
-            await Task.WhenAll(usersTask, vehiclesTask);
-
-            var similarUsers = usersTask.Result;
-            var vehicles = vehiclesTask.Result;
+            var similarUsers = await userDetailsRepository.GetSimilarUsers(details);
+            var vehicles = await vehicleRepository.GetAll();
 
             double priceAverage = 0.0;
             double powerAverage = 0.0;
@@ -56,10 +52,10 @@ namespace API.Managers
             //sort by newest and take newest <recommendationViewLimit>
             views = views.OrderByDescending(x => x.Date).Take(recommendationViewLimit).ToList();
 
-            foreach(var view in views)
+                foreach(var view in views)
             {
-                priceAverage += view.Vehicle.Price / (views.Count);
-                powerAverage += view.Vehicle.Power / (views.Count);
+                priceAverage += (double) view.Vehicle.Price / (views.Count);
+                powerAverage += (double) view.Vehicle.Power / (views.Count);
 
                 if (!bodyTypeViewDictionary.ContainsKey(view.Vehicle.BodyTypeName))
                     bodyTypeViewDictionary[view.Vehicle.BodyTypeName] = 1;
@@ -78,7 +74,9 @@ namespace API.Managers
 
                 if (bodyTypeViewDictionary.TryGetValue(vehicle.BodyType, out int value))
                     // 2 * to assign a bigger importance to body types
-                    desirability += 2 * (value / views.Count);   
+                    desirability += 2 * (value / views.Count);
+
+                vehicleDesirability[vehicle.Id] = desirability;
             }
 
             vehiclesToSort = vehiclesToSort.OrderByDescending(x => vehicleDesirability[x.Id]).ToList();
@@ -88,12 +86,7 @@ namespace API.Managers
 
         private static double GetSimilarity(double x, double y)
         {
-            double midpoint = (x / 2) + (x * 2);
-            double distance = Math.Abs(y - midpoint) / Math.Abs(x - midpoint);
-
-            double result = 1.0 - distance;
-
-            return Math.Max(result, 0.0);
+            return Math.Max(0, 1 - Math.Abs(Math.Log2(y / x)));
         }
     }
 }

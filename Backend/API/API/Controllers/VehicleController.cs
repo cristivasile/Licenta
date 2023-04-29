@@ -34,27 +34,23 @@ namespace API.Controllers
         /// For no filters send an empty {} body
         /// </summary>
         [HttpPost("getAvailable")]
+        [Authorize(Policy = "Any")]
         public async Task<IActionResult> ReadAvailableVehicles([FromBody] VehicleFiltersModel filters)
         {
-            var username = User.Identity.Name;
-
-            if (username != null)
-                try
-                {
-                    filters.Username = username;
-                    var vehicles = await vehicleManager.GetAvailable(filters);
-                    return Ok(vehicles);
-                }
-                catch (KeyNotFoundException)
-                {
-                    return NotFound();
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest(ex.Message);
-                }
-
-            return Unauthorized();
+            try
+            {
+                filters.Username = User.Identity.Name;
+                var vehicles = await vehicleManager.GetAvailable(filters);
+                return Ok(vehicles);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
