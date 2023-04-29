@@ -80,6 +80,7 @@ namespace API.Entities
         public virtual ICollection<Feature> Features { get; set; }
         public virtual ICollection<Picture> Images { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<VehicleView> VehicleViews { get; set; }
     }
 }
 
