@@ -6,7 +6,7 @@ import { addLocation, removeLocationById, updateLocationById } from '../../../..
 import { postLocation, removeLocation, updateLocation } from '../../../../services/locationsService';
 import Loading from '../../../Loading/Loading';
 import { ScheduleModel } from '../../../../models/ScheduleModel';
-import { WeekdayEnum } from '../../../../models/WeekdayEnum';
+import { WeekdayEnum } from '../../../../models/enums/WeekdayEnum';
 import { LocationModel } from '../../../../models/LocationModel';
 import { AppointmentTypeModel, mapJsonToAppointmentTypeModels } from '../../../../models/AppointmentTypeModel';
 import { deleteAppointmentType, getAppointmentTypesBylocationId, postAppointmentType, putAppointmentType } from '../../../../services/appointmentTypesService';

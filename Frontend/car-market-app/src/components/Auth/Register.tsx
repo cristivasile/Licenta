@@ -1,12 +1,15 @@
-import { Button, TextField } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
 import { FC, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { generateErrorMessage, generateSuccessMessage } from '../../common';
-import { signUp } from '../../services/authenticationService';
+import { SignUpModel, signUp } from '../../services/authenticationService';
 import Loading from '../Loading/Loading';
 import './Auth.scss';
+import { AgeGroupEnum, ageGroupEnumMap } from '../../models/enums/AgeGroupEnum';
+import { SexEnum, sexEnumMap } from '../../models/enums/SexEnum';
+import { RegionEnum, regionEnumMap } from '../../models/enums/RegionEnum';
 
-interface RegisterProps { 
+interface RegisterProps {
   userName: string;
   setUserCallback: Function;
 }
@@ -16,6 +19,15 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
   const [usernameValue, setUsernameValue] = useState(props.userName);
   const [passwordValue, setPasswordValue] = useState("");
   const [repeatValue, setRepeatValue] = useState("");
+
+  const [hasDetailedInfo, setHasDetailedInfo] = useState(false);
+  const [ageGroupValue, setAgeGroupValue] = useState(AgeGroupEnum.Young);
+  const [regionValue, setRegionValue] = useState(RegionEnum.Urban);
+  const [sexValue, setSexValue] = useState(SexEnum.Male);
+
+  const ageGroups = Array.from(ageGroupEnumMap.entries());
+  const regions = Array.from(regionEnumMap.entries());
+  const sexes = Array.from(sexEnumMap.entries());
 
   const [emailError, setEmailError] = useState(false);
   const [emailErrorText, setEmailErrorText] = useState("");
@@ -31,10 +43,10 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  function validate(){
+  function validate() {
     var hasError = false;
 
-    if(emailValue.trim() === ""){
+    if (emailValue.trim() === "") {
       setEmailError(true);
       setEmailErrorText("Email cannot be empty");
       hasError = true;
@@ -50,7 +62,7 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
       hasError = true;
     }
 
-    if(repeatValue.trim() === ""){
+    if (repeatValue.trim() === "") {
       setRepeatError(true);
       setRepeatErrorText("Repeated password cannot be empty");
       hasError = true;
@@ -84,12 +96,23 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
 
     setLoading(true);
 
-    signUp(usernameValue.trim(), passwordValue.trim(), emailValue.trim(), window.location.origin)
+    var signUpInfo = {
+      username: usernameValue.trim(),
+      password: passwordValue.trim(),
+      email: emailValue.trim(),
+      hasDetailedInfo: hasDetailedInfo,
+      ageGroup: ageGroupValue,
+      sex: sexValue,
+      region: regionValue,
+      websiteAddress: window.location.origin,
+    } as SignUpModel;
+
+    signUp(signUpInfo)
       .then(async response => {
         if (response.status !== 200) {
           setErrorMessage(await response.text());
         }
-        else{
+        else {
           setSuccessMessage("A confirmation email has been sent to " + emailValue);
         }
       })
@@ -107,7 +130,7 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
       });
   };
 
-  function goToMain(){
+  function goToMain() {
     navigate("/main");
   }
 
@@ -115,14 +138,14 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
     props.setUserCallback(usernameValue);
     navigate("../login");
   }
-  
+
   return (
     <div className="pageContainer">
       <div className="titleContainer" >
         Car Market App
       </div>
-      {loading? <Loading/> : <></>}
-      <div className="authContainer">
+      {loading ? <Loading /> : <></>}
+      <div className="authContainer" style={{ width: "26em" }}>
         <div className="formTitle">Register</div>
         <form onSubmit={handleRegister} className="authForm">
           <div className="inputDiv">
@@ -148,6 +171,44 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
               onChange={(event) => setRepeatValue(event.target.value)}
               type="password" placeholder="*******" name="repeat"
               error={repeatError} helperText={repeatErrorText} />
+          </div>
+          <div className="inputDiv" style={{ marginTop: "1em", marginBottom: ".5em" }}>
+            <FormControlLabel
+              control={<Checkbox checked={hasDetailedInfo} onChange={(event) => setHasDetailedInfo(event.target.checked)} />}
+              label={<Typography sx={{ textAlign: "left" }}>[OPTIONAL] I want to give some info about myself in order to get recommendations</Typography>}
+            />
+          </div>
+          <div className="inputDiv" style={{display: "flex", flexDirection:"row", justifyContent:"space-between"}}>
+            {hasDetailedInfo ?
+              <>
+                <TextField value={ageGroupValue} label="Age group" margin="dense" select sx={{width: "32%"}}
+                  onChange={(event) => setAgeGroupValue(event.target.value as AgeGroupEnum)}>
+                  {ageGroups.map((entry) => (
+                    <MenuItem key={entry[0]} value={entry[1]}>
+                      {entry[0]}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField value={regionValue} label="Region" margin="dense" select sx={{width: "32%"}}
+                  onChange={(event) => setRegionValue(event.target.value as RegionEnum)}>
+                  {regions.map((entry) => (
+                    <MenuItem key={entry[0]} value={entry[1]}>
+                      {entry[0]}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField value={sexValue} label="Sex" margin="dense" select sx={{width: "32%"}}
+                  onChange={(event) => setSexValue(event.target.value as SexEnum)}>
+                  {sexes.map((entry) => (
+                    <MenuItem key={entry[0]} value={entry[1]}>
+                      {entry[0]}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </>
+              :
+              <></>
+            }
           </div>
           {generateErrorMessage(errorMessage)}
           {generateSuccessMessage(successMessage)}

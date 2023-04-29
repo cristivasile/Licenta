@@ -19,3 +19,4 @@ export function mapFromVehicleTypeList(list: VehicleTypeModel[]): Map<string, st
         list.map(vehicleType => 
             [vehicleType.name, vehicleType.values] as [string, string[]]));
 }
+

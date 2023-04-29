@@ -6,11 +6,11 @@ import { notifyFetchFail } from '../../../services/toastNotificationsService';
 import { createVehicle, updateVehicle } from '../../../services/vehiclesService';
 import { capitalizeFirstLetter, compressImage, fileToBase64, handleNumericInput } from '../../../services/utils';
 import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
-import { driveTrainsMap, DriveTrainTypeEnum } from '../../../models/DriveTrainTypeEnum';
-import { powerTrainsMap, PowerTrainTypeEnum } from '../../../models/PowerTrainTypeEnum';
+import { driveTrainEnumMap, DriveTrainTypeEnum } from '../../../models/enums/DriveTrainTypeEnum';
+import { powerTrainEnumMap, PowerTrainTypeEnum } from '../../../models/enums/PowerTrainTypeEnum';
 import Loading from '../../Loading/Loading';
 import defaultImage from "../../../assets/no-image.png";
-import { TransmissionTypeEnum, transmissionTypesMap } from '../../../models/TransmissionTypeEnum';
+import { TransmissionTypeEnum, transmissionTypeEnumMap } from '../../../models/enums/TransmissionTypeEnum';
 import { compressedImageSizeInMb, compressedThumbnailSizeInMb, maxCompressedImageWidth, maxCompressedThumbnailWidth } from '../../../constants';
 import { DetailedVehicleModel, VehicleCreateModel } from '../../../models/VehicleModel';
 import './VehicleDialog.scss';
@@ -30,9 +30,9 @@ const VehicleDialog: FC<VehicleDialogProps> = (props: VehicleDialogProps) => {
   const bodyTypes = useAppSelector((state) => state.bodyType.bodyTypes);
   const features = useAppSelector((state) => state.feature.features);
   const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
-  const driveTrains = Array.from(driveTrainsMap.entries());
-  const powerTrains = Array.from(powerTrainsMap.entries());
-  const transmissions = Array.from(transmissionTypesMap.entries());
+  const driveTrains = Array.from(driveTrainEnumMap.entries());
+  const powerTrains = Array.from(powerTrainEnumMap.entries());
+  const transmissions = Array.from(transmissionTypeEnumMap.entries());
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath } from "../constants";
+import { hasRecommendationsLocalStoragePath, roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath } from "../constants";
 
 function userIsLogged() {
     return localStorage.getItem(tokenLocalStoragePath) !== null;
@@ -13,6 +13,12 @@ function getLocalStorageString(key: string) {
         return localStorage.getItem(key);
 }
 
+function clearLocalStorage() {
+    localStorage.setItem(tokenLocalStoragePath, "");
+    localStorage.setItem(hasRecommendationsLocalStoragePath, JSON.stringify(false));
+    localStorage.setItem(roleLocalStoragePath, "");
+}
+
 export const userSlice = createSlice({
     name: "userState",
     initialState: {
@@ -20,6 +26,7 @@ export const userSlice = createSlice({
         loggedUser: getLocalStorageString(userLocalStoragePath),
         token: getLocalStorageString(tokenLocalStoragePath),
         role: getLocalStorageString(roleLocalStoragePath),
+        hasRecommendations: JSON.parse(getLocalStorageString(hasRecommendationsLocalStoragePath) || "false"),
     },
     reducers: {
         login: (state) => {
@@ -30,12 +37,15 @@ export const userSlice = createSlice({
             state.loggedUser = "";
             state.token = "";
             state.role = "";
+            state.hasRecommendations = false;
+            clearLocalStorage();
         },
         forcedLogout: (state) => {
-            state.isLogged = false;
             //state.loggedUser = state.loggedUser; do not reset username
+            state.isLogged = false;
             state.token = "";
             state.role = "";
+            clearLocalStorage();
         },
         setUser: (state, action) => {
             state.loggedUser = action.payload;
@@ -45,9 +55,12 @@ export const userSlice = createSlice({
         },
         setRole: (state, action) => {
             state.role = action.payload;
+        },
+        setHasRecommendations: (state, action) => {
+            state.hasRecommendations = action.payload;
         }
     },
 });
 
-export const { login, logout, forcedLogout, setUser, setToken, setRole } = userSlice.actions;
+export const { login, logout, forcedLogout, setUser, setToken, setRole, setHasRecommendations } = userSlice.actions;
 export default userSlice.reducer;

@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import './Auth.scss';
 import { Button } from '@mui/material';
-import { login, setRole, setToken, setUser} from '../../redux/userStore';
+import { login, setHasRecommendations, setRole, setToken, setUser} from '../../redux/userStore';
 import { useAppDispatch } from '../../hooks';
-import { roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath } from '../../constants';
+import { hasRecommendationsLocalStoragePath, roleLocalStoragePath, tokenLocalStoragePath, userLocalStoragePath } from '../../constants';
 import Loading from '../Loading/Loading';
 import { notifyFetchFail } from '../../services/toastNotificationsService';
 import { generateErrorMessage } from '../../common';
@@ -78,12 +78,14 @@ const Login: FC<LoginProps> = (props: LoginProps) => {
           localStorage.setItem(tokenLocalStoragePath, json.accessToken);
           localStorage.setItem(roleLocalStoragePath, json.role);
           localStorage.setItem(userLocalStoragePath, usernameValue);
+          localStorage.setItem(hasRecommendationsLocalStoragePath, JSON.stringify(json.hasRecommendations));
 
           //set values in redux
           dispatch(login());
           dispatch(setUser(usernameValue));
           dispatch(setRole(json.role));
           dispatch(setToken(json.accessToken));
+          dispatch(setHasRecommendations(json.hasRecommendations));
           navigate("/main");
         }
       })

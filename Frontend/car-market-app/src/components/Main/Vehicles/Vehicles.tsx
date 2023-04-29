@@ -22,8 +22,8 @@ import './Vehicles.scss';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import TuneIcon from '@mui/icons-material/Tune';
 import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
-import { transmissionTypesMap } from '../../../models/TransmissionTypeEnum';
-import { sortTypesMap } from '../../../models/SortTypeEnumModel';
+import { transmissionTypeEnumMap } from '../../../models/enums/TransmissionTypeEnum';
+import { recommendationSortTypesMap, sortTypesMap } from '../../../models/enums/SortTypeEnumModel';
 import ManageLocationsDialog from './ManageLocationsDialog/ManageLocationsDialog';
 import ManageFeaturesDialog from './ManageFeaturesDialog/ManageFeaturesDialog';
 import ManageBodyTypesDialog from './ManageBodyTypesDialog/ManageBodyTypesDialog';
@@ -78,9 +78,10 @@ const Vehicles: FC<VehiclesProps> = () => {
   const bodyTypes = useAppSelector((state) => state.bodyType.bodyTypes);
   const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
   const brands = Array.from(vehicleTypesMap.keys());
-  const transmissionTypes = Array.from(transmissionTypesMap.entries());
-  const sortTypes = Array.from(sortTypesMap.entries());
+  const transmissionTypes = Array.from(transmissionTypeEnumMap.entries());
   const [modelOptions, setModelOptions] = useState(new Array<string>());
+  const hasRecommendations = useAppSelector((state) => state.user.hasRecommendations);
+  const sortTypes = Array.from(hasRecommendations? recommendationSortTypesMap.entries() : sortTypesMap.entries())
 
   // Sets the 'Model' autocomplete options when the brand value is modified
   function handleBrandSelection(brand: string) {

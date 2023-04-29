@@ -1,4 +1,4 @@
-import { WeekdayEnum } from "./WeekdayEnum";
+import { WeekdayEnum } from "./enums/WeekdayEnum";
 
 export interface ScheduleModel{
     weekday: WeekdayEnum,

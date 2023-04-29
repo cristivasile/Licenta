@@ -1,7 +1,7 @@
-import { DriveTrainTypeEnum } from "./DriveTrainTypeEnum";
+import { DriveTrainTypeEnum } from "./enums/DriveTrainTypeEnum";
 import { jsonToLocationModel, LocationModel } from "./LocationModel";
-import { PowerTrainTypeEnum } from "./PowerTrainTypeEnum";
-import { TransmissionTypeEnum } from "./TransmissionTypeEnum";
+import { PowerTrainTypeEnum } from "./enums/PowerTrainTypeEnum";
+import { TransmissionTypeEnum } from "./enums/TransmissionTypeEnum";
 
 export interface SimplifiedVehicleModel {
     id: string,

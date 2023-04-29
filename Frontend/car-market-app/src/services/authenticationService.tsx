@@ -1,4 +1,7 @@
 import { apiUrl } from "../constants";
+import { AgeGroupEnum } from "../models/enums/AgeGroupEnum";
+import { RegionEnum } from "../models/enums/RegionEnum";
+import { SexEnum } from "../models/enums/SexEnum";
 import { store } from "../redux/store";
 import { authenticatedFetch } from "./authenticatedFetch";
 
@@ -33,11 +36,29 @@ export const logIn = (username: string, password: string): Promise<Response> => 
   return fetch(apiUrl + "/api/auth/login", requestOptions);
 }
 
-export const signUp = (username: string, password: string, email: string, websiteAddress: string): Promise<Response> => {
+export interface SignUpModel {
+  username: string,
+  password: string,
+  email: string,
+  hasDetailedInfo: boolean,
+  ageGroup: AgeGroupEnum | null,
+  sex: SexEnum | null,
+  region:  RegionEnum | null,
+  websiteAddress: string,
+}
+
+export const signUp = (signUp: SignUpModel): Promise<Response> => {
+
+  var details: any = null;
+
+  if (signUp.hasDetailedInfo)
+    details = {ageGroup: signUp.ageGroup, region: signUp.region, sex: signUp.sex}
+
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, username: username, password: password, websiteConfirmationPageLink: websiteAddress + "/auth/confirmation/" })
+        body: JSON.stringify({ email: signUp.email, username: signUp.username, password: signUp.password, 
+          userDetails: details, websiteConfirmationPageLink: signUp.websiteAddress + "/auth/confirmation/" })
       };
 
   return fetch(apiUrl + "/api/auth/signUp", requestOptions);
