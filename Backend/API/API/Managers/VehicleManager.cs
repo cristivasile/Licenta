@@ -36,13 +36,11 @@ namespace API.Managers
         private readonly IThumbnailRepostory thumbnailRepository;
         private readonly IPictureRepository pictureRepository;
         private readonly IRecommendationManager recommendationManager;
-        private readonly IUserDetailsRepository userDetailsRepository;
         private readonly UserManager<User> userManager;
 
         public VehicleManager(IVehicleRepository vehicleRepository, IVehicleViewRepository vehicleViewRepository, IFeatureRepository featureRepository, 
             ILocationRepository locationRepository, IBodyTypeRepository bodyTypeRepository, IVehicleTypeRepository vehicleTypeRepository, IStatusRepository statusRepository, 
-            IPictureRepository pictureRepository, IThumbnailRepostory thumbnailRepository, IRecommendationManager recommendationManager,
-            IUserDetailsRepository userDetailsRepository, UserManager<User> userManager)
+            IPictureRepository pictureRepository, IThumbnailRepostory thumbnailRepository, IRecommendationManager recommendationManager, UserManager<User> userManager)
         {
             this.vehicleRepository = vehicleRepository;
             this.vehicleViewRepository = vehicleViewRepository;
@@ -54,7 +52,6 @@ namespace API.Managers
             this.pictureRepository = pictureRepository;
             this.thumbnailRepository = thumbnailRepository;
             this.recommendationManager = recommendationManager;
-            this.userDetailsRepository = userDetailsRepository;
             this.userManager = userManager;
         }
 
@@ -72,21 +69,17 @@ namespace API.Managers
         {
             var vehicle = await vehicleRepository.GetById(id) ?? throw new KeyNotFoundException();
 
-            //add a View instance
+            //add a View entry
             var user = await userManager.FindByNameAsync(username) ?? throw new Exception("User does not exist!");
-
-            if (await userDetailsRepository.GetByUIserId(user.Id) != null)  //only add a view entry for users with details
+            var newView = new VehicleView
             {
-                var newView = new VehicleView
-                {
-                    Date = DateTime.Now,
-                    UserId = user.Id,
-                    VehicleId = vehicle.Id,
-                    Id = Utilities.GetGUID(),
-                };
+                Id = Utilities.GetGUID(),
+                Date = DateTime.Now,
+                UserId = user.Id,
+                VehicleId = vehicle.Id,
+            };
 
-                await vehicleViewRepository.Create(newView);
-            }
+            await vehicleViewRepository.Create(newView);
 
             return new DetailedVehicleModel(vehicle);
         }
@@ -158,9 +151,8 @@ namespace API.Managers
                             throw new Exception("User cannot be null for recommended sort type!");
 
                         var user = await userManager.FindByNameAsync(filters.Username) ?? throw new KeyNotFoundException(); //should never happen
-                        var details = await userDetailsRepository.GetByUIserId(user.Id);
 
-                        result = await recommendationManager.SortByRecommended(result, details);
+                        result = await recommendationManager.SortByRecommended(result, user.Id);
                         break;
                     default:
                         throw new Exception("Unsupported sort type!");

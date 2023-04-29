@@ -12,7 +12,8 @@ namespace API.Managers
     public class RecommendationManager : IRecommendationManager
     {
 
-        private readonly int recommendationViewLimit = 10000;    //recommendations will be made based on the last 
+        private readonly int recommendationViewLimit = 10000;    //recommendations will be made based on the last <recommendationViewLimit> views
+        private readonly int personalRecommendationMultiplier = 5;      //how many times more imporant a user's view should be
         private readonly IUserDetailsRepository userDetailsRepository;
         private readonly IVehicleRepository vehicleRepository;
         private readonly IVehicleViewRepository vehicleViewRepository;
@@ -24,11 +25,12 @@ namespace API.Managers
             this.vehicleViewRepository = vehicleViewRepository; 
         }
 
-        public async Task<List<VehicleModel>> SortByRecommended(List<VehicleModel> vehiclesToSort, UserDetails details)
+        public async Task<List<VehicleModel>> SortByRecommended(List<VehicleModel> vehiclesToSort, string userId)
         {
+            var details = await userDetailsRepository.GetByUserId(userId) ?? throw new Exception("Cannot sort by recommended for a user without details!");
+
             var usersTask = userDetailsRepository.GetSimilarUsers(details);
             var vehiclesTask = vehicleRepository.GetAll();
-
             await Task.WhenAll(usersTask, vehiclesTask);
 
             var similarUsers = usersTask.Result;
@@ -38,12 +40,17 @@ namespace API.Managers
             double powerAverage = 0.0;
             Dictionary<string, int> bodyTypeViewDictionary = new();
 
+            //get a list of all views
             List<VehicleView> views = new();
             foreach (var similarUser in similarUsers)
             {
                 var vehicleViews = await vehicleViewRepository.GetByUserId(similarUser.UserId);
 
-                views.AddRange(vehicleViews);
+                if (similarUser.UserId != userId)
+                    views.AddRange(vehicleViews);
+                else
+                    for(int _ = 0; _ < personalRecommendationMultiplier; _++)   //the current user's views should hold more weight
+                        views.AddRange(vehicleViews);
             }
 
             //sort by newest and take newest <recommendationViewLimit>

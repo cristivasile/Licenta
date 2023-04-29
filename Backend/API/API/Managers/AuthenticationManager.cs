@@ -58,7 +58,7 @@ namespace API.Managers
 
             var token = await authTokenManager.GenerateToken(user);
             var roles = await userManager.GetRolesAsync(user);
-            var userDetails = await userDetailsRepository.GetByUIserId(user.Id);
+            var userDetails = await userDetailsRepository.GetByUserId(user.Id);
 
             var result = new LoginReturnModel()
             {

@@ -14,7 +14,7 @@ namespace API.Repositories
         public UserDetailsRepository(AppDbContext context) : base(context)
             => entitySet = context.UserDetails;
 
-        public async Task<UserDetails> GetByUIserId(string userId)
+        public async Task<UserDetails> GetByUserId(string userId)
             => await ApplySpecification(new UserDetailsByUserIdSpecification(userId)).FirstOrDefaultAsync();
 
         public async Task<List<UserDetails>> GetSimilarUsers(UserDetails userDetails)

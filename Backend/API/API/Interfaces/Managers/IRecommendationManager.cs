@@ -7,6 +7,6 @@ namespace API.Interfaces.Managers
 {
     public interface IRecommendationManager
     {
-        Task<List<VehicleModel>> SortByRecommended(List<VehicleModel> vehicles, UserDetails details);
+        Task<List<VehicleModel>> SortByRecommended(List<VehicleModel> vehicles, string userId);
     }
 }
