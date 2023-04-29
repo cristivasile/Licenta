@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Context
 {
     public class AppDbContext : IdentityDbContext
-        <User, Role, string, IdentityUserClaim<string>, UserRole, IdentityUserLogin<string>,
+        <User, IdentityRole<string>, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>,
         IdentityRoleClaim<string>, IdentityUserToken<string>>
     {
         public DbSet<BodyType> BodyTypes { get; set; }

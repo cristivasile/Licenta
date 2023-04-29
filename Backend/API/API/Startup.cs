@@ -117,7 +117,7 @@ namespace API
                                                             .UseSqlServer(Configuration.GetConnectionString("ConnString")));
 
             //-- authentication config
-            services.AddIdentity<User, Role>()
+            services.AddIdentity<User, IdentityRole<string>>()
                     .AddEntityFrameworkStores<AppDbContext>()
                     .AddDefaultTokenProviders();
             services.AddScoped<IAuthenticationManager, AuthenticationManager>();
@@ -167,7 +167,7 @@ namespace API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration configuration, RoleManager<Role> roleManager, UserManager<User> userManager)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration configuration, RoleManager<IdentityRole<string>> roleManager, UserManager<User> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -196,7 +196,7 @@ namespace API
         /// <summary>
         /// Creates the required roles automatically if they do not exist
         /// </summary>
-        private static async Task CreateRoles(RoleManager<Role> roleManager)
+        private static async Task CreateRoles(RoleManager<IdentityRole<string>> roleManager)
         {
             bool userRoleExists = await roleManager.RoleExistsAsync("User");
             bool adminRoleExists = await roleManager.RoleExistsAsync("Admin");
@@ -204,15 +204,15 @@ namespace API
 
             if (!userRoleExists)
             {
-                await roleManager.CreateAsync(new Role("User"));
+                await roleManager.CreateAsync(new IdentityRole("User"));
             }
             if (!adminRoleExists)
             {
-                await roleManager.CreateAsync(new Role("Admin"));
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
             if (!sysAdminRoleExists)
             {
-                await roleManager.CreateAsync(new Role("SysAdmin"));
+                await roleManager.CreateAsync(new IdentityRole("SysAdmin"));
             }
         }
 
