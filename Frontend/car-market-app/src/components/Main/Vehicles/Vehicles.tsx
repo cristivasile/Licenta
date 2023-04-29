@@ -23,7 +23,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import TuneIcon from '@mui/icons-material/Tune';
 import { mapFromVehicleTypeList } from '../../../models/VehicleTypeModel';
 import { transmissionTypeEnumMap } from '../../../models/enums/TransmissionTypeEnum';
-import { recommendationSortTypesMap, sortTypesMap } from '../../../models/enums/SortTypeEnumModel';
+import { SortTypeEnum, recommendationSortTypesMap, sortTypesMap } from '../../../models/enums/SortTypeEnumModel';
 import ManageLocationsDialog from './ManageLocationsDialog/ManageLocationsDialog';
 import ManageFeaturesDialog from './ManageFeaturesDialog/ManageFeaturesDialog';
 import ManageBodyTypesDialog from './ManageBodyTypesDialog/ManageBodyTypesDialog';
@@ -127,6 +127,11 @@ const Vehicles: FC<VehiclesProps> = () => {
         setLoading(false);
       });
   }
+
+  useEffect(() => {
+    if (hasRecommendations)
+      dispatch(setSortTypeFilter(SortTypeEnum.Recommended));
+  }, [hasRecommendations])
 
   useEffect(() => {
     setLoading(true);
