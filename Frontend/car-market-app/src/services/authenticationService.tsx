@@ -27,6 +27,20 @@ export const isSysAdmin = (role: string): boolean => {
   return false;
 }
 
+/** 
+ * Checks if an user is currently logged in
+ * @returns 
+ */
+export const isLoggedIn = (): boolean => {
+    var token = store.getState().user.token 
+
+    if (token === "" || token === undefined)
+      return false;
+      
+    return true;
+}
+
+
 export const logIn = (username: string, password: string): Promise<Response> => {
     const requestOptions = {
         method: 'POST',

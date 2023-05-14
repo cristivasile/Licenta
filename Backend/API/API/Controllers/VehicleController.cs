@@ -29,17 +29,10 @@ namespace API.Controllers
             return Ok(vehicles);
         }
 
-        /// <summary>
-        /// Get all vehicles that have an associated "available" status. 
-        /// For no filters send an empty {} body
-        /// </summary>
-        [HttpPost("getAvailable")]
-        [Authorize(Policy = "Any")]
-        public async Task<IActionResult> ReadAvailableVehicles([FromBody] VehicleFiltersModel filters)
+        private async Task<IActionResult> ReadAvailableCommon(VehicleFiltersModel filters)
         {
             try
             {
-                filters.Username = User.Identity.Name;
                 var vehicles = await vehicleManager.GetAvailable(filters);
                 return Ok(vehicles);
             }
@@ -51,6 +44,36 @@ namespace API.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Must be called by authenticated users in order to get recommendations
+        /// Get all vehicles that have an associated "available" status. 
+        /// For no filters send an empty {} body
+        /// </summary>
+        [HttpPost("getAvailable")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> ReadAvailableVehicles([FromBody] VehicleFiltersModel filters)
+        {
+            try 
+            {
+                filters.Username = User.Identity.Name;
+                return await ReadAvailableCommon(filters);
+            }
+            catch
+            {
+                return Unauthorized();
+            }
+        }
+
+        /// <summary>
+        /// Get all vehicles that have an associated "available" status. 
+        /// For no filters send an empty {} body
+        /// </summary>
+        [HttpPost("getAvailable/noAuth")]
+        public async Task<IActionResult> ReadAvailableVehiclesNoAuth([FromBody] VehicleFiltersModel filters) 
+        { 
+            return await ReadAvailableCommon(filters);
         }
 
         [HttpGet("{id}")]

@@ -17,7 +17,7 @@ import { getFeatures } from '../../../services/featuresService';
 import { getBodyTypes } from '../../../services/bodyTypeService.';
 import { setBodyTypesFromJson } from '../../../redux/bodyTypesStore';
 import { setVehicleTypesFromJson } from '../../../redux/vehicleTypesStore';
-import { isAdmin, isSysAdmin } from '../../../services/authenticationService';
+import { isAdmin, isLoggedIn, isSysAdmin } from '../../../services/authenticationService';
 import './Vehicles.scss';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import TuneIcon from '@mui/icons-material/Tune';
@@ -109,6 +109,9 @@ const Vehicles: FC<VehiclesProps> = () => {
       sortAsc: sortAscending
     };
 
+    if (!isLoggedIn() && sortType === SortTypeEnum.Recommended)
+      filters.sort = null;
+
     getVehiclesList(filters)
       .then(async (result) => {
         if (result.status === 200) {
@@ -131,7 +134,7 @@ const Vehicles: FC<VehiclesProps> = () => {
   useEffect(() => {
     if (hasRecommendations)
       dispatch(setSortTypeFilter(SortTypeEnum.Recommended));
-  }, [hasRecommendations])
+  }, [hasRecommendations, dispatch])
 
   useEffect(() => {
     setLoading(true);

@@ -1,7 +1,7 @@
 import { apiUrl } from "../constants";
 import { VehicleCreateModel, VehicleFiltersModel } from "../models/VehicleModel";
 import { store } from "../redux/store";
-import { isAdmin } from "./authenticationService";
+import { isAdmin, isLoggedIn } from "./authenticationService";
 import { authenticatedFetch } from "./authenticatedFetch";
 
 export const createVehicle = (newVehicle: VehicleCreateModel): Promise<Response> => {
@@ -99,14 +99,20 @@ export const getVehiclesList = (filters: VehicleFiltersModel): Promise<Response>
         })
     };
 
-    //regular users can only get still available vehicles
-    if (!userIsAdmin){
-        var endpoint = apiUrl + "/api/Vehicle/getAvailable";
+    //logged out users use a separate fetch
+    if (!isLoggedIn())
+    {
+        var endpoint = apiUrl + "/api/Vehicle/getAvailable/noAuth";
         return fetch(endpoint, requestOptions);
     }
     else{
-        endpoint = apiUrl + "/api/Vehicle/getAll"; 
-        return authenticatedFetch(endpoint, requestOptions);
+        //regular users can only get still available vehicles
+        if (!userIsAdmin)
+            var authenticatedEndpoint = apiUrl + "/api/Vehicle/getAvailable";
+        else
+            authenticatedEndpoint = apiUrl + "/api/Vehicle/getAll"; 
+
+        return authenticatedFetch(authenticatedEndpoint, requestOptions);
     }
 }
 

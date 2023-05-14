@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import './Main.scss';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -23,21 +23,27 @@ const Main: FC<MainProps> = (_: MainProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    //check JWT token expiration
-    if (isLogged) {
-        var decodedToken: any = jwt_decode(token);
-        var now = new Date();
+    useEffect(() => {
+        //check JWT token expiration
+        if (isLogged && token !== "" && token !== undefined) {
+            var decodedToken: any = jwt_decode(token);
+            var now = new Date();
 
-        //token has expired, log out
-        if (decodedToken.exp * 1000 < now.getTime()) {
-            dispatch(forcedLogout());
-            localStorage.removeItem(tokenLocalStoragePath);
-            localStorage.removeItem(roleLocalStoragePath);
-            //do not remove user so the username can be displayed inside the login
-            generateToastError("Your session has expired! Please log in again!");
-            console.log("Token expired!");
+            //token has expired, log out
+            if (decodedToken.exp * 1000 < now.getTime()) {
+                dispatch(forcedLogout());
+                localStorage.removeItem(tokenLocalStoragePath);
+                localStorage.removeItem(roleLocalStoragePath);
+                //do not remove user so the username can be displayed inside the login
+                generateToastError("Your session has expired! Please log in again!");
+                console.log("Token expired!");
+            }
         }
-    }
+        else {
+            dispatch(forcedLogout());
+        }
+    })
+
 
     function goToAuth() {
         navigate("/auth");

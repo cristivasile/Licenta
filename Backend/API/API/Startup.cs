@@ -165,10 +165,6 @@ namespace API
 
                 options.AddPolicy("Sysadmin", policy => policy.RequireRole("SysAdmin")
                 .RequireAuthenticatedUser().AddAuthenticationSchemes("AuthScheme").Build());
-
-                //used where a token is optional
-                options.AddPolicy("Any", policy => policy                                       
-                    .RequireAuthenticatedUser().AddAuthenticationSchemes("AuthScheme").Build());
             });
 
             //---

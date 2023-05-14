@@ -41,7 +41,6 @@ export const userSlice = createSlice({
             clearLocalStorage();
         },
         forcedLogout: (state) => {
-            //state.loggedUser = state.loggedUser; do not reset username
             state.isLogged = false;
             state.token = "";
             state.role = "";
