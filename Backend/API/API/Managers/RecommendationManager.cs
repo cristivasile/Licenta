@@ -36,26 +36,27 @@ namespace API.Managers
             double powerAverage = 0.0;
             Dictionary<string, int> bodyTypeViewDictionary = new();
 
-            //get a list of all views
-            List<VehicleView> views = new();
+            //get a list of latest views
+            var views = await vehicleViewRepository.GetLatest(recommendationViewLimit);
+
+            //store a list of relevant views
+            List<VehicleView> relevantViews = new();
             foreach (var similarUser in similarUsers)
             {
-                var vehicleViews = await vehicleViewRepository.GetByUserId(similarUser.UserId);
+                var vehicleViews = views.Where(x => x.UserId == similarUser.UserId);
 
                 if (similarUser.UserId != userId)
-                    views.AddRange(vehicleViews);
+                    relevantViews.AddRange(vehicleViews);
                 else
                     for(int _ = 0; _ < personalRecommendationMultiplier; _++)   //the current user's views should hold more weight
-                        views.AddRange(vehicleViews);
+                        relevantViews.AddRange(vehicleViews);
             }
 
-            //sort by newest and take newest <recommendationViewLimit>
-            views = views.OrderByDescending(x => x.Date).Take(recommendationViewLimit).ToList();
 
-                foreach(var view in views)
+            foreach(var view in relevantViews)
             {
-                priceAverage += (double) view.Vehicle.Price / (views.Count);
-                powerAverage += (double) view.Vehicle.Power / (views.Count);
+                priceAverage += (double) view.Vehicle.Price / (relevantViews.Count);
+                powerAverage += (double) view.Vehicle.Power / (relevantViews.Count);
 
                 if (!bodyTypeViewDictionary.ContainsKey(view.Vehicle.BodyTypeName))
                     bodyTypeViewDictionary[view.Vehicle.BodyTypeName] = 1;
@@ -74,7 +75,7 @@ namespace API.Managers
 
                 if (bodyTypeViewDictionary.TryGetValue(vehicle.BodyType, out int value))
                     // 2 * to assign a bigger importance to body types
-                    desirability += 2 * (value / views.Count);
+                    desirability += value / relevantViews.Count;
 
                 vehicleDesirability[vehicle.Id] = desirability;
             }

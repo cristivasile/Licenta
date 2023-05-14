@@ -7,5 +7,6 @@ namespace API.Interfaces.Repositories
     public interface IVehicleViewRepository: IRepositoryBase<VehicleView>
     {
         Task<List<VehicleView>> GetByUserId(string userId);
+        Task<List<VehicleView>> GetLatest(int count);
     }
 }
