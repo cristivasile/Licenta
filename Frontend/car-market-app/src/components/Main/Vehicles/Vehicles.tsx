@@ -74,6 +74,7 @@ const Vehicles: FC<VehiclesProps> = () => {
   const transmissionFilter = useAppSelector((state) => state.vehiclesMainFiltersStore.transmissionFilter);
   const sortType = useAppSelector((state) => state.vehiclesMainFiltersStore.sortType);
   const sortAscending = useAppSelector((state) => state.vehiclesMainFiltersStore.sortAscending);
+  const role = useAppSelector((state) => state.user.role) || "";
 
   const bodyTypes = useAppSelector((state) => state.bodyType.bodyTypes);
   const vehicleTypesMap = mapFromVehicleTypeList(useAppSelector((state) => state.vehicleType.vehicleTypes));
@@ -109,8 +110,9 @@ const Vehicles: FC<VehiclesProps> = () => {
       sortAsc: sortAscending
     };
 
-    if (!isLoggedIn() && sortType === SortTypeEnum.Recommended)
-      filters.sort = null;
+    if (sortType === SortTypeEnum.Recommended)
+      if(!isLoggedIn || isAdmin(role))
+        filters.sort = null;
 
     getVehiclesList(filters)
       .then(async (result) => {

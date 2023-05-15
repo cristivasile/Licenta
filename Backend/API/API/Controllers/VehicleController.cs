@@ -25,8 +25,15 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> ReadVehicles([FromBody] VehicleFiltersModel filters)
         {
-            var vehicles = await vehicleManager.GetAll(filters);
-            return Ok(vehicles);
+            try
+            {
+                var vehicles = await vehicleManager.GetAll(filters);
+                return Ok(vehicles);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         private async Task<IActionResult> ReadAvailableCommon(VehicleFiltersModel filters)
