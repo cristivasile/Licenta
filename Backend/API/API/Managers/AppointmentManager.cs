@@ -21,6 +21,7 @@ namespace API.Managers
         private readonly IAppointmentTypeRepository appointmentTypeRepository;
         private readonly IVehicleRepository vehicleRepository;
         private readonly IScheduleRepository scheduleRepository;
+        private readonly IEmailManager emailManager;
         private readonly UserManager<User> userManager;
         private readonly static int upcomingAppointmentLimit = 3;
         private readonly static int daysLimit = 60;
@@ -28,12 +29,13 @@ namespace API.Managers
         private readonly static int intervalSize = 15;
 
         public AppointmentManager(IAppointmentRepository appointmentRepository, IAppointmentTypeRepository appointmentTypeRepository,
-            IVehicleRepository vehicleRepository, IScheduleRepository scheduleRepository, UserManager<User> userManager)
+            IVehicleRepository vehicleRepository, IScheduleRepository scheduleRepository, UserManager<User> userManager, IEmailManager emailManager)
         {
             this.appointmentRepository= appointmentRepository;
             this.appointmentTypeRepository = appointmentTypeRepository;
             this.vehicleRepository = vehicleRepository;
             this.scheduleRepository = scheduleRepository;
+            this.emailManager = emailManager;
             this.userManager = userManager;
         }
 
@@ -59,6 +61,11 @@ namespace API.Managers
 
             if (await appointmentRepository.GetByUserIdAndVehicleId(user.Id, newAppointment.VehicleId, upcoming: true) != null)
                 throw new Exception("User already has an appointment for this vehicle!");
+
+            var confirmationEmailBody = $"Hello,<br><br>This is a confirmation for your appointment on {newAppointment.Date:dd/MM/yyyy} at " +
+                $"{newAppointment.Date.TimeOfDay} for the {vehicle.Brand + " " + vehicle.Model}. <br><br>See you soon!";
+
+            _ = emailManager.SendEmail(user.Email, "Appointment confirmation", confirmationEmailBody);
 
             var appointment = new Appointment()
             {

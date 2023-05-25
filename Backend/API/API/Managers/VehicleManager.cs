@@ -112,6 +112,8 @@ namespace API.Managers
                 vehicleQueryable = vehicleQueryable.Where(x => x.Power <= filters.MaxPower.Value);
             if (filters.MinYear != null)
                 vehicleQueryable = vehicleQueryable.Where(x => x.Year >= filters.MinYear.Value);
+            if (filters.BodyType != null)
+                vehicleQueryable = vehicleQueryable.Where(x => x.BodyType == filters.BodyType);
             if (filters.Transmission != null)
             {
                 var filterString = filters.Transmission.ToString();
