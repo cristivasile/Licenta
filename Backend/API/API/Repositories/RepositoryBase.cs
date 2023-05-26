@@ -74,6 +74,14 @@ namespace API.Repositories
             return SpecificationEvaluator.GetQuery(entitySet, specification);
         }
 
+        /// <summary>
+        /// Used to apply a specification on a queriable
+        /// </summary>
+        protected IQueryable<EntityType> ApplySpecification(IQueryable<EntityType> queryable, Specification<EntityType> specification)
+        {
+            return SpecificationEvaluator.GetQuery(queryable, specification);
+        }
+
         protected async Task SaveAsync() => await context.SaveChangesAsync();
     }
 }

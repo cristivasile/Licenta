@@ -19,16 +19,24 @@ namespace API.Repositories
 
         /// <param name="upcoming"> - Whether to get only upcoming appointments </param>
         public async Task<List<Appointment>> GetByLocationId(string locationId, bool upcoming = true)
-            => await ApplySpecification(new AppointmentsByLocationIdSpecification(locationId, upcoming)).ToListAsync();
+            => await ApplySpecification(
+                ApplySpecification(new AppointmentsByLocationIdSpecification(locationId)),
+                new AppointmentsByUpcomingSpecification(upcoming)).ToListAsync();
 
         public async Task<List<Appointment>> GetByLocationIdAndDate(string locationId, DateTime date)
-            => await ApplySpecification(new AppointmentsByLocationIdAndDateSpecification(locationId, date)).ToListAsync();
+            => await ApplySpecification(
+                ApplySpecification(new AppointmentsByLocationIdSpecification(locationId)),
+                new AppointmentsByDateSpecification(date)).ToListAsync();
 
         /// <param name="upcoming"> - Whether to get only upcoming appointments </param>
         public async Task<List<Appointment>> GetByUserId(string userId, bool upcoming = true)
-            => await ApplySpecification(new AppointmentsByUserIdSpecification(userId, upcoming)).ToListAsync();
+            => await ApplySpecification(
+                ApplySpecification(new AppointmentsByUserIdSpecification(userId)),
+                new AppointmentsByUpcomingSpecification(upcoming)).ToListAsync();
 
         public async Task<Appointment> GetByUserIdAndVehicleId(string userId, string locationId, bool upcoming = true)
-            => await ApplySpecification(new AppointmentsByUserIdAndVehicleIdSpecification(userId, locationId, upcoming)).FirstOrDefaultAsync();
+            => await ApplySpecification(
+                ApplySpecification(new AppointmentsByUserIdSpecification(userId)),
+                new AppointmentByVehicleIdSpecification(locationId, upcoming)).FirstOrDefaultAsync();
     }
 }

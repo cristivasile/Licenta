@@ -5,8 +5,8 @@ namespace API.Specifications.AppointmentSpecifications
 {
     public class AppointmentsByLocationIdSpecification : Specification<Appointment>
     {
-        public AppointmentsByLocationIdSpecification(string locationId, bool upcoming) 
-            : base(x => x.Vehicle.LocationId == locationId && (!upcoming || x.Date > DateTime.Now))
+        public AppointmentsByLocationIdSpecification(string locationId) 
+            : base(x => x.Vehicle.LocationId == locationId)
         {
             SplitQuery = true;
 

@@ -3,10 +3,10 @@ using System;
 
 namespace API.Specifications.AppointmentSpecifications
 {
-    public class AppointmentsByUserIdSpecification : Specification<Appointment>
+    public class AppointmentsByUpcomingSpecification : Specification<Appointment>
     {
-        public AppointmentsByUserIdSpecification(string userId) 
-            : base(x => x.UserId == userId)
+        public AppointmentsByUpcomingSpecification(bool upcoming)
+            : base(x => !upcoming || x.Date > DateTime.Now)
         {
             SplitQuery = true;
 

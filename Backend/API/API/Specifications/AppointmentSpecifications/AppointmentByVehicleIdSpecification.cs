@@ -4,10 +4,10 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace API.Specifications.AppointmentSpecifications
 {
-    public class AppointmentsByUserIdAndVehicleIdSpecification : Specification<Appointment>
+    public class AppointmentByVehicleIdSpecification : Specification<Appointment>
     {
-        public AppointmentsByUserIdAndVehicleIdSpecification(string userId, string vehicleId, bool upcoming)
-            : base(x => x.UserId == userId && x.VehicleId == vehicleId && (!upcoming || x.Date > DateTime.Now))
+        public AppointmentByVehicleIdSpecification(string vehicleId, bool upcoming)
+            : base(x => x.VehicleId == vehicleId && (!upcoming || x.Date > DateTime.Now))
         {
             SplitQuery = true;
 
