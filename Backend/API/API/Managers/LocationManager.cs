@@ -1,5 +1,4 @@
 ﻿using API.Entities;
-using API.Helpers;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Models.Input;
@@ -42,7 +41,7 @@ namespace API.Managers
             if (location != null)
                 throw new Exception("Location already exists!");
 
-            string locationId = Utilities.GetGUID();
+            string locationId = Program.GetGUID();
 
             var createdLocation = new Location()
             {
@@ -81,7 +80,7 @@ namespace API.Managers
             //create default appointments
             foreach(var pair in defaultAppointmentTypes) { 
                 var newAppointmentType = new AppointmentType() { 
-                    Id = Utilities.GetGUID(),
+                    Id = Program.GetGUID(),
                     LocationId = locationId,
                     Duration = pair.Value,
                     Name = pair.Key,
@@ -95,11 +94,7 @@ namespace API.Managers
 
         public async Task Delete(string id)
         {
-            var location = await locationRepository.GetById(id);
-
-            if (location == null)
-                throw new KeyNotFoundException("Location doesn't exist!");
-
+            var location = await locationRepository.GetById(id) ?? throw new KeyNotFoundException("Location doesn't exist!");
             var vehiclesList = await vehicleRepository.GetByLocationId(location.Id);
 
             if (vehiclesList.Count > 0)
@@ -121,11 +116,7 @@ namespace API.Managers
 
         public async Task Update(string id, LocationCreateModel updatedLocation)
         {
-            var location = await locationRepository.GetById(id);
-
-            if (location == null)
-                throw new Exception("Location doesn't exist!");
-
+            var location = await locationRepository.GetById(id) ?? throw new Exception("Location doesn't exist!");
             location.City = updatedLocation.City;
             location.Address = updatedLocation.Address;
 

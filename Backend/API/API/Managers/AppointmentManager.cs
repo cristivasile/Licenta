@@ -1,5 +1,4 @@
 ﻿using API.Entities;
-using API.Helpers;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Models.Input;
@@ -69,7 +68,7 @@ namespace API.Managers
 
             var appointment = new Appointment()
             {
-                Id = Utilities.GetGUID(),
+                Id = Program.GetGUID(),
                 Date = newAppointment.Date.ToLocalTime(),
                 FirstName = newAppointment.FirstName,
                 LastName = newAppointment.LastName,

@@ -75,7 +75,7 @@ namespace API.Repositories
         }
 
         /// <summary>
-        /// Used to apply a specification on a queriable
+        /// Used to apply a specification on a queryable
         /// </summary>
         protected IQueryable<EntityType> ApplySpecification(IQueryable<EntityType> queryable, Specification<EntityType> specification)
         {
