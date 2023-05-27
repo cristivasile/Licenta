@@ -1,5 +1,4 @@
 ﻿using API.Entities;
-using API.Helpers;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Models.Input;
@@ -35,7 +34,7 @@ namespace API.Managers
 
             var appointmentType = new AppointmentType() 
             {
-                Id = Utilities.GetGUID(),
+                Id = Program.GetGUID(),
                 LocationId = toCreate.LocationId,
                 Name = toCreate.Name.Trim(),
                 Duration = toCreate.Duration,

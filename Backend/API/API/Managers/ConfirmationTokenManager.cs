@@ -1,5 +1,4 @@
 ﻿using API.Entities;
-using API.Helpers;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using System;
@@ -25,7 +24,7 @@ namespace API.Managers
               UserId = userId, 
               Type = type,
               CreationTime = DateTime.Now,
-              Token = Utilities.GetGUID()
+              Token = Program.GetGUID()
             };
 
             await confirmationTokenRepository.Create(newToken);
@@ -35,11 +34,7 @@ namespace API.Managers
 
         public async Task Delete(string token)
         {
-            var foundToken = await confirmationTokenRepository.GetByToken(token);
-
-            if (foundToken == null)
-                throw new KeyNotFoundException(token);
-
+            var foundToken = await confirmationTokenRepository.GetByToken(token) ?? throw new KeyNotFoundException(token);
             await confirmationTokenRepository.Delete(foundToken);
         }
 

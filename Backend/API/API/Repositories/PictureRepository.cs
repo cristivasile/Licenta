@@ -1,5 +1,4 @@
-﻿using API.Context;
-using API.Entities;
+﻿using API.Entities;
 using API.Interfaces.Repositories;
 using API.Specifications.ImageSpecifications;
 using Microsoft.EntityFrameworkCore;

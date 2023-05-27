@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Context
+namespace API
 {
     public class AppDbContext : IdentityDbContext
         <User, IdentityRole<string>, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>,
@@ -25,7 +25,7 @@ namespace API.Context
         public DbSet<VehicleType> VehicleTypes { get; set; }
         public DbSet<VehicleView> VehicleViews { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -34,6 +34,6 @@ namespace API.Context
             modelBuilder.ApplyConfiguration(new StatusConfiguration());
             modelBuilder.ApplyConfiguration(new FeatureConfiguration());
         }
-        
+
     }
 }

@@ -1,17 +1,13 @@
 ﻿using API.Entities;
-using API.Helpers;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
-using API.Migrations;
 using API.Models.Input;
 using API.Models.Return;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace API.Managers
 {
@@ -73,7 +69,7 @@ namespace API.Managers
             var user = await userManager.FindByNameAsync(username) ?? throw new Exception("User does not exist!");
             var newView = new VehicleView
             {
-                Id = Utilities.GetGUID(),
+                Id = Program.GetGUID(),
                 Date = DateTime.Now,
                 UserId = user.Id,
                 VehicleId = vehicle.Id,
@@ -288,8 +284,8 @@ namespace API.Managers
             if (await vehicleTypeRepository.GetById(inputVehicle.Brand, inputVehicle.Model) == null)
                 await vehicleTypeRepository.Create(new() { Brand = inputVehicle.Brand, Model = inputVehicle.Model });
 
-            var generatedId = Utilities.GetGUID();
-            var thumbnailId = Utilities.GetGUID();
+            var generatedId = Program.GetGUID();
+            var thumbnailId = Program.GetGUID();
 
             Vehicle newVehicle = new()
             {
@@ -330,7 +326,7 @@ namespace API.Managers
             foreach (var image in inputVehicle.Images)
                 newImages.Add(new()
                 {
-                    Id = Utilities.GetGUID(),
+                    Id = Program.GetGUID(),
                     Base64Image = image,
                     VehicleId = newVehicle.Id,
                 });
@@ -374,7 +370,7 @@ namespace API.Managers
 
                 Thumbnail newThumbnail = new()
                 {
-                    Id = Utilities.GetGUID(),
+                    Id = Program.GetGUID(),
                     Base64Image = updatedVehicle.ThumbnailImage,
                     VehicleId = currentVehicle.Id,
                 };
@@ -396,7 +392,7 @@ namespace API.Managers
                     foreach (var image in updatedVehicle.Images)
                         newImages.Add(new()
                         {
-                            Id = Utilities.GetGUID(),
+                            Id = Program.GetGUID(),
                             Base64Image = image,
                             VehicleId = currentVehicle.Id,
                         });
@@ -472,7 +468,7 @@ namespace API.Managers
             foreach (var image in updatedImages)
                 newImages.Add(new()
                 {
-                    Id = Utilities.GetGUID(),
+                    Id = Program.GetGUID(),
                     Base64Image = image,
                     VehicleId = currentVehicle.Id,
                 });

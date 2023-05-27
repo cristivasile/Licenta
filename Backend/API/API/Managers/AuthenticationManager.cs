@@ -1,6 +1,4 @@
-﻿using API.Context;
-using API.Entities;
-using API.Helpers;
+﻿using API.Entities;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Models.Input;
@@ -9,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -82,7 +79,7 @@ namespace API.Managers
         {
             var result = new IdentityResult();
 
-            var newUserId = Utilities.GetGUID();
+            var newUserId = Program.GetGUID();
 
             var user = new User()
             {

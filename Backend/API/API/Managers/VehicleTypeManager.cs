@@ -20,11 +20,7 @@ namespace API.Managers
 
         public async Task Delete(VehicleTypeDeleteModel toDelete)
         {
-            var vehicleType = await vehicleTypeRepository.GetById(toDelete.Brand, toDelete.Model);
-
-            if(vehicleType == null)
-                throw new Exception("Vehicle type doesn't exist!");
-
+            var vehicleType = await vehicleTypeRepository.GetById(toDelete.Brand, toDelete.Model) ?? throw new Exception("Vehicle type doesn't exist!");
             await vehicleTypeRepository.Delete(vehicleType);
         }
 

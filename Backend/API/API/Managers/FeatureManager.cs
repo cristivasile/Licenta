@@ -1,5 +1,4 @@
 ﻿using API.Entities;
-using API.Helpers;
 using API.Interfaces.Managers;
 using API.Interfaces.Repositories;
 using API.Models.Input;
@@ -27,7 +26,7 @@ namespace API.Managers
             if (feature != null)
                 throw new Exception("A feature with the given name already exists!");
 
-            var id = Utilities.GetGUID();
+            var id = Program.GetGUID();
 
             var createdFeature = new Feature()
             {
@@ -42,11 +41,7 @@ namespace API.Managers
 
         public async Task Delete(string id)
         {
-            var feature = await featureRepository.GetById(id);
-
-            if (feature == null)
-                throw new Exception("Feature doesn't exist!");
-
+            var feature = await featureRepository.GetById(id) ?? throw new Exception("Feature doesn't exist!");
             await featureRepository.Delete(feature);
         }
 
