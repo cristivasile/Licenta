@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace API.Interfaces.Specifications
+namespace API.Interfaces
 {
     public interface ISpecification<Entity>
     {
