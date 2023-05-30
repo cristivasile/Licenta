@@ -1,5 +1,5 @@
 ﻿using API.Entities;
-using API.Interfaces.Specifications;
+using API.Interfaces;
 using System;
 using System.Linq.Expressions;
 

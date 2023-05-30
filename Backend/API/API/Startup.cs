@@ -231,7 +231,8 @@ namespace API
                 var adminUser = new User()
                 {
                     UserName = "admin",
-                    Email = ""
+                    Email = "",
+                    EmailConfirmed = true,
                 };
                 var result = await userManager.CreateAsync(adminUser, configuration.GetValue<string>("RootPasswords:adminPassword"));
 
@@ -249,7 +250,8 @@ namespace API
                 var adminUser = new User()
                 {
                     UserName = "sysadmin",
-                    Email = ""
+                    Email = "",
+                    EmailConfirmed = true,
                 };
 
                 var result = await userManager.CreateAsync(adminUser, configuration.GetValue<string>("RootPasswords:sysAdminPassword"));
