@@ -7,6 +7,7 @@ namespace API.Interfaces.Managers
 {
     public interface IPictureManager
     {
+        Task UpdateImages(string id, List<string> updatedImages);
         Task<List<string>> GetByVehicleId(string vehicleId);
     }
 }

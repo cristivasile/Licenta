@@ -187,25 +187,6 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("updateImages/{id}")]
-        [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> UpdateVehicleImages([FromRoute] string id, [FromBody] List<string> newImages)
-        {
-            try
-            {
-                await vehicleManager.UpdateImages(id, newImages);
-                return Ok();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpDelete("{id}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteVehicle([FromRoute] string id)

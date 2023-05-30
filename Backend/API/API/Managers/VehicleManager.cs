@@ -449,34 +449,6 @@ namespace API.Managers
             await statusRepository.Update(status);
         }
 
-        public async Task UpdateImages(string id, List<string> updatedImages)
-        {
-            var currentVehicle = await vehicleRepository.GetById(id) ?? throw new KeyNotFoundException();
-
-            //check images
-            foreach (var image in updatedImages)
-                if (image.Length > maxImageSize)
-                    throw new Exception("An image is too large!");
-
-            //remove new pictures
-            var images = await pictureRepository.GetByVehicleId(currentVehicle.Id);
-            foreach (var image in images)
-                await pictureRepository.Delete(image);
-
-            //add new pictures
-            List<Picture> newImages = new();
-            foreach (var image in updatedImages)
-                newImages.Add(new()
-                {
-                    Id = Program.GetGUID(),
-                    Base64Image = image,
-                    VehicleId = currentVehicle.Id,
-                });
-
-            foreach (var newImage in newImages)
-                await pictureRepository.Create(newImage);
-        }
-
         public async Task Delete(string id)
         {
             var currentVehicle = await vehicleRepository.GetById(id) ?? throw new KeyNotFoundException();

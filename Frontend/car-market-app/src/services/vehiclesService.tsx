@@ -72,7 +72,7 @@ export const updateVehicleImages = (id: string, updatedImages: string[]): Promis
         )
     };
 
-    return authenticatedFetch(apiUrl + "/api/Vehicle/updateImages/" + id, requestOptions);
+    return authenticatedFetch(apiUrl + "/api/Picture/updateImages/" + id, requestOptions);
 }
 
 export const getVehiclesList = (filters: VehicleFiltersModel): Promise<Response> => {

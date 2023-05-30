@@ -20,7 +20,6 @@ namespace API.Interfaces.Managers
         Task Create(VehicleCreateModel newVehicle);
         Task Update(string id, VehicleCreateModel updatedVehicle);
         Task UpdateStatus(string id, VehicleStatusUpdateModel updatedStatus);
-        Task UpdateImages(string id, List<string> updatedImages);
         Task Delete(string id);
     }
 }

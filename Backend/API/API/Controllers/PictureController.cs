@@ -1,6 +1,9 @@
 ﻿using API.Interfaces.Managers;
+using API.Managers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -22,6 +25,25 @@ namespace API.Controllers
         {
             var locations = await pictureManager.GetByVehicleId(vehicleId);
             return Ok(locations);
+        }
+
+        [HttpPut("updateImages/{id}")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> UpdateVehicleImages([FromRoute] string id, [FromBody] List<string> newImages)
+        {
+            try
+            {
+                await pictureManager.UpdateImages(id, newImages);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
