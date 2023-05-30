@@ -1,4 +1,4 @@
-﻿using API.Interfaces.Managers;
+﻿    using API.Interfaces.Managers;
 using API.Models.Input;
 using Azure.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -119,7 +119,6 @@ namespace API.Controllers
 
         [HttpGet("getUsernames")]
         [Authorize(Policy = "Admin")]
-
         public async Task<IActionResult> GetUsernames()
         {
             try

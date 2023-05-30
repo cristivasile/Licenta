@@ -18,7 +18,7 @@ namespace API.Controllers
 
         [HttpGet("getVehicleImages/{vehicleId}")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> ReadLocations([FromRoute] string vehicleId)
+        public async Task<IActionResult> ReadVehicleImages([FromRoute] string vehicleId)
         {
             var locations = await pictureManager.GetByVehicleId(vehicleId);
             return Ok(locations);
