@@ -15,13 +15,11 @@ namespace API.Managers
         private readonly int recommendationViewLimit = 10000;    //recommendations will be made based on the last <recommendationViewLimit> views
         private readonly int personalRecommendationMultiplier = 5;      //how many times more imporant a user's view should be
         private readonly IUserDetailsRepository userDetailsRepository;
-        private readonly IVehicleRepository vehicleRepository;
         private readonly IVehicleViewRepository vehicleViewRepository;
 
-        public RecommendationManager(IUserDetailsRepository userDetailsRepository, IVehicleRepository vehicleRepository, IVehicleViewRepository vehicleViewRepository)
+        public RecommendationManager(IUserDetailsRepository userDetailsRepository, IVehicleViewRepository vehicleViewRepository)
         {
             this.userDetailsRepository = userDetailsRepository;
-            this.vehicleRepository = vehicleRepository;
             this.vehicleViewRepository = vehicleViewRepository; 
         }
 
@@ -30,7 +28,6 @@ namespace API.Managers
             var details = await userDetailsRepository.GetByUserId(userId) ?? throw new Exception("Cannot sort by recommended for a user without details!");
 
             var similarUsers = await userDetailsRepository.GetSimilarUsers(details);
-            var vehicles = await vehicleRepository.GetAll();
 
             double priceAverage = 0.0;
             double powerAverage = 0.0;
@@ -74,7 +71,6 @@ namespace API.Managers
                 desirability += GetSimilarity(powerAverage, vehicle.Power);
 
                 if (bodyTypeViewDictionary.TryGetValue(vehicle.BodyType, out int value))
-                    // 2 * to assign a bigger importance to body types
                     desirability += value / relevantViews.Count;
 
                 vehicleDesirability[vehicle.Id] = desirability;
