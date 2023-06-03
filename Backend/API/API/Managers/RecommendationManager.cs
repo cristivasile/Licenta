@@ -71,7 +71,7 @@ namespace API.Managers
                 desirability += GetSimilarity(powerAverage, vehicle.Power);
 
                 if (bodyTypeViewDictionary.TryGetValue(vehicle.BodyType, out int value))
-                    desirability += value / relevantViews.Count;
+                    desirability += value / relevantViews.Count; 
 
                 vehicleDesirability[vehicle.Id] = desirability;
             }
