@@ -12,10 +12,12 @@ namespace API.Managers
     public class BodyTypeManager : IBodyTypeManager
     {
         private readonly IBodyTypeRepository bodyTypeRepository;
+        private readonly IVehicleRepository vehicleRepository;
 
-        public BodyTypeManager(IBodyTypeRepository bodyTypeRepository)
+        public BodyTypeManager(IBodyTypeRepository bodyTypeRepository, IVehicleRepository vehicleRepository)
         {
             this.bodyTypeRepository = bodyTypeRepository;
+            this.vehicleRepository = vehicleRepository;
         }
 
         public async Task Create(BodyTypeCreateModel newBodyType)
@@ -35,10 +37,15 @@ namespace API.Managers
 
         public async Task Delete(string bodyTypeName)
         {
+            var vehicles = await vehicleRepository.GetAll();
+
+            if (vehicles.Any(x => x.BodyTypeName == bodyTypeName))
+                throw new Exception("Cannot delete a body type that is present on a vehicle!");
+
             var toDelete = await bodyTypeRepository.GetByName(bodyTypeName);
 
             if (toDelete == null)
-                throw new Exception("Body type not found!");
+                throw new KeyNotFoundException("Body type not found!");
 
             await bodyTypeRepository.Delete(toDelete);
         }

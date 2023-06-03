@@ -4,6 +4,7 @@ using API.Models.Input;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -50,9 +51,13 @@ namespace API.Controllers
                 await bodyTypeManager.Delete(typeName);
                 return Ok();
             }
-            catch
+            catch (KeyNotFoundException)
             {
                 return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
