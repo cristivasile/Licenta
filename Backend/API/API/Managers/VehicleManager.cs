@@ -405,13 +405,8 @@ namespace API.Managers
                 }
             }
 
-            //check if brand and model is still used
-            var vehicles = await vehicleRepository.GetAll();
-            var filteredVehicles = vehicles.Where(x => x.Brand == currentVehicle.Brand && x.Model == currentVehicle.Model);
-
-            //remove if necessary
-            if (filteredVehicles.Count() == 1)  //only the current vehicle has this pair
-                await vehicleTypeRepository.Delete(await vehicleTypeRepository.GetById(currentVehicle.Brand, currentVehicle.Model));
+            var oldBrand = currentVehicle.Brand;
+            var oldModel = currentVehicle.Model;
 
             currentVehicle.Brand = updatedVehicle.Brand;
             currentVehicle.Model = updatedVehicle.Model;
@@ -430,6 +425,14 @@ namespace API.Managers
             currentVehicle.TransmissionType = updatedVehicle.TransmissionType;
 
             await vehicleRepository.Update(currentVehicle);
+
+            //check if brand and model is still used
+            var vehicles = await vehicleRepository.GetAll();
+            var filteredVehicles = vehicles.Where(x => x.Brand == oldBrand && x.Model == oldModel).ToList();
+
+            //remove if necessary
+            if (!filteredVehicles.Any())  //only the current vehicle has this pair
+                await vehicleTypeRepository.Delete(await vehicleTypeRepository.GetById(oldBrand, oldModel));
         }
 
         public async Task UpdateStatus(string id, VehicleStatusUpdateModel updatedStatus)
@@ -468,7 +471,7 @@ namespace API.Managers
 
             //check if brand and model is still used
             var vehicles = await vehicleRepository.GetAll();
-            var filteredVehicles = vehicles.Where(x => x.Brand == brand && x.Model == model);
+            var filteredVehicles = vehicles.Where(x => x.Brand == brand && x.Model == model).ToList();
 
             //remove if necessary
             if (!filteredVehicles.Any())

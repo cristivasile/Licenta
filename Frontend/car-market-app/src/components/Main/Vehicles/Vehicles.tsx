@@ -93,6 +93,7 @@ const Vehicles: FC<VehiclesProps> = () => {
   const vehicles = useAppSelector((state) => state.vehicle.vehicles);
 
   function fetchVehicles(currentPage: number = selectedPage, pageSize: number = vehiclesPerPage): void {
+
     var filters: VehicleFiltersModel = {
       startAt: (currentPage - 1) * vehiclesPerPage,
       numberToGet: pageSize,
