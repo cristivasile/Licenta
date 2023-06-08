@@ -431,7 +431,7 @@ namespace API.Managers
             var filteredVehicles = vehicles.Where(x => x.Brand == oldBrand && x.Model == oldModel).ToList();
 
             //remove if necessary
-            if (!filteredVehicles.Any())  //only the current vehicle has this pair
+            astaif (!filteredVehicles.Any())  //only the current vehicle has this pair
                 await vehicleTypeRepository.Delete(await vehicleTypeRepository.GetById(oldBrand, oldModel));
         }
 
