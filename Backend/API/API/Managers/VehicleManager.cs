@@ -405,6 +405,14 @@ namespace API.Managers
                 }
             }
 
+            //check if brand and model is still used
+            var vehicles = await vehicleRepository.GetAll();
+            var filteredVehicles = vehicles.Where(x => x.Brand == currentVehicle.Brand && x.Model == currentVehicle.Model);
+
+            //remove if necessary
+            if (filteredVehicles.Count() == 1)  //only the current vehicle has this pair
+                await vehicleTypeRepository.Delete(await vehicleTypeRepository.GetById(currentVehicle.Brand, currentVehicle.Model));
+
             currentVehicle.Brand = updatedVehicle.Brand;
             currentVehicle.Model = updatedVehicle.Model;
             currentVehicle.BodyTypeName = updatedVehicle.BodyType;
@@ -463,7 +471,7 @@ namespace API.Managers
             var filteredVehicles = vehicles.Where(x => x.Brand == brand && x.Model == model);
 
             //remove if necessary
-            if (filteredVehicles.Any())
+            if (!filteredVehicles.Any())
                 await vehicleTypeRepository.Delete(await vehicleTypeRepository.GetById(brand, model));
 
             //remove thumbnail
